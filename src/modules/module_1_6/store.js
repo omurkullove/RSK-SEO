@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { API } from './variables';
+import { API } from '../../utils/variables';
 import axios from 'axios';
 
 // Возможно будут ошибки, в процессе буду фиксить

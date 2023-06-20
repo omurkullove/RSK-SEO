@@ -1,8 +1,15 @@
 import React from 'react';
-import { useModule_1_6 } from './store';
+import MainLayout from './mainComponents/Mainlayout/MainLayout';
+import MainRouter from './mainRouter/MainRouter';
 
 const App = () => {
-  return <div>1.6 module</div>;
+  return (
+    <main>
+      <MainLayout>
+        <MainRouter />
+      </MainLayout>
+    </main>
+  );
 };
 
 export default App;
