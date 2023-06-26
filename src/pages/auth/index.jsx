@@ -1,28 +1,28 @@
-import React from 'react'
-import styles from '@/assets/styles/Auth.module.scss'
-import logo from '@/assets/svg/bigLogo.svg'
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import styles from '@/assets/styles/main/Auth.module.scss';
+import logo from '@/assets/svg/bigLogo.svg';
+import { useNavigate } from 'react-router-dom';
 
-import { Button, Form, Input } from 'antd'
-import { Link } from 'react-router-dom'
+import { Button, Form, Input } from 'antd';
+import { Link } from 'react-router-dom';
 
 const AuthPage = () => {
-   const navigate = useNavigate()
+   const navigate = useNavigate();
 
    const onFinish = (values) => {
       // Здесь потом будем определять, кто пытается зайти
       switch (values.username) {
          case 'operator':
-            navigate('/1_6/home')
-            break
+            navigate('/1_6/home');
+            break;
          case 'registrator':
-            navigate('/1_7/home')
-            break
+            navigate('/1_7/home');
+            break;
 
          default:
-            break
+            break;
       }
-   }
+   };
 
    return (
       <div className={styles.main}>
@@ -30,7 +30,12 @@ const AuthPage = () => {
             <img src={logo} alt='logo' />
 
             <div className={styles.formBlock}>
-               <Form className={styles.form} name='basic' onFinish={onFinish} autoComplete='off'>
+               <Form
+                  className={styles.form}
+                  name='basic'
+                  onFinish={onFinish}
+                  autoComplete='off'
+               >
                   <Form.Item
                      name='username'
                      rules={[
@@ -40,7 +45,10 @@ const AuthPage = () => {
                         },
                      ]}
                   >
-                     <Input placeholder='Имя пользователя  ' className={styles.input} />
+                     <Input
+                        placeholder='Имя пользователя  '
+                        className={styles.input}
+                     />
                   </Form.Item>
 
                   <Form.Item
@@ -91,7 +99,7 @@ const AuthPage = () => {
             </div>
          </div>
       </div>
-   )
-}
+   );
+};
 
-export default AuthPage
+export default AuthPage;
