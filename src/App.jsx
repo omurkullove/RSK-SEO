@@ -1,15 +1,8 @@
-import React from 'react';
-import MainLayout from './mainComponents/Mainlayout/MainLayout';
-import MainRouter from './mainRouter/MainRouter';
+import React from 'react'
+import MainRouter from './router/MainRouter'
 
 const App = () => {
-  return (
-    <main>
-      <MainLayout>
-        <MainRouter />
-      </MainLayout>
-    </main>
-  );
-};
+  return <MainRouter />
+}
 
-export default App;
+export default App
