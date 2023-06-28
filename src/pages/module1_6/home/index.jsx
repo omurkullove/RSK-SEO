@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '@/assets/styles/1.6/Home.module.scss';
 import { Popover, Row, Table } from 'antd';
 import dots from '@/assets/svg/dots.svg';
@@ -9,8 +9,12 @@ import alert from '@/assets/svg/1_6Alert.svg';
 import edit from '@/assets/svg/edit.svg';
 import deleteSvg from '@/assets/svg/delete.svg';
 import Navbar from '@/components/1.6/UI/Navbar';
+import { useTranslation, withTranslation } from 'react-i18next';
+import axios from 'axios';
 
 const HomePage = () => {
+   const { t } = useTranslation();
+
    const handleDeleteClient = async (client) => {
       try {
          console.log(client);
@@ -48,28 +52,42 @@ const HomePage = () => {
          render: (value) => <p className={styles.columnData}>{value}</p>,
       },
       {
-         title: <p className={styles.columnTitle}>Имя</p>,
+         title: <p className={styles.columnTitle}>{t('table.titles.name')}</p>,
          dataIndex: 'name',
          render: (value) => <p className={styles.columnDataName}>{value}</p>,
       },
       {
-         title: <p className={styles.columnTitle}>В очереди</p>,
+         title: (
+            <p className={styles.columnTitle}>{t('table.titles.inQueue')}</p>
+         ),
          dataIndex: 'inOrder',
          render: (value) => <p className={styles.columnData}>{value}</p>,
       },
       {
-         title: <p className={styles.columnTitle}>Льгота</p>,
+         title: (
+            <p className={styles.columnTitle}>{t('table.titles.benefit')}</p>
+         ),
          dataIndex: 'benefit',
-         render: (value) => <p className={styles.columnData}>{value}</p>,
+         render: (value) => (
+            <p className={styles.columnData}>
+               {value === 'да'
+                  ? t('table.body.benefit.yes')
+                  : t('table.body.benefit.no')}
+            </p>
+         ),
       },
       {
-         title: <p className={styles.columnTitle}>Услуга</p>,
+         title: (
+            <p className={styles.columnTitle}>{t('table.titles.service')}</p>
+         ),
          dataIndex: 'service',
          render: (value) => <p className={styles.columnData}>{value}</p>,
       },
 
       {
-         title: <p className={styles.columnTitle}>Статус</p>,
+         title: (
+            <p className={styles.columnTitle}>{t('table.titles.status')}</p>
+         ),
          dataIndex: 'status',
          render: (value) => {
             switch (value) {
@@ -79,7 +97,7 @@ const HomePage = () => {
                         className={styles.columnDataStatus}
                         style={{ color: '#2E79BD' }}
                      >
-                        В процессе
+                        {t('table.body.status.inProgress')}
                      </p>
                   );
                   break;
@@ -89,7 +107,7 @@ const HomePage = () => {
                         className={styles.columnDataStatus}
                         style={{ color: '#848484' }}
                      >
-                        Ожидается
+                        {t('table.body.status.expected')}
                      </p>
                   );
 
@@ -100,7 +118,7 @@ const HomePage = () => {
                         className={styles.columnDataStatus}
                         style={{ color: '#2E6C47' }}
                      >
-                        Завершен
+                        {t('table.body.status.completed')}
                      </p>
                   );
 
@@ -112,7 +130,11 @@ const HomePage = () => {
          },
       },
       {
-         title: <p className={styles.columnTitle}>Время обслуживания</p>,
+         title: (
+            <p className={styles.columnTitle}>
+               {t('table.titles.serviceTime')}
+            </p>
+         ),
          dataIndex: 'time',
          render: (value, client) => {
             if (+value <= 15 && value) {
@@ -121,7 +143,7 @@ const HomePage = () => {
                      className={styles.columnDataTime}
                      style={{ color: '#2E6C47' }}
                   >
-                     {value} мин
+                     {value} {t('table.body.serviceTime.min')}
                   </p>
                );
             } else if (+value > 15) {
@@ -132,7 +154,9 @@ const HomePage = () => {
                      }}
                      className={styles.columnDataTime}
                   >
-                     <span>{value} мин</span>
+                     <span>
+                        {value} {t('table.body.serviceTime.min')}
+                     </span>
                      <img src={alert} alt='alert' />
                      <Popover
                         content={tableContent(client)}
@@ -243,14 +267,14 @@ const HomePage = () => {
                            <img src={dots} alt='dots' />
                         </Popover>
                      </div>
-                     <p>Клиентов за день</p>
+                     <p>{t('card.title1')}</p>
                   </div>
                   <div className={styles.body}>
                      <div>
                         <img src={arrowGreen} alt='arrow' />
                         <span>3</span>
                      </div>
-                     <p>Больше чем вчера</p>
+                     <p>{t('card.body')}</p>
                   </div>
                   <div className={styles.footer}>
                      <p>16</p>
@@ -268,14 +292,14 @@ const HomePage = () => {
                            <img src={dots} alt='dots' />
                         </Popover>
                      </div>
-                     <p>Отмененные визиты</p>
+                     <p>{t('card.title2')}</p>
                   </div>
                   <div className={styles.body}>
                      <div>
                         <img src={arrowRed} alt='arrow' />
                         <span>1</span>
                      </div>
-                     <p>Больше чем вчера</p>
+                     <p>{t('card.body')}</p>
                   </div>
                   <div className={styles.footer}>
                      <p>4</p>
@@ -296,7 +320,7 @@ const HomePage = () => {
                         fontWeight: '600',
                      }}
                   >
-                     Все клиенты:
+                     {t('table.titles.allClients')}
                   </p>
                )}
             />

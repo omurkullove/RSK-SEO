@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Routes } from 'react-router';
-import AuthPage from '../auth';
 import HomePage from './home';
 
 const Root1_6 = () => {
