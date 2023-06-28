@@ -14,7 +14,7 @@
    text-align: center;
    font-size: 16px;
    font-family: $Inter;
-   font-weight: 500;
+   font-weight: 600;
    line-height: 20px;
 }
 .columnDataName {
@@ -22,8 +22,27 @@
    text-align: start;
    font-size: 16px;
    font-family: $Inter;
-   font-weight: 500;
+   font-weight: 600;
    line-height: 20px;
+}
+.columnDataStatus {
+   text-align: center;
+   font-size: 16px;
+   font-family: $Inter;
+   font-weight: 600;
+   line-height: 20px;
+}
+.columnDataTime {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   text-align: center;
+   font-size: 16px;
+   font-family: $Inter;
+   font-weight: 600;
+   line-height: 20px;
+   gap: 7px;
+   text-align: center;
 }
 
 .main {
@@ -31,12 +50,6 @@
    flex-direction: column;
    padding-inline: 40px;
    padding-top: 20px;
-
-   // .content {
-   //    padding-inline: 40px;
-   //    padding-top: 36px;
-   //    padding-bottom: 36px;
-   //    min-height: min-content;
 
    .cardBlock {
       display: flex;

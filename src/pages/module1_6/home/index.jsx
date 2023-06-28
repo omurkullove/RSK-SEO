@@ -5,6 +5,7 @@ import dots from '@/assets/svg/dots.svg';
 import arrowGreen from '@/assets/svg/arrowGreen.svg';
 import arrowRed from '@/assets/svg/arrowRed.svg';
 import MainLayout from '@/components/1.6/UI/Layout';
+import alert from '@/assets/svg/1_6Alert.svg';
 
 const content = (
    <div>
@@ -44,12 +45,75 @@ const HomePage = () => {
       {
          title: <p className={styles.columnTitle}>Статус</p>,
          dataIndex: 'status',
-         render: (value) => <p className={styles.columnDataTime}>{value}</p>,
+         render: (value) => {
+            switch (value) {
+               case 'progress':
+                  return (
+                     <p
+                        className={styles.columnDataStatus}
+                        style={{ color: '#2E79BD' }}
+                     >
+                        В процессе
+                     </p>
+                  );
+                  break;
+               case 'await':
+                  return (
+                     <p
+                        className={styles.columnDataStatus}
+                        style={{ color: '#848484' }}
+                     >
+                        Ожидается
+                     </p>
+                  );
+
+                  break;
+               case 'done':
+                  return (
+                     <p
+                        className={styles.columnDataStatus}
+                        style={{ color: '#2E6C47' }}
+                     >
+                        Завершен
+                     </p>
+                  );
+
+                  break;
+
+               default:
+                  break;
+            }
+         },
       },
       {
          title: <p className={styles.columnTitle}>Время обслуживания</p>,
          dataIndex: 'time',
-         render: (value) => <p className={styles.columnDataStatus}>{value}</p>,
+         render: (value) => {
+            if (+value <= 15 && value) {
+               return (
+                  <p
+                     className={styles.columnDataTime}
+                     style={{ color: '#2E6C47' }}
+                  >
+                     {value} мин
+                  </p>
+               );
+            } else if (+value > 15) {
+               return (
+                  <div
+                     style={{
+                        color: '#B5051E',
+                     }}
+                     className={styles.columnDataTime}
+                  >
+                     <span>{value} мин</span>
+                     <img src={alert} alt='alert' />
+                  </div>
+               );
+            } else {
+               return <p className={styles.columnDataTime}>-</p>;
+            }
+         },
       },
    ];
    const data = [
@@ -59,7 +123,25 @@ const HomePage = () => {
          inOrder: '-',
          benefit: 'нет',
          service: 'Услуга 1',
-         status: 'Завершен',
+         status: 'done',
+         time: '15',
+      },
+      {
+         number: 'A0912',
+         name: 'Иванов Федор Петрович',
+         inOrder: '-',
+         benefit: 'нет',
+         service: 'Услуга 4',
+         status: 'progress',
+         time: '18',
+      },
+      {
+         number: 'A0912',
+         name: 'Иванов Федор Петрович',
+         inOrder: '-',
+         benefit: 'нет',
+         service: 'Услуга 4',
+         status: 'await',
          time: '15',
       },
       {
@@ -78,7 +160,16 @@ const HomePage = () => {
          benefit: 'нет',
          service: 'Услуга 4',
          status: 'В процессе',
-         time: '18',
+         time: '',
+      },
+      {
+         number: 'A0912',
+         name: 'Иванов Федор Петрович',
+         inOrder: '-',
+         benefit: 'нет',
+         service: 'Услуга 4',
+         status: 'В процессе',
+         time: '',
       },
       {
          number: 'A0912',
@@ -114,34 +205,7 @@ const HomePage = () => {
          benefit: 'нет',
          service: 'Услуга 4',
          status: 'В процессе',
-         time: '18',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
-         time: '18',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
-         time: '18',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
-         time: '18',
+         time: '15',
       },
       {
          number: 'A0912',
