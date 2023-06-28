@@ -3,3 +3,28 @@
    margin: 0;
    box-sizing: border-box;
 }
+
+#tablePopover {
+   background-color: #b9babb !important;
+   padding: 0 !important;
+   border-radius: 10px 0px 10px 10px !important;
+   -webkit-border-radius: 10px 0px 10px 10px !important;
+   -moz-border-radius: 10px 0px 10px 10px !important;
+   -ms-border-radius: 10px 0px 10px 10px !important;
+   -o-border-radius: 10px 0px 10px 10px !important;
+}
+
+#cardPopover {
+   background-color: #fff;
+   padding: 0 !important;
+   margin-top: 10px !important;
+   border-radius: 0px 10px 10px 10px !important;
+   -webkit-border-radius: 0px 10px 10px 10px !important;
+   -moz-border-radius: 0px 10px 10px 10px !important;
+   -ms-border-radius: 0px 10px 10px 10px !important;
+   -o-border-radius: 0px 10px 10px 10px !important;
+}
+
+.ant-popover-arrow {
+   display: none !important;
+}

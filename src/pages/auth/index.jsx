@@ -46,6 +46,7 @@ const AuthPage = () => {
                      ]}
                   >
                      <Input
+                        autoComplete='username'
                         placeholder='Имя пользователя  '
                         className={styles.input}
                      />
@@ -61,6 +62,7 @@ const AuthPage = () => {
                      ]}
                   >
                      <Input.Password
+                        autoComplete='current-password'
                         placeholder='Пароль'
                         style={{
                            borderRadius: '15px',

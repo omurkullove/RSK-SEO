@@ -6,15 +6,40 @@ import arrowGreen from '@/assets/svg/arrowGreen.svg';
 import arrowRed from '@/assets/svg/arrowRed.svg';
 import MainLayout from '@/components/1.6/UI/Layout';
 import alert from '@/assets/svg/1_6Alert.svg';
-
-const content = (
-   <div>
-      <p>Tool 1</p>
-      <p>Tool 2</p>
-   </div>
-);
+import edit from '@/assets/svg/edit.svg';
+import deleteSvg from '@/assets/svg/delete.svg';
 
 const HomePage = () => {
+   const handleDeleteClient = async (client) => {
+      try {
+         console.log(client);
+      } catch (error) {
+         console.log(error);
+      }
+   };
+
+   const handleTransferClient = async (client) => {
+      try {
+         console.log(client);
+      } catch (error) {
+         console.log(error);
+      }
+   };
+
+   const content = (
+      <div className={styles.popoverContent}>
+         <img src={edit} alt='edit' />
+         <img src={deleteSvg} alt='delet' />
+      </div>
+   );
+
+   const tableContent = (client) => (
+      <div className={styles.tableContent}>
+         <div onClick={() => handleTransferClient(client)}>Перенести</div>
+         <div onClick={() => handleDeleteClient(client)}>Удалить</div>
+      </div>
+   );
+
    const columns = [
       {
          title: <p className={styles.columnTitle}>№</p>,
@@ -88,7 +113,7 @@ const HomePage = () => {
       {
          title: <p className={styles.columnTitle}>Время обслуживания</p>,
          dataIndex: 'time',
-         render: (value) => {
+         render: (value, client) => {
             if (+value <= 15 && value) {
                return (
                   <p
@@ -108,6 +133,18 @@ const HomePage = () => {
                   >
                      <span>{value} мин</span>
                      <img src={alert} alt='alert' />
+                     <Popover
+                        content={tableContent(client)}
+                        trigger='click'
+                        placement='leftTop'
+                        id='tablePopover'
+                     >
+                        <img
+                           src={dots}
+                           alt='dots'
+                           style={{ cursor: 'pointer' }}
+                        />
+                     </Popover>
                   </div>
                );
             } else {
@@ -125,6 +162,7 @@ const HomePage = () => {
          service: 'Услуга 1',
          status: 'done',
          time: '15',
+         key: 1,
       },
       {
          number: 'A0912',
@@ -133,6 +171,7 @@ const HomePage = () => {
          benefit: 'нет',
          service: 'Услуга 4',
          status: 'progress',
+         key: 2,
          time: '18',
       },
       {
@@ -142,6 +181,7 @@ const HomePage = () => {
          benefit: 'нет',
          service: 'Услуга 4',
          status: 'await',
+         key: 3,
          time: '15',
       },
       {
@@ -151,6 +191,7 @@ const HomePage = () => {
          benefit: 'нет',
          service: 'Услуга 4',
          status: 'В процессе',
+         key: 4,
          time: '18',
       },
       {
@@ -160,6 +201,7 @@ const HomePage = () => {
          benefit: 'нет',
          service: 'Услуга 4',
          status: 'В процессе',
+         key: 5,
          time: '',
       },
       {
@@ -169,6 +211,7 @@ const HomePage = () => {
          benefit: 'нет',
          service: 'Услуга 4',
          status: 'В процессе',
+         key: 6,
          time: '',
       },
       {
@@ -178,43 +221,8 @@ const HomePage = () => {
          benefit: 'нет',
          service: 'Услуга 4',
          status: 'В процессе',
-         time: '18',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
-         time: '18',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
-         time: '18',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
+         key: 7,
          time: '15',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
-         time: '18',
       },
    ];
 
@@ -226,6 +234,7 @@ const HomePage = () => {
                   <div className={styles.head}>
                      <div>
                         <Popover
+                           id='cardPopover'
                            content={content}
                            trigger='click'
                            placement='rightTop'
@@ -250,6 +259,7 @@ const HomePage = () => {
                   <div className={styles.head}>
                      <div>
                         <Popover
+                           id='cardPopover'
                            content={content}
                            trigger='click'
                            placement='rightTop'
