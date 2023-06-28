@@ -8,6 +8,7 @@ import MainLayout from '@/components/1.6/UI/Layout';
 import alert from '@/assets/svg/1_6Alert.svg';
 import edit from '@/assets/svg/edit.svg';
 import deleteSvg from '@/assets/svg/delete.svg';
+import Navbar from '@/components/1.6/UI/Navbar';
 
 const HomePage = () => {
    const handleDeleteClient = async (client) => {
@@ -227,7 +228,7 @@ const HomePage = () => {
    ];
 
    return (
-      <MainLayout>
+      <MainLayout isSidebar={true} Navbar={<Navbar />}>
          <div className={styles.main}>
             <div className={styles.cardBlock}>
                <div className={styles.card1}>
