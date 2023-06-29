@@ -1,8 +1,14 @@
-import React from 'react'
-import MainRouter from './router/MainRouter'
+import React from 'react';
+import MainRouter from './router/MainRouter';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18next';
 
 const App = () => {
-  return <MainRouter />
-}
+   return (
+      <I18nextProvider i18n={i18n}>
+         <MainRouter />
+      </I18nextProvider>
+   );
+};
 
-export default App
+export default App;
