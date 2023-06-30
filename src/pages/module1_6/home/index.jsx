@@ -1,123 +1,129 @@
+import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
+
+// Components & modules
+import MainLayout from '@/components/1.6/UI/Layout';
+import Navbar from '@/components/1.6/UI/Navbar';
+import { useModule_1_6 } from '@/services/1_6store';
+
+// Utils
+import { ShowMessage, formatTime, returnUnderstandableDate, timeLimitSeconds } from '@/utils/utils';
+
+// UI
+import { Popover, Table, Spin, Statistic } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import styles from '@/assets/styles/1.6/Home.module.scss';
-import { Popover, Row, Table } from 'antd';
 import dots from '@/assets/svg/dots.svg';
 import arrowGreen from '@/assets/svg/arrowGreen.svg';
 import arrowRed from '@/assets/svg/arrowRed.svg';
-import MainLayout from '@/components/1.6/UI/Layout';
 import alert from '@/assets/svg/1_6Alert.svg';
 import edit from '@/assets/svg/edit.svg';
 import deleteSvg from '@/assets/svg/delete.svg';
-import Navbar from '@/components/1.6/UI/Navbar';
-import { useTranslation, withTranslation } from 'react-i18next';
-import axios from 'axios';
 
 const HomePage = () => {
+   // Store states & functions
+   const getProfileInfo = useModule_1_6((state) => state.getProfileInfo);
+
+   const transferTalonToEnd = useModule_1_6((state) => state.transferTalonToEnd);
+
+   const serviceEnd = useModule_1_6((state) => state.serviceEnd);
+   const serviceStart = useModule_1_6((state) => state.serviceStart);
+
+   const getTalons = useModule_1_6((state) => state.getTalons);
+   const deleteTalon = useModule_1_6((state) => state.deleteTalon);
+
+   const talons = useModule_1_6((state) => state.talons);
+   const employee = useModule_1_6((state) => state.employee);
+
+   const getTalonsLoading = useModule_1_6((state) => state.getTalonsLoading);
+   const getProfileInfoLoading = useModule_1_6((state) => state.getProfileInfoLoading);
+
+   // Vanilla states
+   const [isRunning, setIsRunning] = useState(false);
+   const [seconds, setSeconds] = useState(0);
+
+   // Locale
    const { t } = useTranslation();
 
-   const handleDeleteClient = async (client) => {
-      try {
-         console.log(client);
-      } catch (error) {
-         console.log(error);
-      }
-   };
-
-   const handleTransferClient = async (client) => {
-      try {
-         console.log(client);
-      } catch (error) {
-         console.log(error);
-      }
-   };
-
-   const content = (
-      <div className={styles.popoverContent}>
-         <img src={edit} alt='edit' />
-         <img src={deleteSvg} alt='delet' />
-      </div>
-   );
-
-   const tableContent = (client) => (
-      <div className={styles.tableContent}>
-         <div onClick={() => handleTransferClient(client)}>Перенести</div>
-         <div onClick={() => handleDeleteClient(client)}>Удалить</div>
-      </div>
-   );
-
+   // Table columns
    const columns = [
       {
-         title: <p className={styles.columnTitle}>№</p>,
-         dataIndex: 'number',
-         render: (value) => <p className={styles.columnData}>{value}</p>,
-      },
-      {
-         title: <p className={styles.columnTitle}>{t('table.titles.name')}</p>,
-         dataIndex: 'name',
-         render: (value) => <p className={styles.columnDataName}>{value}</p>,
-      },
-      {
          title: (
-            <p className={styles.columnTitle}>{t('table.titles.inQueue')}</p>
-         ),
-         dataIndex: 'inOrder',
-         render: (value) => <p className={styles.columnData}>{value}</p>,
-      },
-      {
-         title: (
-            <p className={styles.columnTitle}>{t('table.titles.benefit')}</p>
-         ),
-         dataIndex: 'benefit',
-         render: (value) => (
-            <p className={styles.columnData}>
-               {value === 'да'
-                  ? t('table.body.benefit.yes')
-                  : t('table.body.benefit.no')}
+            <p className={styles.columnTitle} key={1}>
+               №
             </p>
          ),
+         dataIndex: 'token',
+         render: (value, talon) => (
+            <div>
+               <button onClick={() => handleStart(talon.token)}>начать</button>
+               <button onClick={() => handleEnd(talon.token)}>завершить</button>
+               <p className={styles.columnData} key={value.token}>
+                  {value}
+               </p>
+            </div>
+         ),
       },
       {
-         title: (
-            <p className={styles.columnTitle}>{t('table.titles.service')}</p>
-         ),
-         dataIndex: 'service',
-         render: (value) => <p className={styles.columnData}>{value}</p>,
+         title: <p className={styles.columnTitle}>{t('table.titles.registered_at')}</p>,
+         dataIndex: 'registered_at',
+         render: (value) => <p className={styles.columnData}>{returnUnderstandableDate(value)}</p>,
       },
 
       {
-         title: (
-            <p className={styles.columnTitle}>{t('table.titles.status')}</p>
+         title: <p className={styles.columnTitle}>{t('table.titles.appointment_date')}</p>,
+         dataIndex: 'appointment_date',
+         render: (value) => <p className={styles.columnData}>{returnUnderstandableDate(value)}</p>,
+      },
+      {
+         title: <p className={styles.columnTitle}>{t('table.titles.talons_type')}</p>,
+         dataIndex: 'client_type',
+         render: (value) => {
+            switch (value) {
+               case 'Физ. лицо':
+                  return <p className={styles.columnData}>{t('table.body.type.naturalPerson')}</p>;
+
+                  break;
+               case 'Юр. лицо':
+                  return <p className={styles.columnData}>{t('table.body.type.legalЕntity')}</p>;
+
+               default:
+                  break;
+            }
+         },
+      },
+      {
+         title: <p className={styles.columnTitle}>{t('table.titles.service')}</p>,
+         dataIndex: 'service',
+
+         render: (value) => (
+            <p className={styles.columnData}>{t('table.body.service.CreditFinancing')}</p>
          ),
+      },
+
+      {
+         title: <p className={styles.columnTitle}>{t('table.titles.status')}</p>,
          dataIndex: 'status',
          render: (value) => {
             switch (value) {
-               case 'progress':
+               case 'in service':
                   return (
-                     <p
-                        className={styles.columnDataStatus}
-                        style={{ color: '#2E79BD' }}
-                     >
+                     <p className={styles.columnDataStatus} style={{ color: '#2E79BD' }}>
                         {t('table.body.status.inProgress')}
                      </p>
                   );
                   break;
-               case 'await':
+               case 'waiting':
                   return (
-                     <p
-                        className={styles.columnDataStatus}
-                        style={{ color: '#848484' }}
-                     >
+                     <p className={styles.columnDataStatus} style={{ color: '#848484' }}>
                         {t('table.body.status.expected')}
                      </p>
                   );
 
                   break;
-               case 'done':
+               case 'complited':
                   return (
-                     <p
-                        className={styles.columnDataStatus}
-                        style={{ color: '#2E6C47' }}
-                     >
+                     <p className={styles.columnDataStatus} style={{ color: '#2E6C47' }}>
                         {t('table.body.status.completed')}
                      </p>
                   );
@@ -130,129 +136,165 @@ const HomePage = () => {
          },
       },
       {
-         title: (
-            <p className={styles.columnTitle}>
-               {t('table.titles.serviceTime')}
-            </p>
-         ),
-         dataIndex: 'time',
-         render: (value, client) => {
-            if (+value <= 15 && value) {
-               return (
-                  <p
-                     className={styles.columnDataTime}
-                     style={{ color: '#2E6C47' }}
-                  >
-                     {value} {t('table.body.serviceTime.min')}
-                  </p>
-               );
-            } else if (+value > 15) {
-               return (
-                  <div
-                     style={{
-                        color: '#B5051E',
-                     }}
-                     className={styles.columnDataTime}
-                  >
-                     <span>
-                        {value} {t('table.body.serviceTime.min')}
-                     </span>
-                     <img src={alert} alt='alert' />
-                     <Popover
-                        content={tableContent(client)}
-                        trigger='click'
-                        placement='leftTop'
-                        id='tablePopover'
-                     >
-                        <img
-                           src={dots}
-                           alt='dots'
-                           style={{ cursor: 'pointer' }}
-                        />
-                     </Popover>
-                  </div>
-               );
-            } else {
-               return <p className={styles.columnDataTime}>-</p>;
-            }
+         title: <p className={styles.columnTitle}>{t('table.titles.serviceTime')}</p>,
+         dataIndex: 'service_start',
+
+         render: (value, talon, index) => {
+            return (
+               <div className={styles.columnServiceBlock}>
+                  {seconds && index === 0 ? (
+                     <Statistic
+                        valueStyle={{
+                           color: seconds > timeLimitSeconds ? '#B5051E' : '#2E6C47',
+                           fontSize: '18px',
+                           fontFamily: '$Inter',
+                        }}
+                        style={{ color: '#2E6C47' }}
+                        value={seconds}
+                        suffix={t('table.body.serviceTime.min')}
+                        formatter={(value) => formatTime(value)}
+                     />
+                  ) : (
+                     <p className={styles.columnDataStatus}>-</p>
+                  )}
+
+                  {seconds > timeLimitSeconds && index === 0 ? (
+                     <img src={alert} alt='alert' className={styles.alert} />
+                  ) : null}
+
+                  {seconds && index === 0 ? null : (
+                     <div className={styles.childDiv}>
+                        <Popover
+                           content={tableContent(talon)}
+                           trigger='hover'
+                           placement='leftTop'
+                           id='tablePopover'
+                        >
+                           <img src={dots} alt='dots' style={{ cursor: 'pointer' }} />
+                        </Popover>
+                     </div>
+                  )}
+               </div>
+            );
          },
       },
    ];
-   const data = [
-      {
-         number: 'A0122',
-         name: 'Ильясов Айбек Рустамович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 1',
-         status: 'done',
-         time: '15',
-         key: 1,
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'progress',
-         key: 2,
-         time: '18',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'await',
-         key: 3,
-         time: '15',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
-         key: 4,
-         time: '18',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
-         key: 5,
-         time: '',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
-         key: 6,
-         time: '',
-      },
-      {
-         number: 'A0912',
-         name: 'Иванов Федор Петрович',
-         inOrder: '-',
-         benefit: 'нет',
-         service: 'Услуга 4',
-         status: 'В процессе',
-         key: 7,
-         time: '15',
-      },
-   ];
 
-   return (
-      <MainLayout isSidebar={true} Navbar={<Navbar />}>
+   // Loading Icon
+   const antIcon = <LoadingOutlined style={{ fontSize: 54 }} spin />;
+
+   // Handlers
+   // Delete
+   const handleDeletetalon = async (talon) => {
+      try {
+         await deleteTalon(talon.token);
+         await getTalons();
+      } catch (error) {
+         console.log(error);
+      }
+   };
+
+   // Transfet to end
+   const handleTransfertalon = async (talon) => {
+      await transferTalonToEnd(talon.token);
+      await getTalons();
+   };
+
+   // Start sevice
+   const handleStart = async (token) => {
+      // await serviceStart(token);
+      // await getTalons();
+      startStopwatch();
+   };
+
+   // Complite service
+   const handleEnd = async (token) => {
+      // await serviceEnd(token);
+      // await getTalons();
+      stopStopwatch();
+   };
+
+   // Popover
+   const content = (
+      <div className={styles.popoverContent}>
+         <img src={edit} alt='edit' />
+         <img src={deleteSvg} alt='delet' />
+      </div>
+   );
+   const tableContent = (talon) => (
+      <div className={styles.tableContent}>
+         <div onClick={() => handleTransfertalon(talon)}>Перенести</div>
+         <div onClick={() => handleDeletetalon(talon)}>Удалить</div>
+      </div>
+   );
+
+   // Timer fn's
+   // Start
+   const startStopwatch = () => {
+      ShowMessage('loading', 'Началось время обслуживания', 8);
+      setIsRunning(true);
+   };
+
+   // Stop
+   const stopStopwatch = () => {
+      ShowMessage('success', 'Обслуживание  завершилось');
+
+      setIsRunning(false);
+      setSeconds(0);
+   };
+
+   // Rest
+   const resetStopwatch = () => {
+      setSeconds(0);
+   };
+
+   // Effects
+   // Fetch data
+   useEffect(() => {
+      getTalons();
+      getProfileInfo();
+   }, []);
+
+   // Message indicator
+   useEffect(() => {
+      if (employee) {
+         ShowMessage('success', 'Вы успешно зашли на аккаунт');
+      }
+   }, []);
+
+   // Timer indicator
+   useEffect(() => {
+      let interval = null;
+
+      if (isRunning) {
+         interval = setInterval(() => {
+            setSeconds((prevSeconds) => prevSeconds + 1);
+         }, 1000);
+      } else {
+         clearInterval(interval);
+      }
+
+      console.log('useEffect is working');
+
+      return () => clearInterval(interval);
+   }, [isRunning]);
+
+   return getTalonsLoading && getProfileInfoLoading ? (
+      <div
+         style={{
+            height: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            gap: '20px',
+         }}
+      >
+         <Spin indicator={antIcon} size='50' />
+         <h4>Идет подсчет данных....</h4>
+      </div>
+   ) : (
+      <MainLayout isSidebar={true} Navbar={<Navbar employee={employee} />}>
          <div className={styles.main}>
             <div className={styles.cardBlock}>
                <div className={styles.card1}>
@@ -308,7 +350,8 @@ const HomePage = () => {
             </div>
 
             <Table
-               dataSource={data}
+               loading={getTalonsLoading}
+               dataSource={talons}
                columns={columns}
                scroll={{ x: 1300 }}
                title={() => (
@@ -320,7 +363,7 @@ const HomePage = () => {
                         fontWeight: '600',
                      }}
                   >
-                     {t('table.titles.allClients')}
+                     {t('table.titles.allTalons')}
                   </p>
                )}
             />

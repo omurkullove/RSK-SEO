@@ -1,11 +1,12 @@
 {
    "table": {
       "titles": {
-         "allClients": "Всек  клиенты:",
-
+         "allTalons": "Все талоны:",
          "name": "Имя",
-         "inQueue": "В очереди",
+         "appointment_date": "Дата назначения",
+         "registered_at": "Время регистрации",
          "benefit": "Льгота",
+         "talons_type": "Тип",
          "service": "Услуга",
          "status": "Статус",
          "serviceTime": "Время обслуживания"
@@ -22,6 +23,20 @@
          "benefit": {
             "yes": "Да",
             "no": "Нет"
+         },
+         "service": {
+            "CreditFinancing": "Кредитование",
+            "CurrencyExchange": "Обмен валют",
+            "MoneyTransfers": "Денежные переводы",
+            "CardIssuance": "Выпуск карты",
+            "ReceiveTransfer": "Получить перевод",
+            "OpenAnAccount": "Открыть счет",
+            "SecuritiesOperations": "Опперации с ценными бумагами",
+            "IslamicFinancing": "Исламское финансирование"
+         },
+         "type": {
+            "naturalPerson": "Физическое лицо",
+            "legalЕntity": "Юридическое лицо"
          }
       }
    },
@@ -38,6 +53,20 @@
       "popover": {
          "profile": "Профиль",
          "settings": "Настройки"
+      }
+   },
+   "auth": {
+      "placeholder": {
+         "email": "Потча",
+         "password": "Пароль"
+      },
+      "forgetPassword": "Забыли пароль ?",
+      "button": {
+         "placeholder": "Войти"
+      },
+      "errors": {
+         "emailError": "Пожалуйста, введите email !",
+         "passwordError": "Пожалуйста, введите пароль !"
       }
    }
 }

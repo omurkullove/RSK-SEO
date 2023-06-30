@@ -1,10 +1,12 @@
 {
    "table": {
       "titles": {
-         "allClients": "All clietns:",
+         "allTalons": "All talons:",
          "name": "name",
-         "inQueue": "In Queue",
+         "appointment_date": "Appointement time",
+         "registered_at": "Registration time",
          "benefit": "Benefit",
+         "talons_type": "Type",
          "service": "Service",
          "status": "Status",
          "serviceTime": "Service Time"
@@ -21,6 +23,20 @@
          "benefit": {
             "yes": "Yes",
             "no": "No"
+         },
+         "service": {
+            "CreditFinancing": "Credit financing",
+            "CurrencyExchange": "Currency exchange",
+            "MoneyTransfers": "Money transfers",
+            "CardIssuance": "Card issuance",
+            "ReceiveTransfer": "Receive transfer",
+            "OpenAnAccount": "Open an account",
+            "SecuritiesOperations": "Securities operations",
+            "IslamicFinancing": "Islamic financing"
+         },
+         "type": {
+            "naturalPerson": "Natural person",
+            "legalЕntity": "Legal entity"
          }
       }
    },
@@ -37,6 +53,20 @@
       "popover": {
          "profile": "Profile",
          "settings": "Settings"
+      }
+   },
+   "auth": {
+      "placeholder": {
+         "email": "Email",
+         "password": "Password"
+      },
+      "forgetPassword": "Forgot Password?",
+      "button": {
+         "placeholder": "Login"
+      },
+      "errors": {
+         "emailError": "Please enter an email!",
+         "passwordError": "Please enter a password!"
       }
    }
 }

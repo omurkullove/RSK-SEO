@@ -1,187 +1,137 @@
 import { create } from 'zustand';
-import { API } from '@/utils/utils';
+import { API, ShowMessage } from '@/utils/utils';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 // Возможно будут ошибки, в процессе буду фиксить
 
 export const useModule_1_6 = create((set, get) => ({
-   clients: [],
-   appointments: [],
-   queue: [],
-   error: [],
-   breakTime: {},
-   serviceTime: {},
-   shiftTime: {},
-   loading: false,
+   email: JSON.parse(localStorage.getItem('email')) || '',
+   errors: [],
+   token: JSON.parse(localStorage.getItem('token')) || {},
+   talons: [],
+   employee: {},
 
-   // Getting initial data:
-   getDataStore: async (email) => {
-      set({ loading: true });
+   loginLoading: false,
+   getTalonsLoading: false,
+   getProfileInfoLoading: false,
+   transferTalonToEndLoading: false,
+
+   login: async (body, navigate) => {
+      set({ loginLoading: true });
       try {
-         const res = await axios(`${API}/operator/${email}`);
-         set({ clients: res.data });
+         const res = await axios.post(`${API}/employee/login/`, body);
+         localStorage.setItem('token', JSON.stringify(res.data));
+         localStorage.setItem('email', JSON.stringify(body.email));
+         set({ token: res.data });
+         switch (res.data?.position) {
+            case 'operator':
+               navigate('/1_6/home');
+               break;
+            case 'registrator':
+               alert('registator');
+               break;
+
+            default:
+               break;
+         }
+         set({ loginLoading: false });
       } catch (err) {
-         set({ error: err });
+         set({ errors: err });
+         ShowMessage('error', 'Ошибка при входе на аккаунт');
       } finally {
-         set({ loading: false });
       }
    },
 
-   // Send a client to the end of queue:
-   sendToEndOfQueueStore: async (id) => {
-      set({ loading: true });
+   getTalons: async () => {
+      set({ getTalonsLoading: true });
       try {
-         const res = await axios.post(`${API}/clients/end/${id}`);
-         set({ clients: res.data });
+         const res = await axios.get(`${API}/employee/queue/`, {
+            headers: {
+               Authorization: `Bearer ${get().token.access}`,
+            },
+         });
+         set({ talons: res.data });
       } catch (err) {
-         set({ error: err });
+         set({ errors: err });
       } finally {
-         set({ loading: false });
+         set({ getTalonsLoading: false });
       }
    },
 
-   // Remove from queue:
-   removeFromQueueStore: async (id) => {
-      set({ loading: true });
+   getProfileInfo: async () => {
+      set({ getProfileInfoLoading: true });
       try {
-         const res = await axios.post(`${API}/clients/remove/${id}`);
-         set({ clients: res.data });
+         const res = await axios.get(`${API}/employee/retrieve/${get().email}/`, {
+            headers: {
+               Authorization: `Bearer ${get().token.access}`,
+            },
+         });
+         set({ employee: res.data });
       } catch (err) {
-         set({ error: err });
+         set({ errors: err });
       } finally {
-         set({ loading: false });
+         set({ getProfileInfoLoading: false });
       }
    },
 
-   // Transfer to another queue:
-   transferToQueueStore: async (id, queue_id) => {
-      set({ loading: true });
+   transferTalonToEnd: async (id) => {
+      set({ getTalonsLoading: true });
       try {
-         const res = await axios.post(
-            `${API}/clients/transfer/${queue_id}`,
-            id
-         );
-         set({ clients: res.data });
+         const res = await axios.get(`${API}/talon/end/${id}/`, {
+            headers: {
+               Authorization: `Bearer ${get().token.access}`,
+            },
+         });
+
+         set({ get });
       } catch (err) {
-         set({ error: err });
+         set({ errors: err });
       } finally {
-         set({ loading: false });
+         set({ getTalonsLoading: false });
       }
    },
-
-   // Move to start of queue:
-   moveToStartOfQueueStore: async (id) => {
-      set({ loading: true });
+   deleteTalon: async (id) => {
+      set({ getTalonsLoading: true });
       try {
-         const res = await axios.post(`${API}/clients/start/`, id);
-         set({ clients: res.data });
+         const res = await axios.get(`${API}/talon/remove/${id}/`, {
+            headers: {
+               Authorization: `Bearer ${get().token.access}`,
+            },
+         });
+         set({ get });
       } catch (err) {
-         set({ error: err });
+         set({ errors: err });
       } finally {
-         set({ loading: false });
+         set({ getTalonsLoading: false });
       }
    },
-
-   // Delay queue:
-   setDelayOfQueueStore: async (minutes, id) => {
-      set({ loading: true });
+   serviceStart: async (id) => {
+      set({ getTalonsLoading: true });
       try {
-         const res = await axios.post(`${API}/clients/delay/${id}`, minutes);
-         set({ clients: res.data });
+         const res = await axios.get(`${API}/talon/service-start/${id}/`, {
+            headers: {
+               Authorization: `Bearer ${get().token.access}`,
+            },
+         });
       } catch (err) {
-         set({ error: err });
+         set({ errors: err });
       } finally {
-         set({ loading: false });
+         set({ getTalonsLoading: false });
       }
    },
-
-   // Appointments:
-   getAppointmentsStore: async () => {
-      set({ loading: true });
+   serviceEnd: async (id) => {
+      set({ getTalonsLoading: true });
       try {
-         const res = await axios(`${API}/clients/appointments/data`);
-         set({ appointments: res.data });
+         const res = await axios.get(`${API}/talon/service-end/${id}/`, {
+            headers: {
+               Authorization: `Bearer ${get().token.access}`,
+            },
+         });
       } catch (err) {
-         set({ error: err });
+         set({ errors: err });
       } finally {
-         set({ loading: false });
-      }
-   },
-
-   // Edit information on appointment:
-   editAppointmentInfoStore: async (data) => {
-      set({ loading: true });
-      try {
-         const res = await axios.put(`${API}/clients/appointments/`, data);
-         set({ clients: res.data });
-      } catch (err) {
-         set({ error: err });
-      } finally {
-         set({ loading: false });
-      }
-   },
-
-   // Save start time:
-   setStartTimeStore: async (time, id) => {
-      set({ loading: true });
-      try {
-         await axios.post(`${API}/clients/time/start${id}`, time);
-      } catch (err) {
-         set({ error: err });
-      } finally {
-         set({ loading: false });
-      }
-   },
-
-   // Set up who can pass talons:
-   setTalonAccessStore: async (email, queue) => {
-      set({ loading: true });
-      try {
-         const res = await axios.post(`${API}/employee/queues/${email}`, queue);
-         set({ queue: res.data });
-      } catch (err) {
-         set({ error: err });
-      } finally {
-         set({ loading: false });
-      }
-   },
-
-   // Setting up break time:
-   setBreakTimeStore: async (time, email) => {
-      set({ loading: true });
-      try {
-         const res = await axios.post(`${API}/employee/break/${email}`, time);
-         set({ breakTime: res.data });
-      } catch (err) {
-         set({ error: err });
-      } finally {
-         set({ loading: false });
-      }
-   },
-
-   // Service time alert:
-   serviceTimeAlertStore: async (id) => {
-      set({ loading: true });
-      try {
-         const res = await axios(`${API}/clients/time/alert/${id}`);
-         set({ serviceTime: res.data });
-      } catch (err) {
-         set({ error: err });
-      } finally {
-         set({ loading: false });
-      }
-   },
-
-   // Setting up shift time:
-   setShiftTimeStore: async (email, time) => {
-      set({ loading: true });
-      try {
-         const res = await axios.post(`${API}/employee/shift/${email}`, time);
-         set({ shiftTime: res.data });
-      } catch (err) {
-         set({ error: err });
-      } finally {
-         set({ loading: false });
+         set({ getTalonsLoading: false });
       }
    },
 }));

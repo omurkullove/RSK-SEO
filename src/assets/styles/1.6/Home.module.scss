@@ -99,17 +99,27 @@
    font-weight: 600;
    line-height: 20px;
 }
-.columnDataTime {
+.columnServiceBlock {
    display: flex;
    align-items: center;
    justify-content: center;
    text-align: center;
-   font-size: 16px;
-   font-family: $Inter;
    font-weight: 600;
-   line-height: 20px;
    gap: 7px;
    text-align: center;
+   position: relative;
+
+   .alert {
+      margin-bottom: 3px;
+   }
+
+   .childDiv {
+      position: absolute;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
 }
 
 .main {

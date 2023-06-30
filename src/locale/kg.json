@@ -1,10 +1,12 @@
 {
    "table": {
       "titles": {
-         "allClients": "Бардык кардарлар:",
+         "allTalons": "Бардык кардарлар:",
          "name": "Аты",
-         "inQueue": "Кезекте",
+         "appointment_date": "Дайындоо убактысы",
+         "registered_at": "Каттoо убактысы",
          "benefit": "Льгота",
+         "talons_type": "Tүрү",
          "service": "Кызмат",
          "status": "Статус",
          "serviceTime": "Кызмат көрүлүү убактысы"
@@ -21,6 +23,20 @@
          "benefit": {
             "yes": "Ооба",
             "no": "Жок"
+         },
+         "service": {
+            "CreditFinancing": "Кредиттоо",
+            "CurrencyExchange": "Валютаны алмашуу",
+            "MoneyTransfers": "Акча алмашуу",
+            "CardIssuance": "Карта чыгаруу",
+            "ReceiveTransfer": "Алуу акча",
+            "OpenAnAccount": "Эсеп ачуу",
+            "SecuritiesOperations": "Мундариялар операциялары",
+            "IslamicFinancing": "Исламдык коомдуктуу"
+         },
+         "type": {
+            "naturalPerson": "Жеке адам",
+            "legalЕntity": "Юридикалык жат"
          }
       }
    },
@@ -37,6 +53,20 @@
       "popover": {
          "profile": "Профиль",
          "settings": "Опциялар"
+      }
+   },
+   "auth": {
+      "placeholder": {
+         "email": "Электрондук почта",
+         "password": "Пароль"
+      },
+      "forgetPassword": "Паролду унуттунузбу?",
+      "button": {
+         "placeholder": "Кируу"
+      },
+      "errors": {
+         "emailError": "Алдын келген почта дарегин киргизиңиз!",
+         "passwordError": "Алдын келген паролду киргизиңиз!"
       }
    }
 }

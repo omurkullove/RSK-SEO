@@ -1,43 +1,63 @@
-import React from 'react';
+import React, { useState } from 'react';
 import stlyes from '@/assets/styles/1.6/Sidebar.module.scss';
 
 import userSVG from '@/assets/svg/sideUser.svg';
 import settingSVG from '@/assets/svg/sideSet.svg';
-import { Popover } from 'antd';
+import { Image, Input, Menu, Popover } from 'antd';
 import { useTranslation } from 'react-i18next';
+import Sider from 'antd/es/layout/Sider';
+import { UserOutlined, SettingOutlined, HomeOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router';
 
 const Sidebar = () => {
+   const navigate = useNavigate();
+
    const { t } = useTranslation();
+   function getItem(label, key, icon) {
+      return {
+         key,
+         icon,
+         label,
+      };
+   }
 
    const SIDE_ICONS = [
-      {
-         id: 1,
-         icon: userSVG,
-         path: '/',
-         popover: {
-            text: t('sidebar.popover.profile'),
-         },
-      },
-      {
-         id: 2,
-         icon: settingSVG,
-         path: '/',
-         popover: {
-            text: t('sidebar.popover.settings'),
-         },
-      },
+      getItem(
+         t('sidebar.popover.profile'),
+         '1',
+         <UserOutlined style={{ fontSize: '20px', color: 'white' }} />
+      ),
+      getItem(
+         t('sidebar.popover.settings'),
+         '2',
+         <SettingOutlined style={{ fontSize: '20px', color: 'white' }} />
+      ),
    ];
 
+   const [collapsed, setCollapsed] = useState(true);
+
    return (
-      <div className={stlyes.main}>
-         {SIDE_ICONS.map((item) => (
-            <div key={item.id}>
-               <Popover content={item.popover.text} placement='right'>
-                  <img src={item.icon} alt={item.popover} />
-               </Popover>
-            </div>
-         ))}
-      </div>
+      <Sider
+         width={400}
+         collapsible
+         collapsed={collapsed}
+         onCollapse={setCollapsed}
+         trigger={null}
+         style={{
+            height: '100vh',
+            minHeight: '100%',
+            overflow: 'auto',
+            backgroundColor: '#1e4a89',
+         }}
+      >
+         <Menu
+            defaultSelectedKeys={1}
+            className='custom-menu'
+            mode='inline'
+            onClick={() => setCollapsed(!collapsed)}
+            items={SIDE_ICONS}
+         />
+      </Sider>
    );
 };
 
