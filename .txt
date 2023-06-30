@@ -1,0 +1,501 @@
+// import React from 'react';
+// import styles from '@/assets/styles/1.6/Home.module.scss';
+// import Navbar from '@/components/1.6/UI/Navbar';
+// import Sidebar from '@/components/1.6/UI/Sidebar';
+
+// import dots from '@/assets/svg/dots.svg';
+// import arrowGreen from '@/assets/svg/arrowGreen.svg';
+// import arrowRed from '@/assets/svg/arrowRed.svg';
+
+// import { Popover, Table } from 'antd';
+
+// const content = (
+//    <div>
+//       <p>Tool 1</p>
+//       <p>Tool 2</p>
+//    </div>
+// );
+
+// const HomePage = () => {
+//    const columns = [
+//       {
+//          title: <p className={styles.columnTitle}>№</p>,
+//          dataIndex: 'number',
+//          render: (value) => <p className={styles.columnData}>{value}</p>,
+//       },
+//       {
+//          title: <p className={styles.columnTitle}>Имя</p>,
+//          dataIndex: 'name',
+//          render: (value) => <p className={styles.columnDataName}>{value}</p>,
+//       },
+//       {
+//          title: <p className={styles.columnTitle}>В очереди</p>,
+//          dataIndex: 'inOrder',
+//          render: (value) => <p className={styles.columnData}>{value}</p>,
+//       },
+//       {
+//          title: <p className={styles.columnTitle}>Льгота</p>,
+//          dataIndex: 'benefit',
+//          render: (value) => <p className={styles.columnData}>{value}</p>,
+//       },
+//       {
+//          title: <p className={styles.columnTitle}>Услуга</p>,
+//          dataIndex: 'service',
+//          render: (value) => <p className={styles.columnData}>{value}</p>,
+//       },
+
+//       {
+//          title: <p className={styles.columnTitle}>Статус</p>,
+//          dataIndex: 'status',
+//          render: (value) => <p className={styles.columnDataTime}>{value}</p>,
+//       },
+//       {
+//          title: <p className={styles.columnTitle}>Время обслуживания</p>,
+//          dataIndex: 'time',
+//          render: (value) => <p className={styles.columnDataStatus}>{value}</p>,
+//       },
+//    ];
+//    const data = [
+//       {
+//          number: 'A0122',
+//          name: 'Ильясов Айбек Рустамович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 1',
+//          status: 'Завершен',
+//          time: '15',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//    ];
+
+//    return (
+//       <div className={styles.main}>
+//          <div>
+//             <Sidebar />
+//          </div>
+//          <main
+//             style={{
+//                width: '100%',
+//             }}
+//          >
+//             <header>
+//                <Navbar />
+//             </header>
+//             <div className={styles.content}>
+//                <div className={styles.cardBlock}>
+//                   <div className={styles.card1}>
+//                      <div className={styles.head}>
+//                         <div>
+//                            <Popover
+//                               content={content}
+//                               trigger='click'
+//                               placement='rightTop'
+//                            >
+//                               <img src={dots} alt='dots' />
+//                            </Popover>
+//                         </div>
+//                         <p>Клиентов за день</p>
+//                      </div>
+//                      <div className={styles.body}>
+//                         <div>
+//                            <img src={arrowGreen} alt='arrow' />
+//                            <span>3</span>
+//                         </div>
+//                         <p>Больше чем вчера</p>
+//                      </div>
+//                      <div className={styles.footer}>
+//                         <p>16</p>
+//                      </div>
+//                   </div>
+//                   <div className={styles.card2}>
+//                      <div className={styles.head}>
+//                         <div>
+//                            <Popover
+//                               content={content}
+//                               trigger='click'
+//                               placement='rightTop'
+//                            >
+//                               <img src={dots} alt='dots' />
+//                            </Popover>
+//                         </div>
+//                         <p>Отмененные визиты</p>
+//                      </div>
+//                      <div className={styles.body}>
+//                         <div>
+//                            <img src={arrowRed} alt='arrow' />
+//                            <span>1</span>
+//                         </div>
+//                         <p>Больше чем вчера</p>
+//                      </div>
+//                      <div className={styles.footer}>
+//                         <p>4</p>
+//                      </div>
+//                   </div>
+//                </div>
+//                <Table
+//                   style={{ width: '100%' }}
+//                   title={() => (
+//                      <p
+//                         style={{
+//                            fontFamily: "'Inter', sanf-serif",
+//                            color: '#2B2B2B',
+//                            fontSize: '18px',
+//                            fontWeight: '600',
+//                         }}
+//                      >
+//                         Все клиенты:
+//                      </p>
+//                   )}
+//                   pagination={{ pageSize: 10 }}
+//                   columns={columns}
+//                   dataSource={data}
+//                   bordered={false}
+//                   scroll={{ x: 1024 }}
+//                   // onChange={onChange}
+//                />
+//             </div>
+//          </main>
+//       </div>
+//    );
+// };import React from 'react';
+// import styles from '@/assets/styles/1.6/Home.module.scss';
+// import Navbar from '@/components/1.6/UI/Navbar';
+// import Sidebar from '@/components/1.6/UI/Sidebar';
+
+// import dots from '@/assets/svg/dots.svg';
+// import arrowGreen from '@/assets/svg/arrowGreen.svg';
+// import arrowRed from '@/assets/svg/arrowRed.svg';
+
+// import { Popover, Table } from 'antd';
+
+// const content = (
+//    <div>
+//       <p>Tool 1</p>
+//       <p>Tool 2</p>
+//    </div>
+// );
+
+// const HomePage = () => {
+//    const columns = [
+//       {
+//          title: <p className={styles.columnTitle}>№</p>,
+//          dataIndex: 'number',
+//          render: (value) => <p className={styles.columnData}>{value}</p>,
+//       },
+//       {
+//          title: <p className={styles.columnTitle}>Имя</p>,
+//          dataIndex: 'name',
+//          render: (value) => <p className={styles.columnDataName}>{value}</p>,
+//       },
+//       {
+//          title: <p className={styles.columnTitle}>В очереди</p>,
+//          dataIndex: 'inOrder',
+//          render: (value) => <p className={styles.columnData}>{value}</p>,
+//       },
+//       {
+//          title: <p className={styles.columnTitle}>Льгота</p>,
+//          dataIndex: 'benefit',
+//          render: (value) => <p className={styles.columnData}>{value}</p>,
+//       },
+//       {
+//          title: <p className={styles.columnTitle}>Услуга</p>,
+//          dataIndex: 'service',
+//          render: (value) => <p className={styles.columnData}>{value}</p>,
+//       },
+
+//       {
+//          title: <p className={styles.columnTitle}>Статус</p>,
+//          dataIndex: 'status',
+//          render: (value) => <p className={styles.columnDataTime}>{value}</p>,
+//       },
+//       {
+//          title: <p className={styles.columnTitle}>Время обслуживания</p>,
+//          dataIndex: 'time',
+//          render: (value) => <p className={styles.columnDataStatus}>{value}</p>,
+//       },
+//    ];
+//    const data = [
+//       {
+//          number: 'A0122',
+//          name: 'Ильясов Айбек Рустамович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 1',
+//          status: 'Завершен',
+//          time: '15',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//       {
+//          number: 'A0912',
+//          name: 'Иванов Федор Петрович',
+//          inOrder: '-',
+//          benefit: 'нет',
+//          service: 'Услуга 4',
+//          status: 'В процессе',
+//          time: '18',
+//       },
+//    ];
+
+//    return (
+//       <div className={styles.main}>
+//          <div>
+//             <Sidebar />
+//          </div>
+//          <main
+//             style={{
+//                width: '100%',
+//             }}
+//          >
+//             <header>
+//                <Navbar />
+//             </header>
+//             <div className={styles.content}>
+//                <div className={styles.cardBlock}>
+//                   <div className={styles.card1}>
+//                      <div className={styles.head}>
+//                         <div>
+//                            <Popover
+//                               content={content}
+//                               trigger='click'
+//                               placement='rightTop'
+//                            >
+//                               <img src={dots} alt='dots' />
+//                            </Popover>
+//                         </div>
+//                         <p>Клиентов за день</p>
+//                      </div>
+//                      <div className={styles.body}>
+//                         <div>
+//                            <img src={arrowGreen} alt='arrow' />
+//                            <span>3</span>
+//                         </div>
+//                         <p>Больше чем вчера</p>
+//                      </div>
+//                      <div className={styles.footer}>
+//                         <p>16</p>
+//                      </div>
+//                   </div>
+//                   <div className={styles.card2}>
+//                      <div className={styles.head}>
+//                         <div>
+//                            <Popover
+//                               content={content}
+//                               trigger='click'
+//                               placement='rightTop'
+//                            >
+//                               <img src={dots} alt='dots' />
+//                            </Popover>
+//                         </div>
+//                         <p>Отмененные визиты</p>
+//                      </div>
+//                      <div className={styles.body}>
+//                         <div>
+//                            <img src={arrowRed} alt='arrow' />
+//                            <span>1</span>
+//                         </div>
+//                         <p>Больше чем вчера</p>
+//                      </div>
+//                      <div className={styles.footer}>
+//                         <p>4</p>
+//                      </div>
+//                   </div>
+//                </div>
+//                <Table
+//                   style={{ width: '100%' }}
+//                   title={() => (
+//                      <p
+//                         style={{
+//                            fontFamily: "'Inter', sanf-serif",
+//                            color: '#2B2B2B',
+//                            fontSize: '18px',
+//                            fontWeight: '600',
+//                         }}
+//                      >
+//                         Все клиенты:
+//                      </p>
+//                   )}
+//                   pagination={{ pageSize: 10 }}
+//                   columns={columns}
+//                   dataSource={data}
+//                   bordered={false}
+//                   scroll={{ x: 1024 }}
+//                   // onChange={onChange}
+//                />
+//             </div>
+//          </main>
+//       </div>
+//    );
+// };
+
+// export default HomePage;
+
+// export default HomePage;

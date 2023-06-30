@@ -7,6 +7,7 @@ import Root1_6 from '@/pages/module1_6';
 import Root1_7 from '@/pages/module1_7';
 
 const MainRouter = () => {
+
   return (
     <Routes>
       <Route path='/' element={<AuthPage />} />
@@ -14,6 +15,7 @@ const MainRouter = () => {
       <Route path='/1_7/*' element={<Root1_7 />} />
     </Routes>
   );
+
 };
 
 export default MainRouter;
