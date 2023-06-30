@@ -1,43 +1,48 @@
 {
-   "table": {
-      "titles": {
-         "allClients": "Всек  клиенты:",
+  "table": {
+    "titles": {
+      "allClients": "Всек  клиенты:",
 
-         "name": "Имя",
-         "inQueue": "В очереди",
-         "benefit": "Льгота",
-         "service": "Услуга",
-         "status": "Статус",
-         "serviceTime": "Время обслуживания"
+      "name": "Имя",
+      "inQueue": "В очереди",
+      "benefit": "Льгота",
+      "service": "Услуга",
+      "status": "Статус",
+      "serviceTime": "Время обслуживания"
+    },
+    "body": {
+      "status": {
+        "completed": "Завершен",
+        "inProgress": "В процессе",
+        "expected": "Ожидается"
       },
-      "body": {
-         "status": {
-            "completed": "Завершен",
-            "inProgress": "В процессе",
-            "expected": "Ожидается"
-         },
-         "serviceTime": {
-            "min": "мин"
-         },
-         "benefit": {
-            "yes": "Да",
-            "no": "Нет"
-         }
+      "serviceTime": {
+        "min": "мин"
+      },
+      "benefit": {
+        "yes": "Да",
+        "no": "Нет"
       }
-   },
-   "navbar": {
-      "queue": "Очередь",
-      "date": "Дата"
-   },
-   "card": {
-      "title1": "Клиентов за день",
-      "title2": "Отмененные визиты",
-      "body": "Больше чем вчера"
-   },
-   "sidebar": {
-      "popover": {
-         "profile": "Профиль",
-         "settings": "Настройки"
-      }
-   }
+    }
+  },
+
+  "navbar": {
+    "queue": "Очередь",
+    "date": "Дата"
+  },
+  "card": {
+    "title1": "Клиентов за день",
+    "title2": "Отмененные визиты",
+    "body": "Больше чем вчера"
+  },
+  "newtalon": {
+    "button": "Новый талон",
+    "button2": "Печать"
+  },
+  "sidebar": {
+    "popover": {
+      "profile": "Профиль",
+      "settings": "Настройки"
+    }
+  }
 }

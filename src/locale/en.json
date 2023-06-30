@@ -1,42 +1,47 @@
 {
-   "table": {
-      "titles": {
-         "allClients": "All clietns:",
-         "name": "name",
-         "inQueue": "In Queue",
-         "benefit": "Benefit",
-         "service": "Service",
-         "status": "Status",
-         "serviceTime": "Service Time"
+  "table": {
+    "titles": {
+      "allClients": "All clietns:",
+      "name": "name",
+      "inQueue": "In Queue",
+      "benefit": "Benefit",
+      "service": "Service",
+      "status": "Status",
+      "serviceTime": "Service Time"
+    },
+    "body": {
+      "status": {
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "expected": "Expected"
       },
-      "body": {
-         "status": {
-            "completed": "Completed",
-            "inProgress": "In Progress",
-            "expected": "Expected"
-         },
-         "serviceTime": {
-            "min": "min"
-         },
-         "benefit": {
-            "yes": "Yes",
-            "no": "No"
-         }
+      "serviceTime": {
+        "min": "min"
+      },
+      "benefit": {
+        "yes": "Yes",
+        "no": "No"
       }
-   },
-   "navbar": {
-      "queue": "Queue",
-      "date": "Date"
-   },
-   "card": {
-      "title1": "Clients per Day",
-      "title2": "Cancelled sessions",
-      "body": "More than Yesterday"
-   },
-   "sidebar": {
-      "popover": {
-         "profile": "Profile",
-         "settings": "Settings"
-      }
-   }
+    }
+  },
+
+  "navbar": {
+    "queue": "Queue",
+    "date": "Date"
+  },
+  "card": {
+    "title1": "Clients per Day",
+    "title2": "Cancelled sessions",
+    "body": "More than Yesterday"
+  },
+  "newtalon": {
+    "button": "New talon",
+    "button2": "Print"
+  },
+  "sidebar": {
+    "popover": {
+      "profile": "Profile",
+      "settings": "Settings"
+    }
+  }
 }

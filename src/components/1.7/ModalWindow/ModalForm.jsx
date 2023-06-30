@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { Select, DatePicker, TimePicker } from "antd";
 import { useModel_1_7 } from "@/services/1_7store";
+import { useTranslation, withTranslation } from "react-i18next";
 
 const handleChange = (value) => {
   console.log(`selected ${value}`);
@@ -24,6 +25,8 @@ export const ModalForm = ({ active, setActive }) => {
     return <DatePicker picker={type} onChange={onChange} />;
   };
 
+  const { t } = useTranslation();
+  
   // Верстка модального окна
   return (
     <div
@@ -126,7 +129,7 @@ export const ModalForm = ({ active, setActive }) => {
           size="large"
         />
 
-        <button className={styles.modal__button}>Печать</button>
+        <button className={styles.modal__button}>{t('newtalon.button2')}</button>
       </div>
     </div>
   );

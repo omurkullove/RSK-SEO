@@ -1,42 +1,47 @@
 {
-   "table": {
-      "titles": {
-         "allClients": "Бардык кардарлар:",
-         "name": "Аты",
-         "inQueue": "Кезекте",
-         "benefit": "Льгота",
-         "service": "Кызмат",
-         "status": "Статус",
-         "serviceTime": "Кызмат көрүлүү убактысы"
+  "table": {
+    "titles": {
+      "allClients": "Бардык кардарлар:",
+      "name": "Аты",
+      "inQueue": "Кезекте",
+      "benefit": "Льгота",
+      "service": "Кызмат",
+      "status": "Статус",
+      "serviceTime": "Кызмат көрүлүү убактысы"
+    },
+    "body": {
+      "status": {
+        "completed": "Аякталды",
+        "inProgress": "Жүргүзүлүүдө",
+        "expected": "Күтүлүүдө"
       },
-      "body": {
-         "status": {
-            "completed": "Аякталды",
-            "inProgress": "Жүргүзүлүүдө",
-            "expected": "Күтүлүүдө"
-         },
-         "serviceTime": {
-            "min": "мүнөт"
-         },
-         "benefit": {
-            "yes": "Ооба",
-            "no": "Жок"
-         }
+      "serviceTime": {
+        "min": "мүнөт"
+      },
+      "benefit": {
+        "yes": "Ооба",
+        "no": "Жок"
       }
-   },
-   "navbar": {
-      "queue": "Кезек",
-      "date": "Дата"
-   },
-   "card": {
-      "title1": "Күндүгү клиенттер",
-      "title2": "Жокко чыгарылган визиттер",
-      "body": "Кечкигөчөгө караганынан ашуу"
-   },
-   "sidebar": {
-      "popover": {
-         "profile": "Профиль",
-         "settings": "Опциялар"
-      }
-   }
+    }
+  },
+
+  "navbar": {
+    "queue": "Кезек",
+    "date": "Дата"
+  },
+  "card": {
+    "title1": "Күндүгү клиенттер",
+    "title2": "Жокко чыгарылган визиттер",
+    "body": "Кечкигөчөгө караганынан ашуу"
+  },
+  "newtalon": {
+    "button": "Жаңы талон",
+    "button2": "Басып чыгаруу"
+  },
+  "sidebar": {
+    "popover": {
+      "profile": "Профиль",
+      "settings": "Опциялар"
+    }
+  }
 }
