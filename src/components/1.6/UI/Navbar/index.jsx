@@ -6,8 +6,11 @@ import navLogo from '@/assets/svg/navLogo.svg';
 import kg from '@/assets/svg/kg.svg';
 import en from '@/assets/svg/en.svg';
 import ru from '@/assets/svg/ru.svg';
+import { useModule_1_6 } from '@/services/1_6store';
 
 const Navbar = ({ employee }) => {
+   const talons = useModule_1_6((state) => state.talons);
+
    const { t, i18n } = useTranslation();
    const [lang, setLang] = useState('ru');
    const [date, setDate] = useState('');
@@ -58,47 +61,12 @@ const Navbar = ({ employee }) => {
             </div>
          </div>
          <div className={stlyes.footer}>
-            <p>{t('navbar.queue')}: #102</p>
+            <p>
+               {t('navbar.queue')}: {talons ? talons.length : 'Нет данных'}
+            </p>
             <p>
                {t('navbar.date')}: {date}
             </p>
-
-            {/* <button
-               onClick={() => handleChangeLanguage('ru')}
-               style={{
-                  fontWeight: '800',
-                  background: 'gray',
-                  padding: '5px',
-                  cursor: 'pointer',
-                  color: lang === 'ru' ? 'green' : '',
-               }}
-            >
-               russian
-            </button>
-            <button
-               onClick={() => handleChangeLanguage('en')}
-               style={{
-                  fontWeight: '800',
-                  background: 'gray',
-                  padding: '5px',
-                  cursor: 'pointer',
-                  color: lang === 'en' ? 'green' : '',
-               }}
-            >
-               english
-            </button>
-            <button
-               onClick={() => handleChangeLanguage('kg')}
-               style={{
-                  fontWeight: '800',
-                  background: 'gray',
-                  padding: '5px',
-                  cursor: 'pointer',
-                  color: lang === 'kg' ? 'green' : '',
-               }}
-            >
-               kyrgyz
-            </button> */}
          </div>
       </div>
    );

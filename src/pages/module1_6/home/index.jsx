@@ -37,10 +37,12 @@ const HomePage = () => {
 
    const getTalonsLoading = useModule_1_6((state) => state.getTalonsLoading);
    const getProfileInfoLoading = useModule_1_6((state) => state.getProfileInfoLoading);
+   const currentTalon = useModule_1_6((state) => state.currentTalon);
 
    // Vanilla states
    const [isRunning, setIsRunning] = useState(false);
    const [seconds, setSeconds] = useState(0);
+   const [isStart, setIsStart] = useState(false);
 
    // Locale
    const { t } = useTranslation();
@@ -56,8 +58,6 @@ const HomePage = () => {
          dataIndex: 'token',
          render: (value, talon) => (
             <div>
-               <button onClick={() => handleStart(talon.token)}>начать</button>
-               <button onClick={() => handleEnd(talon.token)}>завершить</button>
                <p className={styles.columnData} key={value.token}>
                   {value}
                </p>
@@ -138,7 +138,6 @@ const HomePage = () => {
       {
          title: <p className={styles.columnTitle}>{t('table.titles.serviceTime')}</p>,
          dataIndex: 'service_start',
-
          render: (value, talon, index) => {
             return (
                <div className={styles.columnServiceBlock}>
@@ -202,16 +201,18 @@ const HomePage = () => {
 
    // Start sevice
    const handleStart = async (token) => {
-      // await serviceStart(token);
-      // await getTalons();
+      await serviceStart(token);
+      await getTalons();
       startStopwatch();
+      setIsStart(true);
    };
 
    // Complite service
    const handleEnd = async (token) => {
-      // await serviceEnd(token);
-      // await getTalons();
+      await serviceEnd(token);
+      await getTalons();
       stopStopwatch();
+      setIsStart(false);
    };
 
    // Popover
@@ -296,55 +297,84 @@ const HomePage = () => {
    ) : (
       <MainLayout isSidebar={true} Navbar={<Navbar employee={employee} />}>
          <div className={styles.main}>
-            <div className={styles.cardBlock}>
-               <div className={styles.card1}>
-                  <div className={styles.head}>
-                     <div>
-                        <Popover
-                           id='cardPopover'
-                           content={content}
-                           trigger='click'
-                           placement='rightTop'
-                        >
-                           <img src={dots} alt='dots' />
-                        </Popover>
+            <div className={styles.mainCardBlock}>
+               <div className={styles.cardBlock}>
+                  <div className={styles.card1}>
+                     <div className={styles.head}>
+                        <div>
+                           <Popover
+                              id='cardPopover'
+                              content={content}
+                              trigger='click'
+                              placement='rightTop'
+                           >
+                              <img src={dots} alt='dots' />
+                           </Popover>
+                        </div>
+                        <p>{t('card.title1')}</p>
                      </div>
-                     <p>{t('card.title1')}</p>
-                  </div>
-                  <div className={styles.body}>
-                     <div>
-                        <img src={arrowGreen} alt='arrow' />
-                        <span>3</span>
+                     <div className={styles.body}>
+                        <div>
+                           <img src={arrowGreen} alt='arrow' />
+                           <span>3</span>
+                        </div>
+                        <p>{t('card.body')}</p>
                      </div>
-                     <p>{t('card.body')}</p>
+                     <div className={styles.footer}>
+                        <p>16</p>
+                     </div>
                   </div>
-                  <div className={styles.footer}>
-                     <p>16</p>
+                  <div className={styles.card2}>
+                     <div className={styles.head}>
+                        <div>
+                           <Popover
+                              id='cardPopover'
+                              content={content}
+                              trigger='click'
+                              placement='rightTop'
+                           >
+                              <img src={dots} alt='dots' />
+                           </Popover>
+                        </div>
+                        <p>{t('card.title2')}</p>
+                     </div>
+                     <div className={styles.body}>
+                        <div>
+                           <img src={arrowRed} alt='arrow' />
+                           <span>1</span>
+                        </div>
+                        <p>{t('card.body')}</p>
+                     </div>
+                     <div className={styles.footer}>
+                        <p>4</p>
+                     </div>
                   </div>
                </div>
-               <div className={styles.card2}>
-                  <div className={styles.head}>
-                     <div>
-                        <Popover
-                           id='cardPopover'
-                           content={content}
-                           trigger='click'
-                           placement='rightTop'
-                        >
-                           <img src={dots} alt='dots' />
-                        </Popover>
-                     </div>
-                     <p>{t('card.title2')}</p>
-                  </div>
-                  <div className={styles.body}>
-                     <div>
-                        <img src={arrowRed} alt='arrow' />
-                        <span>1</span>
-                     </div>
-                     <p>{t('card.body')}</p>
-                  </div>
-                  <div className={styles.footer}>
-                     <p>4</p>
+
+               <div className={styles.currentTalonBlock}>
+                  <p>Сейчас:</p>
+                  <ul>
+                     <li>{currentTalon?.token}</li>
+                     <li>{returnUnderstandableDate(currentTalon?.registered_at)}</li>
+                     <li>{returnUnderstandableDate(currentTalon?.appointment_date)}</li>
+                     <li>{currentTalon?.client_type}</li>
+                     <li>{currentTalon?.service}</li>
+                  </ul>
+                  <div>
+                     <button
+                        onClick={() => handleStart(currentTalon?.token)}
+                        style={{ backgroundColor: isStart ? '#A5A5A5' : ' #136E37' }}
+                        disabled={isStart}
+                     >
+                        Начать обслуживание
+                     </button>
+                     <button
+                        disabled={!isStart}
+                        onClick={() => handleEnd(currentTalon?.token)}
+                        style={{ backgroundColor: isStart ? '#136E37' : '#A5A5A5' }}
+                     >
+                        Завершить обслуживание
+                     </button>
                   </div>
                </div>
             </div>

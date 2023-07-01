@@ -11,6 +11,7 @@ export const useModule_1_6 = create((set, get) => ({
    token: JSON.parse(localStorage.getItem('token')) || {},
    talons: [],
    employee: {},
+   currentTalon: {},
 
    loginLoading: false,
    getTalonsLoading: false,
@@ -52,6 +53,7 @@ export const useModule_1_6 = create((set, get) => ({
             },
          });
          set({ talons: res.data });
+         set({ currentTalon: res.data[0] });
       } catch (err) {
          set({ errors: err });
       } finally {
