@@ -1,501 +1,189 @@
-// import React from 'react';
-// import styles from '@/assets/styles/1.6/Home.module.scss';
-// import Navbar from '@/components/1.6/UI/Navbar';
-// import Sidebar from '@/components/1.6/UI/Sidebar';
+  clients: [],
+   appointments: [],
+   queue: [],
+   error: [],
+   breakTime: {},
+   serviceTime: {},
+   shiftTime: {},
+   loading: false,
 
-// import dots from '@/assets/svg/dots.svg';
-// import arrowGreen from '@/assets/svg/arrowGreen.svg';
-// import arrowRed from '@/assets/svg/arrowRed.svg';
+   // Getting initial data:
+   getDataStore: async (email) => {
+      set({ loading: true });
+      try {
+         const res = await axios(`${API}/operator/${email}`);
+         set({ clients: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-// import { Popover, Table } from 'antd';
+   // Send a client to the end of queue:
+   sendToEndOfQueueStore: async (id) => {
+      set({ loading: true });
+      try {
+         const res = await axios.post(`${API}/clients/end/${id}`);
+         set({ clients: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-// const content = (
-//    <div>
-//       <p>Tool 1</p>
-//       <p>Tool 2</p>
-//    </div>
-// );
+   // Remove from queue:
+   removeFromQueueStore: async (id) => {
+      set({ loading: true });
+      try {
+         const res = await axios.post(`${API}/clients/remove/${id}`);
+         set({ clients: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-// const HomePage = () => {
-//    const columns = [
-//       {
-//          title: <p className={styles.columnTitle}>№</p>,
-//          dataIndex: 'number',
-//          render: (value) => <p className={styles.columnData}>{value}</p>,
-//       },
-//       {
-//          title: <p className={styles.columnTitle}>Имя</p>,
-//          dataIndex: 'name',
-//          render: (value) => <p className={styles.columnDataName}>{value}</p>,
-//       },
-//       {
-//          title: <p className={styles.columnTitle}>В очереди</p>,
-//          dataIndex: 'inOrder',
-//          render: (value) => <p className={styles.columnData}>{value}</p>,
-//       },
-//       {
-//          title: <p className={styles.columnTitle}>Льгота</p>,
-//          dataIndex: 'benefit',
-//          render: (value) => <p className={styles.columnData}>{value}</p>,
-//       },
-//       {
-//          title: <p className={styles.columnTitle}>Услуга</p>,
-//          dataIndex: 'service',
-//          render: (value) => <p className={styles.columnData}>{value}</p>,
-//       },
+   // Transfer to another queue:
+   transferToQueueStore: async (id, queue_id) => {
+      set({ loading: true });
+      try {
+         const res = await axios.post(
+            `${API}/clients/transfer/${queue_id}`,
+            id
+         );
+         set({ clients: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-//       {
-//          title: <p className={styles.columnTitle}>Статус</p>,
-//          dataIndex: 'status',
-//          render: (value) => <p className={styles.columnDataTime}>{value}</p>,
-//       },
-//       {
-//          title: <p className={styles.columnTitle}>Время обслуживания</p>,
-//          dataIndex: 'time',
-//          render: (value) => <p className={styles.columnDataStatus}>{value}</p>,
-//       },
-//    ];
-//    const data = [
-//       {
-//          number: 'A0122',
-//          name: 'Ильясов Айбек Рустамович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 1',
-//          status: 'Завершен',
-//          time: '15',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//    ];
+   // Move to start of queue:
+   moveToStartOfQueueStore: async (id) => {
+      set({ loading: true });
+      try {
+         const res = await axios.post(`${API}/clients/start/`, id);
+         set({ clients: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-//    return (
-//       <div className={styles.main}>
-//          <div>
-//             <Sidebar />
-//          </div>
-//          <main
-//             style={{
-//                width: '100%',
-//             }}
-//          >
-//             <header>
-//                <Navbar />
-//             </header>
-//             <div className={styles.content}>
-//                <div className={styles.cardBlock}>
-//                   <div className={styles.card1}>
-//                      <div className={styles.head}>
-//                         <div>
-//                            <Popover
-//                               content={content}
-//                               trigger='click'
-//                               placement='rightTop'
-//                            >
-//                               <img src={dots} alt='dots' />
-//                            </Popover>
-//                         </div>
-//                         <p>Клиентов за день</p>
-//                      </div>
-//                      <div className={styles.body}>
-//                         <div>
-//                            <img src={arrowGreen} alt='arrow' />
-//                            <span>3</span>
-//                         </div>
-//                         <p>Больше чем вчера</p>
-//                      </div>
-//                      <div className={styles.footer}>
-//                         <p>16</p>
-//                      </div>
-//                   </div>
-//                   <div className={styles.card2}>
-//                      <div className={styles.head}>
-//                         <div>
-//                            <Popover
-//                               content={content}
-//                               trigger='click'
-//                               placement='rightTop'
-//                            >
-//                               <img src={dots} alt='dots' />
-//                            </Popover>
-//                         </div>
-//                         <p>Отмененные визиты</p>
-//                      </div>
-//                      <div className={styles.body}>
-//                         <div>
-//                            <img src={arrowRed} alt='arrow' />
-//                            <span>1</span>
-//                         </div>
-//                         <p>Больше чем вчера</p>
-//                      </div>
-//                      <div className={styles.footer}>
-//                         <p>4</p>
-//                      </div>
-//                   </div>
-//                </div>
-//                <Table
-//                   style={{ width: '100%' }}
-//                   title={() => (
-//                      <p
-//                         style={{
-//                            fontFamily: "'Inter', sanf-serif",
-//                            color: '#2B2B2B',
-//                            fontSize: '18px',
-//                            fontWeight: '600',
-//                         }}
-//                      >
-//                         Все клиенты:
-//                      </p>
-//                   )}
-//                   pagination={{ pageSize: 10 }}
-//                   columns={columns}
-//                   dataSource={data}
-//                   bordered={false}
-//                   scroll={{ x: 1024 }}
-//                   // onChange={onChange}
-//                />
-//             </div>
-//          </main>
-//       </div>
-//    );
-// };import React from 'react';
-// import styles from '@/assets/styles/1.6/Home.module.scss';
-// import Navbar from '@/components/1.6/UI/Navbar';
-// import Sidebar from '@/components/1.6/UI/Sidebar';
+   // Delay queue:
+   setDelayOfQueueStore: async (minutes, id) => {
+      set({ loading: true });
+      try {
+         const res = await axios.post(`${API}/clients/delay/${id}`, minutes);
+         set({ clients: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-// import dots from '@/assets/svg/dots.svg';
-// import arrowGreen from '@/assets/svg/arrowGreen.svg';
-// import arrowRed from '@/assets/svg/arrowRed.svg';
+   // Appointments:
+   getAppointmentsStore: async () => {
+      set({ loading: true });
+      try {
+         const res = await axios(`${API}/clients/appointments/data`);
+         set({ appointments: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-// import { Popover, Table } from 'antd';
+   // Edit information on appointment:
+   editAppointmentInfoStore: async (data) => {
+      set({ loading: true });
+      try {
+         const res = await axios.put(`${API}/clients/appointments/`, data);
+         set({ clients: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-// const content = (
-//    <div>
-//       <p>Tool 1</p>
-//       <p>Tool 2</p>
-//    </div>
-// );
+   // Save start time:
+   setStartTimeStore: async (time, id) => {
+      set({ loading: true });
+      try {
+         await axios.post(`${API}/clients/time/start${id}`, time);
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-// const HomePage = () => {
-//    const columns = [
-//       {
-//          title: <p className={styles.columnTitle}>№</p>,
-//          dataIndex: 'number',
-//          render: (value) => <p className={styles.columnData}>{value}</p>,
-//       },
-//       {
-//          title: <p className={styles.columnTitle}>Имя</p>,
-//          dataIndex: 'name',
-//          render: (value) => <p className={styles.columnDataName}>{value}</p>,
-//       },
-//       {
-//          title: <p className={styles.columnTitle}>В очереди</p>,
-//          dataIndex: 'inOrder',
-//          render: (value) => <p className={styles.columnData}>{value}</p>,
-//       },
-//       {
-//          title: <p className={styles.columnTitle}>Льгота</p>,
-//          dataIndex: 'benefit',
-//          render: (value) => <p className={styles.columnData}>{value}</p>,
-//       },
-//       {
-//          title: <p className={styles.columnTitle}>Услуга</p>,
-//          dataIndex: 'service',
-//          render: (value) => <p className={styles.columnData}>{value}</p>,
-//       },
+   // Set up who can pass talons:
+   setTalonAccessStore: async (email, queue) => {
+      set({ loading: true });
+      try {
+         const res = await axios.post(`${API}/employee/queues/${email}`, queue);
+         set({ queue: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-//       {
-//          title: <p className={styles.columnTitle}>Статус</p>,
-//          dataIndex: 'status',
-//          render: (value) => <p className={styles.columnDataTime}>{value}</p>,
-//       },
-//       {
-//          title: <p className={styles.columnTitle}>Время обслуживания</p>,
-//          dataIndex: 'time',
-//          render: (value) => <p className={styles.columnDataStatus}>{value}</p>,
-//       },
-//    ];
-//    const data = [
-//       {
-//          number: 'A0122',
-//          name: 'Ильясов Айбек Рустамович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 1',
-//          status: 'Завершен',
-//          time: '15',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//       {
-//          number: 'A0912',
-//          name: 'Иванов Федор Петрович',
-//          inOrder: '-',
-//          benefit: 'нет',
-//          service: 'Услуга 4',
-//          status: 'В процессе',
-//          time: '18',
-//       },
-//    ];
+   // Setting up break time:
+   setBreakTimeStore: async (time, email) => {
+      set({ loading: true });
+      try {
+         const res = await axios.post(`${API}/employee/break/${email}`, time);
+         set({ breakTime: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-//    return (
-//       <div className={styles.main}>
-//          <div>
-//             <Sidebar />
-//          </div>
-//          <main
-//             style={{
-//                width: '100%',
-//             }}
-//          >
-//             <header>
-//                <Navbar />
-//             </header>
-//             <div className={styles.content}>
-//                <div className={styles.cardBlock}>
-//                   <div className={styles.card1}>
-//                      <div className={styles.head}>
-//                         <div>
-//                            <Popover
-//                               content={content}
-//                               trigger='click'
-//                               placement='rightTop'
-//                            >
-//                               <img src={dots} alt='dots' />
-//                            </Popover>
-//                         </div>
-//                         <p>Клиентов за день</p>
-//                      </div>
-//                      <div className={styles.body}>
-//                         <div>
-//                            <img src={arrowGreen} alt='arrow' />
-//                            <span>3</span>
-//                         </div>
-//                         <p>Больше чем вчера</p>
-//                      </div>
-//                      <div className={styles.footer}>
-//                         <p>16</p>
-//                      </div>
-//                   </div>
-//                   <div className={styles.card2}>
-//                      <div className={styles.head}>
-//                         <div>
-//                            <Popover
-//                               content={content}
-//                               trigger='click'
-//                               placement='rightTop'
-//                            >
-//                               <img src={dots} alt='dots' />
-//                            </Popover>
-//                         </div>
-//                         <p>Отмененные визиты</p>
-//                      </div>
-//                      <div className={styles.body}>
-//                         <div>
-//                            <img src={arrowRed} alt='arrow' />
-//                            <span>1</span>
-//                         </div>
-//                         <p>Больше чем вчера</p>
-//                      </div>
-//                      <div className={styles.footer}>
-//                         <p>4</p>
-//                      </div>
-//                   </div>
-//                </div>
-//                <Table
-//                   style={{ width: '100%' }}
-//                   title={() => (
-//                      <p
-//                         style={{
-//                            fontFamily: "'Inter', sanf-serif",
-//                            color: '#2B2B2B',
-//                            fontSize: '18px',
-//                            fontWeight: '600',
-//                         }}
-//                      >
-//                         Все клиенты:
-//                      </p>
-//                   )}
-//                   pagination={{ pageSize: 10 }}
-//                   columns={columns}
-//                   dataSource={data}
-//                   bordered={false}
-//                   scroll={{ x: 1024 }}
-//                   // onChange={onChange}
-//                />
-//             </div>
-//          </main>
-//       </div>
-//    );
-// };
+   // Service time alert:
+   serviceTimeAlertStore: async (id) => {
+      set({ loading: true });
+      try {
+         const res = await axios(`${API}/clients/time/alert/${id}`);
+         set({ serviceTime: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-// export default HomePage;
+   // Setting up shift time:
+   setShiftTimeStore: async (email, time) => {
+      set({ loading: true });
+      try {
+         const res = await axios.post(`${API}/employee/shift/${email}`, time);
+         set({ shiftTime: res.data });
+      } catch (err) {
+         set({ error: err });
+      } finally {
+         set({ loading: false });
+      }
+   },
 
-// export default HomePage;
+   <Sider
+         style={{ backgroundColor: 'blue', height: '100%' }}
+         collapsible
+         collapsed={collapsed}
+         onCollapse={(value) => setCollapsed(value)}
+      >
+         <div>123</div>
+         <div>123</div>
+      </Sider>

@@ -1,53 +1,82 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '@/assets/styles/main/Auth.module.scss';
 import logo from '@/assets/svg/bigLogo.svg';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, Form, Input } from 'antd';
 import { Link } from 'react-router-dom';
+import { useOperator } from '@/services/operatorStore';
+
+import kg from '@/assets/svg/kg.svg';
+import en from '@/assets/svg/en.svg';
+import ru from '@/assets/svg/ru.svg';
+import { useTranslation } from 'react-i18next';
 
 const AuthPage = () => {
    const navigate = useNavigate();
+   const { t, i18n } = useTranslation();
+   const [lang, setLang] = useState(i18n.language);
 
-   const onFinish = (values) => {
-      // Здесь потом будем определять, кто пытается зайти
-      switch (values.username) {
-         case 'operator':
-            navigate('/1_6/home');
-            break;
-         case 'registrator':
-            navigate('/1_7/home');
-            break;
+   const handleChangeLanguage = (language) => {
+      i18n.changeLanguage(language);
+      setLang(language);
+   };
 
-         default:
-            break;
-      }
+   useEffect(() => {
+      localStorage.removeItem('token');
+   }, []);
+
+   const login = useOperator((state) => state.login);
+   const token = useOperator((state) => state.token);
+   const hanldeLogin = async (values) => {
+      await login(values, navigate);
    };
 
    return (
       <div className={styles.main}>
+         <div className={styles.languageBlock}>
+            <img
+               src={kg}
+               alt='kg'
+               onClick={() => handleChangeLanguage('kg')}
+               style={{ cursor: 'pointer' }}
+            />
+            <img
+               src={ru}
+               alt='ru'
+               onClick={() => handleChangeLanguage('ru')}
+               style={{ cursor: 'pointer' }}
+            />
+            <img
+               src={en}
+               alt='en'
+               onClick={() => handleChangeLanguage('en')}
+               style={{ cursor: 'pointer' }}
+            />
+         </div>
          <div className={styles.authModal}>
             <img src={logo} alt='logo' />
 
             <div className={styles.formBlock}>
                <Form
+                  key={lang}
                   className={styles.form}
                   name='basic'
-                  onFinish={onFinish}
+                  onFinish={hanldeLogin}
                   autoComplete='off'
                >
                   <Form.Item
-                     name='username'
+                     name='email'
                      rules={[
                         {
                            required: true,
-                           message: 'Пожалуйста, введите имя пользователя !',
+                           message: t('auth.errors.emailError'),
                         },
                      ]}
                   >
                      <Input
-                        autoComplete='username'
-                        placeholder='Имя пользователя'
+                        autoComplete='email'
+                        placeholder={t('auth.placeholder.email')}
                         className={styles.input}
                      />
                   </Form.Item>
@@ -57,13 +86,13 @@ const AuthPage = () => {
                      rules={[
                         {
                            required: true,
-                           message: 'Пожалуйста, введите пароль !',
+                           message: t('auth.errors.passwordError'),
                         },
                      ]}
                   >
                      <Input.Password
                         autoComplete='current-password'
-                        placeholder='Пароль'
+                        placeholder={t('auth.placeholder.password')}
                         style={{
                            borderRadius: '15px',
                            minHeight: '52px',
@@ -78,7 +107,7 @@ const AuthPage = () => {
                      }}
                   >
                      <Link to='#' className={styles.link}>
-                        Забыли пароль?
+                        {t('auth.forgetPassword')}
                      </Link>
                   </Form.Item>
 
@@ -94,7 +123,7 @@ const AuthPage = () => {
                            fontWeight: '700',
                         }}
                      >
-                        Войти
+                        {t('auth.button.placeholder')}
                      </Button>
                   </Form.Item>
                </Form>

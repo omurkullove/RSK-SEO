@@ -1,47 +1,72 @@
 {
-  "table": {
-    "titles": {
-      "allClients": "Бардык кардарлар:",
-      "name": "Аты",
-      "inQueue": "Кезекте",
-      "benefit": "Льгота",
-      "service": "Кызмат",
-      "status": "Статус",
-      "serviceTime": "Кызмат көрүлүү убактысы"
-    },
-    "body": {
-      "status": {
-        "completed": "Аякталды",
-        "inProgress": "Жүргүзүлүүдө",
-        "expected": "Күтүлүүдө"
+   "table": {
+      "titles": {
+         "allTalons": "Бардык кардарлар:",
+         "name": "Аты",
+         "appointment_date": "Дайындоо убактысы",
+         "registered_at": "Каттoо убактысы",
+         "benefit": "Льгота",
+         "talons_type": "Tүрү",
+         "service": "Кызмат",
+         "status": "Статус",
+         "serviceTime": "Кызмат көрүлүү убактысы"
       },
-      "serviceTime": {
-        "min": "мүнөт"
-      },
-      "benefit": {
-        "yes": "Ооба",
-        "no": "Жок"
+      "body": {
+         "status": {
+            "completed": "Аякталды",
+            "inProgress": "Жүргүзүлүүдө",
+            "expected": "Күтүлүүдө"
+         },
+         "serviceTime": {
+            "min": "мүнөт"
+         },
+         "benefit": {
+            "yes": "Ооба",
+            "no": "Жок"
+         },
+         "service": {
+            "CreditFinancing": "Кредиттоо",
+            "CurrencyExchange": "Валютаны алмашуу",
+            "MoneyTransfers": "Акча алмашуу",
+            "CardIssuance": "Карта чыгаруу",
+            "ReceiveTransfer": "Алуу акча",
+            "OpenAnAccount": "Эсеп ачуу",
+            "SecuritiesOperations": "Мундариялар операциялары",
+            "IslamicFinancing": "Исламдык коомдуктуу"
+         },
+         "type": {
+            "naturalPerson": "Жеке адам",
+            "legalЕntity": "Юридикалык жат"
+         }
       }
-    }
-  },
-
-  "navbar": {
-    "queue": "Кезек",
-    "date": "Дата"
-  },
-  "card": {
-    "title1": "Күндүгү клиенттер",
-    "title2": "Жокко чыгарылган визиттер",
-    "body": "Кечкигөчөгө караганынан ашуу"
-  },
-  "newtalon": {
-    "button": "Жаңы талон",
-    "button2": "Басып чыгаруу"
-  },
-  "sidebar": {
-    "popover": {
-      "profile": "Профиль",
-      "settings": "Опциялар"
-    }
-  }
+   },
+   "navbar": {
+      "queue": "Бардыгы",
+      "date": "Дата"
+   },
+   "card": {
+      "title1": "Күндүгү клиенттер",
+      "title2": "Жокко чыгарылган визиттер",
+      "body": "Кечкигөчөгө караганынан ашуу"
+   },
+   "sidebar": {
+      "popover": {
+         "profile": "Профиль",
+         "settings": "Опциялар"
+      }
+   },
+   "auth": {
+      "placeholder": {
+         "email": "Электрондук почта",
+         "password": "Пароль"
+      },
+      "forgetPassword": "Паролду унуттунузбу?",
+      "button": {
+         "placeholder": "Кируу"
+      },
+      "errors": {
+         "emailError": "Алдын келген почта дарегин киргизиңиз!",
+         "passwordError": "Алдын келген паролду киргизиңиз!"
+      }
+   }
 }

@@ -1,47 +1,72 @@
 {
-  "table": {
-    "titles": {
-      "allClients": "All clietns:",
-      "name": "name",
-      "inQueue": "In Queue",
-      "benefit": "Benefit",
-      "service": "Service",
-      "status": "Status",
-      "serviceTime": "Service Time"
-    },
-    "body": {
-      "status": {
-        "completed": "Completed",
-        "inProgress": "In Progress",
-        "expected": "Expected"
+   "table": {
+      "titles": {
+         "allTalons": "All talons:",
+         "name": "name",
+         "appointment_date": "Appointement time",
+         "registered_at": "Registration time",
+         "benefit": "Benefit",
+         "talons_type": "Type",
+         "service": "Service",
+         "status": "Status",
+         "serviceTime": "Service Time"
       },
-      "serviceTime": {
-        "min": "min"
-      },
-      "benefit": {
-        "yes": "Yes",
-        "no": "No"
+      "body": {
+         "status": {
+            "completed": "Completed",
+            "inProgress": "In Progress",
+            "expected": "Expected"
+         },
+         "serviceTime": {
+            "min": "min"
+         },
+         "benefit": {
+            "yes": "Yes",
+            "no": "No"
+         },
+         "service": {
+            "CreditFinancing": "Credit financing",
+            "CurrencyExchange": "Currency exchange",
+            "MoneyTransfers": "Money transfers",
+            "CardIssuance": "Card issuance",
+            "ReceiveTransfer": "Receive transfer",
+            "OpenAnAccount": "Open an account",
+            "SecuritiesOperations": "Securities operations",
+            "IslamicFinancing": "Islamic financing"
+         },
+         "type": {
+            "naturalPerson": "Natural person",
+            "legalЕntity": "Legal entity"
+         }
       }
-    }
-  },
-
-  "navbar": {
-    "queue": "Queue",
-    "date": "Date"
-  },
-  "card": {
-    "title1": "Clients per Day",
-    "title2": "Cancelled sessions",
-    "body": "More than Yesterday"
-  },
-  "newtalon": {
-    "button": "New talon",
-    "button2": "Print"
-  },
-  "sidebar": {
-    "popover": {
-      "profile": "Profile",
-      "settings": "Settings"
-    }
-  }
+   },
+   "navbar": {
+      "queue": "Total",
+      "date": "Date"
+   },
+   "card": {
+      "title1": "Clients per Day",
+      "title2": "Cancelled sessions",
+      "body": "More than Yesterday"
+   },
+   "sidebar": {
+      "popover": {
+         "profile": "Profile",
+         "settings": "Settings"
+      }
+   },
+   "auth": {
+      "placeholder": {
+         "email": "Email",
+         "password": "Password"
+      },
+      "forgetPassword": "Forgot Password?",
+      "button": {
+         "placeholder": "Login"
+      },
+      "errors": {
+         "emailError": "Please enter an email!",
+         "passwordError": "Please enter a password!"
+      }
+   }
 }

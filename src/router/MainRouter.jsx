@@ -3,19 +3,18 @@ import React from 'react';
 import { Route, Routes } from 'react-router';
 
 import AuthPage from '@/pages/auth';
-import Root1_6 from '@/pages/module1_6';
-import Root1_7 from '@/pages/module1_7';
+
+import RootRegistrar from '@/pages/registrar';
+import RootOpertor from '@/pages/operator';
 
 const MainRouter = () => {
-
-  return (
-    <Routes>
-      <Route path='/' element={<AuthPage />} />
-      <Route path='/1_6/*' element={<Root1_6 />} />
-      <Route path='/1_7/*' element={<Root1_7 />} />
-    </Routes>
-  );
-
+   return (
+      <Routes>
+         <Route path='/' element={<AuthPage />} />
+         <Route path='/operator/*' element={<RootOpertor />} />
+         <Route path='/registrar/*' element={<RootRegistrar />} />
+      </Routes>
+   );
 };
 
 export default MainRouter;
