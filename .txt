@@ -199,10 +199,7 @@ import { useNavigate } from 'react-router';
 
 const Sidebar = () => {
    const navigate = useNavigate();
-
-   const [collapsed, setCollapsed] = useState(true);
-
-   const { t } = useTranslation();
+c
    function getItem(label, key, icon, children) {
       return {
          key,

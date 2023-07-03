@@ -7,6 +7,7 @@ import kg from '@/assets/svg/kg.svg';
 import en from '@/assets/svg/en.svg';
 import ru from '@/assets/svg/ru.svg';
 import { useOperator } from '@/services/operatorStore';
+import { UserOutlined } from '@ant-design/icons';
 
 const Navbar = ({ employee }) => {
    const talons = useOperator((state) => state.talons);
@@ -53,10 +54,12 @@ const Navbar = ({ employee }) => {
                />
             </div>
             <div className={stlyes.avatarBlock}>
-               <Avatar size={45} icon />
+               <Avatar size={45} icon={<UserOutlined />} />
                <div className={stlyes.avatarChildBlock}>
                   <p>{employee?.username}</p>
-                  <p>Окно: {employee.window}</p>
+                  <p>
+                     {t('navbar.window')}: {employee.window}
+                  </p>
                </div>
             </div>
          </div>

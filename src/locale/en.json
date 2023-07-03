@@ -37,12 +37,18 @@
          "type": {
             "naturalPerson": "Natural person",
             "legalЕntity": "Legal entity"
+         },
+         "popover": {
+            "delete": "Delete",
+            "toStart": "Transfer to start",
+            "toEnd": "Transfer to end"
          }
       }
    },
    "navbar": {
       "queue": "Total",
-      "date": "Date"
+      "date": "Date",
+      "window": "Window"
    },
    "card": {
       "title1": "Clients per Day",
@@ -50,10 +56,16 @@
       "body": "More than Yesterday"
    },
    "sidebar": {
-      "popover": {
-         "profile": "Profile",
-         "settings": "Settings"
-      }
+      "profile": "Profile",
+      "settings": "Settings",
+      "employee": "Employee",
+      "name": "Name",
+      "position": "Position",
+      "status": "Status",
+      "service": "Service",
+      "window": "Window",
+      "shiftTime": "Shift Time",
+      "branch": "Branch"
    },
    "auth": {
       "placeholder": {
@@ -68,5 +80,10 @@
          "emailError": "Please enter an email!",
          "passwordError": "Please enter a password!"
       }
-   }
+   },
+   "button": {
+      "start": "Start maintenance",
+      "end": "Complete maintenance"
+   },
+   "now": "At the moment:"
 }

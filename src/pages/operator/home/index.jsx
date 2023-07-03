@@ -1,5 +1,6 @@
-import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 
 // Components & modules
 import MainLayout from '@/components/operator/UI/Layout';
@@ -19,24 +20,18 @@ import arrowRed from '@/assets/svg/arrowRed.svg';
 import alert from '@/assets/svg/1_6Alert.svg';
 import edit from '@/assets/svg/edit.svg';
 import deleteSvg from '@/assets/svg/delete.svg';
-import { useNavigate } from 'react-router';
 
 const HomePage = () => {
    // Store states & functions
    const getProfileInfo = useOperator((state) => state.getProfileInfo);
-
    const transferTalonToEnd = useOperator((state) => state.transferTalonToEnd);
    const transferTalonToStart = useOperator((state) => state.transferTalonToStart);
-
    const serviceEnd = useOperator((state) => state.serviceEnd);
    const serviceStart = useOperator((state) => state.serviceStart);
-
    const getTalons = useOperator((state) => state.getTalons);
    const deleteTalon = useOperator((state) => state.deleteTalon);
-
    const talons = useOperator((state) => state.talons);
    const employee = useOperator((state) => state.employee);
-
    const getTalonsLoading = useOperator((state) => state.getTalonsLoading);
    const getProfileInfoLoading = useOperator((state) => state.getProfileInfoLoading);
    const currentTalon = useOperator((state) => state.currentTalon);
@@ -71,7 +66,11 @@ const HomePage = () => {
       {
          title: <p className={styles.columnTitle}>{t('table.titles.registered_at')}</p>,
          dataIndex: 'registered_at',
-         render: (value) => <p className={styles.columnData}>{returnUnderstandableDate(value)}</p>,
+         render: (value) => (
+            <p className={styles.columnData} key={value.token}>
+               {returnUnderstandableDate(value)}
+            </p>
+         ),
       },
 
       {
@@ -182,7 +181,6 @@ const HomePage = () => {
    const antIcon = <LoadingOutlined style={{ fontSize: 54 }} spin />;
 
    // Handlers
-   // Delete
    const handleDeletetalon = async (talon) => {
       try {
          await deleteTalon(talon.token);
@@ -192,7 +190,6 @@ const HomePage = () => {
       }
    };
 
-   // Transfet to end
    const handleTransferToEnd = async (talon) => {
       await transferTalonToEnd(talon.token);
       await getTalons();
@@ -203,7 +200,7 @@ const HomePage = () => {
       await getTalons();
    };
 
-   // Start sevice
+   // Service operation
    const handleStart = async (token) => {
       await serviceStart(token);
       await getTalons();
@@ -211,7 +208,6 @@ const HomePage = () => {
       setIsStart(true);
    };
 
-   // Complite service
    const handleEnd = async (token) => {
       await serviceEnd(token);
       await getTalons();
@@ -219,29 +215,29 @@ const HomePage = () => {
       setIsStart(false);
    };
 
-   // Popover
+   // Popover's
    const content = (
       <div className={styles.popoverContent}>
          <img src={edit} alt='edit' />
          <img src={deleteSvg} alt='delet' />
       </div>
    );
+
    const tableContent = (talon) => (
       <div className={styles.tableContent}>
-         <div onClick={() => handleTransferToStart(talon)}>Перенести в начало</div>
-         <div onClick={() => handleTransferToEnd(talon)}>Перенести в конец</div>
-         <div onClick={() => handleDeletetalon(talon)}>Удалить</div>
+         <div onClick={() => handleTransferToStart(talon)}>{t('table.body.popover.toStart')}</div>
+         <div onClick={() => handleTransferToEnd(talon)}>{t('table.body.popover.toEnd')}</div>
+         <div onClick={() => handleDeletetalon(talon)}>{t('table.body.popover.delete')}</div>
       </div>
    );
 
-   // Timer fn's
-   // Start
+   // Timer
    const startStopwatch = () => {
       ShowMessage('loading', 'Началось время обслуживания', 8);
+
       setIsRunning(true);
    };
 
-   // Stop
    const stopStopwatch = () => {
       ShowMessage('success', 'Обслуживание  завершилось');
 
@@ -249,16 +245,11 @@ const HomePage = () => {
       setSeconds(0);
    };
 
-   // Rest
-   const resetStopwatch = () => {
-      setSeconds(0);
-   };
-
    // Effects
    // Fetch data
    useEffect(() => {
       getTalons();
-      getProfileInfo();
+      getProfileInfo(JSON.parse(localStorage.getItem('email')));
 
       if (!JSON.parse(localStorage.getItem('token'))) {
          navigate('/');
@@ -283,8 +274,6 @@ const HomePage = () => {
       } else {
          clearInterval(interval);
       }
-
-      console.log('useEffect is working');
 
       return () => clearInterval(interval);
    }, [isRunning]);
@@ -361,7 +350,7 @@ const HomePage = () => {
                </div>
 
                <div className={styles.currentTalonBlock}>
-                  <p>Сейчас:</p>
+                  <p>{t('now')}</p>
                   <ul>
                      <li>{currentTalon?.token}</li>
                      <li>{returnUnderstandableDate(currentTalon?.registered_at)}</li>
@@ -375,14 +364,14 @@ const HomePage = () => {
                         style={{ backgroundColor: isStart ? '#A5A5A5' : ' #136E37' }}
                         disabled={isStart}
                      >
-                        Начать обслуживание
+                        {t('button.start')}
                      </button>
                      <button
                         disabled={!isStart}
                         onClick={() => handleEnd(currentTalon?.token)}
                         style={{ backgroundColor: isStart ? '#136E37' : '#A5A5A5' }}
                      >
-                        Завершить обслуживание
+                        {t('button.end')}
                      </button>
                   </div>
                </div>
@@ -390,7 +379,10 @@ const HomePage = () => {
 
             <Table
                loading={getTalonsLoading}
-               dataSource={talons}
+               dataSource={talons.map((item, index) => ({
+                  ...item,
+                  key: index,
+               }))}
                columns={columns}
                scroll={{ x: 1300 }}
                title={() => (

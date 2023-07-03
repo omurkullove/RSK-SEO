@@ -3,7 +3,7 @@ import { API, ShowMessage } from '@/utils/utils';
 import axios from 'axios';
 
 export const useOperator = create((set, get) => ({
-   email: JSON.parse(localStorage.getItem('email')) || '',
+   email: {},
    errors: [],
    token: JSON.parse(localStorage.getItem('token')) || {},
    talons: [],
@@ -58,10 +58,10 @@ export const useOperator = create((set, get) => ({
       }
    },
 
-   getProfileInfo: async () => {
+   getProfileInfo: async (email) => {
       set({ getProfileInfoLoading: true });
       try {
-         const res = await axios.get(`${API}/employee/retrieve/${get().email}/`, {
+         const res = await axios.get(`${API}/employee/retrieve/${email}/`, {
             headers: {
                Authorization: `Bearer ${get().token.access}`,
             },

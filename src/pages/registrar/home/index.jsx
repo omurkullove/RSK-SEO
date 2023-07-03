@@ -19,7 +19,7 @@ import Navbar from '@/components/operator/UI/Navbar';
 import { calculateTimeDifference, formatTime, returnUnderstandableDate } from '@/utils/utils';
 import { useRegistrar } from '@/services/registrarStore';
 
-const HomePage = () => {
+const RegistrarHome = () => {
    const { t } = useTranslation();
    const [modalActive, setModalActive] = useState(false);
 
@@ -313,4 +313,4 @@ const HomePage = () => {
    );
 };
 
-export default HomePage;
+export default RegistrarHome;
