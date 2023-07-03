@@ -46,3 +46,19 @@ export const formatTime = (time) => {
 
    return `${formattedMinutes}:${formattedSeconds}`;
 };
+
+export const clientsCounter = (today, yesterday) => {
+   const completedToday = +today?.completed;
+   const completedYesterday = +yesterday?.completed;
+   const res = completedToday - completedYesterday;
+
+   return res.toString();
+};
+
+export const canceledClientsCounter = (today, yesterday) => {
+   const canceledToday = +today?.canceled;
+   const canseledYesterday = +yesterday?.canceled;
+   const res = canceledToday - canseledYesterday;
+
+   return res.toString();
+};

@@ -8,7 +8,14 @@ import Navbar from '@/components/operator/UI/Navbar';
 import { useOperator } from '@/services/operatorStore';
 
 // Utils
-import { ShowMessage, formatTime, returnUnderstandableDate, timeLimitSeconds } from '@/utils/utils';
+import {
+   ShowMessage,
+   canceledClientsCounter,
+   clientsCounter,
+   formatTime,
+   returnUnderstandableDate,
+   timeLimitSeconds,
+} from '@/utils/utils';
 
 // UI
 import { Popover, Table, Spin, Statistic } from 'antd';
@@ -35,6 +42,7 @@ const HomePage = () => {
    const getTalonsLoading = useOperator((state) => state.getTalonsLoading);
    const getProfileInfoLoading = useOperator((state) => state.getProfileInfoLoading);
    const currentTalon = useOperator((state) => state.currentTalon);
+   const clients_per_day = useOperator((state) => state.clients_per_day);
 
    // Vanilla states
    const [isRunning, setIsRunning] = useState(false);
@@ -184,6 +192,7 @@ const HomePage = () => {
    const handleDeletetalon = async (talon) => {
       try {
          await deleteTalon(talon.token);
+         console.log(talon);
          await getTalons();
       } catch (error) {
          console.log(error);
@@ -314,12 +323,14 @@ const HomePage = () => {
                      <div className={styles.body}>
                         <div>
                            <img src={arrowGreen} alt='arrow' />
-                           <span>3</span>
+                           <span>
+                              {clientsCounter(clients_per_day?.today, clients_per_day?.yesterday)}
+                           </span>
                         </div>
                         <p>{t('card.body')}</p>
                      </div>
                      <div className={styles.footer}>
-                        <p>16</p>
+                        <p>{clients_per_day?.today?.completed}</p>
                      </div>
                   </div>
                   <div className={styles.card2}>
@@ -339,12 +350,17 @@ const HomePage = () => {
                      <div className={styles.body}>
                         <div>
                            <img src={arrowRed} alt='arrow' />
-                           <span>1</span>
+                           <span>
+                              {canceledClientsCounter(
+                                 clients_per_day?.today,
+                                 clients_per_day?.yesterday
+                              )}
+                           </span>
                         </div>
                         <p>{t('card.body')}</p>
                      </div>
                      <div className={styles.footer}>
-                        <p>4</p>
+                        <p>{clients_per_day?.today?.canceled}</p>
                      </div>
                   </div>
                </div>

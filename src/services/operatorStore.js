@@ -9,6 +9,7 @@ export const useOperator = create((set, get) => ({
    talons: [],
    employee: {},
    currentTalon: {},
+   clients_per_day: {},
 
    loginLoading: false,
    getTalonsLoading: false,
@@ -49,8 +50,9 @@ export const useOperator = create((set, get) => ({
                Authorization: `Bearer ${get().token.access}`,
             },
          });
-         set({ talons: res.data });
-         set({ currentTalon: res.data[0] });
+         set({ talons: res.data.talons });
+         set({ clients_per_day: res.data.clients_per_day });
+         set({ currentTalon: res.data.talons[0] });
       } catch (err) {
          set({ errors: err });
       } finally {
@@ -88,6 +90,7 @@ export const useOperator = create((set, get) => ({
          set({ getTalonsLoading: false });
       }
    },
+
    transferTalonToStart: async (id) => {
       set({ getTalonsLoading: true });
       try {
@@ -102,6 +105,7 @@ export const useOperator = create((set, get) => ({
          set({ getTalonsLoading: false });
       }
    },
+
    deleteTalon: async (id) => {
       set({ getTalonsLoading: true });
       try {
@@ -116,6 +120,7 @@ export const useOperator = create((set, get) => ({
          set({ getTalonsLoading: false });
       }
    },
+
    serviceStart: async (id) => {
       set({ getTalonsLoading: true });
       try {
@@ -130,6 +135,7 @@ export const useOperator = create((set, get) => ({
          set({ getTalonsLoading: false });
       }
    },
+
    serviceEnd: async (id) => {
       set({ getTalonsLoading: true });
       try {
