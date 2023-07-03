@@ -82,8 +82,20 @@ export const useOperator = create((set, get) => ({
                Authorization: `Bearer ${get().token.access}`,
             },
          });
-
-         set({ get });
+      } catch (err) {
+         set({ errors: err });
+      } finally {
+         set({ getTalonsLoading: false });
+      }
+   },
+   transferTalonToStart: async (id) => {
+      set({ getTalonsLoading: true });
+      try {
+         const res = await axios.get(`${API}/talon/start/${id}/`, {
+            headers: {
+               Authorization: `Bearer ${get().token.access}`,
+            },
+         });
       } catch (err) {
          set({ errors: err });
       } finally {
@@ -98,7 +110,6 @@ export const useOperator = create((set, get) => ({
                Authorization: `Bearer ${get().token.access}`,
             },
          });
-         set({ get });
       } catch (err) {
          set({ errors: err });
       } finally {

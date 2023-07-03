@@ -19,12 +19,14 @@ import arrowRed from '@/assets/svg/arrowRed.svg';
 import alert from '@/assets/svg/1_6Alert.svg';
 import edit from '@/assets/svg/edit.svg';
 import deleteSvg from '@/assets/svg/delete.svg';
+import { useNavigate } from 'react-router';
 
 const HomePage = () => {
    // Store states & functions
    const getProfileInfo = useOperator((state) => state.getProfileInfo);
 
    const transferTalonToEnd = useOperator((state) => state.transferTalonToEnd);
+   const transferTalonToStart = useOperator((state) => state.transferTalonToStart);
 
    const serviceEnd = useOperator((state) => state.serviceEnd);
    const serviceStart = useOperator((state) => state.serviceStart);
@@ -43,6 +45,8 @@ const HomePage = () => {
    const [isRunning, setIsRunning] = useState(false);
    const [seconds, setSeconds] = useState(0);
    const [isStart, setIsStart] = useState(false);
+
+   const navigate = useNavigate();
 
    // Locale
    const { t } = useTranslation();
@@ -88,6 +92,7 @@ const HomePage = () => {
                   return <p className={styles.columnData}>{t('table.body.type.legalЕntity')}</p>;
 
                default:
+                  return <p className={styles.columnData}>{value}</p>;
                   break;
             }
          },
@@ -96,9 +101,7 @@ const HomePage = () => {
          title: <p className={styles.columnTitle}>{t('table.titles.service')}</p>,
          dataIndex: 'service',
 
-         render: (value) => (
-            <p className={styles.columnData}>{t('table.body.service.CreditFinancing')}</p>
-         ),
+         render: (value) => <p className={styles.columnData}>{value}</p>,
       },
 
       {
@@ -112,7 +115,6 @@ const HomePage = () => {
                         {t('table.body.status.inProgress')}
                      </p>
                   );
-                  break;
                case 'waiting':
                   return (
                      <p className={styles.columnDataStatus} style={{ color: '#848484' }}>
@@ -120,15 +122,12 @@ const HomePage = () => {
                      </p>
                   );
 
-                  break;
                case 'complited':
                   return (
                      <p className={styles.columnDataStatus} style={{ color: '#2E6C47' }}>
                         {t('table.body.status.completed')}
                      </p>
                   );
-
-                  break;
 
                default:
                   break;
@@ -194,8 +193,13 @@ const HomePage = () => {
    };
 
    // Transfet to end
-   const handleTransfertalon = async (talon) => {
+   const handleTransferToEnd = async (talon) => {
       await transferTalonToEnd(talon.token);
+      await getTalons();
+   };
+
+   const handleTransferToStart = async (talon) => {
+      await transferTalonToStart(talon.token);
       await getTalons();
    };
 
@@ -224,7 +228,8 @@ const HomePage = () => {
    );
    const tableContent = (talon) => (
       <div className={styles.tableContent}>
-         <div onClick={() => handleTransfertalon(talon)}>Перенести</div>
+         <div onClick={() => handleTransferToStart(talon)}>Перенести в начало</div>
+         <div onClick={() => handleTransferToEnd(talon)}>Перенести в конец</div>
          <div onClick={() => handleDeletetalon(talon)}>Удалить</div>
       </div>
    );
@@ -254,11 +259,15 @@ const HomePage = () => {
    useEffect(() => {
       getTalons();
       getProfileInfo();
+
+      if (!JSON.parse(localStorage.getItem('token'))) {
+         navigate('/');
+      }
    }, []);
 
    // Message indicator
    useEffect(() => {
-      if (employee) {
+      if (employee && JSON.parse(localStorage.getItem('token'))) {
          ShowMessage('success', 'Вы успешно зашли на аккаунт');
       }
    }, []);

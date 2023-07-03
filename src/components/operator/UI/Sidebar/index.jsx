@@ -1,44 +1,112 @@
 import React, { useState } from 'react';
-import stlyes from '@/assets/styles/operator/Sidebar.module.scss';
+import styles from '@/assets/styles/operator/Sidebar.module.scss';
 
-import userSVG from '@/assets/svg/sideUser.svg';
-import settingSVG from '@/assets/svg/sideSet.svg';
 import { Image, Input, Menu, Popover } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Sider from 'antd/es/layout/Sider';
-import { UserOutlined, SettingOutlined, HomeOutlined } from '@ant-design/icons';
+import {
+   UserOutlined,
+   SettingOutlined,
+   HomeOutlined,
+   CaretDownOutlined,
+   DownOutlined,
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router';
+import { useOperator } from '@/services/operatorStore';
 
 const Sidebar = () => {
    const navigate = useNavigate();
 
-   const { t } = useTranslation();
-   function getItem(label, key, icon) {
-      return {
-         key,
-         icon,
-         label,
-      };
-   }
-
-   const SIDE_ICONS = [
-      getItem(
-         t('sidebar.popover.profile'),
-         '1',
-         <UserOutlined style={{ fontSize: '20px', color: 'white' }} />
-      ),
-      getItem(
-         t('sidebar.popover.settings'),
-         '2',
-         <SettingOutlined style={{ fontSize: '20px', color: 'white' }} />
-      ),
-   ];
+   const employee = useOperator((state) => state.employee);
 
    const [collapsed, setCollapsed] = useState(true);
 
+   const { t } = useTranslation();
+
+   const ITEMS = [
+      {
+         title: 'Пользователь',
+         label: 'Сотрудник',
+         key: 123,
+         icon: <UserOutlined style={{ fontSize: '20px', color: 'white' }} />,
+         children: [
+            {
+               key: 1,
+               label: (
+                  <div className={styles.childrenBlock}>
+                     <label>
+                        Имя
+                        <div>{employee?.username}</div>
+                     </label>
+                  </div>
+               ),
+               type: 'group',
+            },
+            {
+               key: 2,
+               label: (
+                  <div className={styles.childrenBlock}>
+                     <label>
+                        Должность
+                        <div>{employee?.position === 'registrar' ? 'Регистратор' : 'Оператор'}</div>
+                     </label>
+                  </div>
+               ),
+               type: 'group',
+            },
+            {
+               key: 3,
+               label: (
+                  <div className={styles.childrenBlock}>
+                     <label>
+                        Статус
+                        <div>{employee?.status === 'active' ? 'Активный' : 'Не активный'}</div>
+                     </label>
+                  </div>
+               ),
+               type: 'group',
+            },
+            {
+               key: 4,
+               label: (
+                  <div className={styles.childrenBlock}>
+                     <label>
+                        Услуга
+                        <div>
+                           {employee?.service?.map((item) => (
+                              <p key={item?.id}>{item?.name}</p>
+                           ))}
+                        </div>
+                     </label>
+                  </div>
+               ),
+               type: 'group',
+            },
+            {
+               key: 5,
+               label: (
+                  <div className={styles.childrenBlock}>
+                     <label>
+                        Окно
+                        <div>№{employee?.window}</div>
+                     </label>
+                  </div>
+               ),
+               type: 'group',
+            },
+         ],
+      },
+      {
+         key: 2,
+         icon: <SettingOutlined style={{ fontSize: '20px', color: 'white' }} />,
+         label: 'Настройки',
+         // children: [],
+      },
+   ];
+
    return (
       <Sider
-         width={400}
+         width={350}
          collapsible
          collapsed={collapsed}
          onCollapse={setCollapsed}
@@ -51,11 +119,15 @@ const Sidebar = () => {
          }}
       >
          <Menu
-            defaultSelectedKeys={1}
+            triggerSubMenuAction=''
             className='custom-menu'
             mode='inline'
             onClick={() => setCollapsed(!collapsed)}
-            items={SIDE_ICONS}
+            items={ITEMS}
+            subMenuOpenDelay={0.5}
+            expandIcon={({ isOpen }) => (
+               <DownOutlined style={{ color: 'white' }} rotate={isOpen ? 0 : 180} />
+            )}
          />
       </Sider>
    );

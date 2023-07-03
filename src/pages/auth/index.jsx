@@ -24,6 +24,7 @@ const AuthPage = () => {
 
    useEffect(() => {
       localStorage.removeItem('token');
+      localStorage.removeItem('email');
    }, []);
 
    const login = useOperator((state) => state.login);

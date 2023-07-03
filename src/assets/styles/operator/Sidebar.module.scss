@@ -1,3 +1,5 @@
+@import '../variables.scss';
+
 .main {
    display: flex;
    flex-direction: column;
@@ -5,4 +7,29 @@
    background-color: #1e4a89;
    padding-inline: 20px;
    padding-top: 29px;
+}
+
+.childrenBlock {
+   background-color: #1e4a89;
+   color: #fff;
+   font-size: 15px;
+   font-family: $Inter;
+   font-style: normal;
+   font-weight: 600;
+   line-height: 20px;
+   overflow-x: hidden;
+
+   div {
+      transition: 1s;
+      -webkit-transition: 1s;
+      -moz-transition: 1s;
+      -ms-transition: 1s;
+      -o-transition: 1s;
+      display: flex;
+      align-items: center;
+      overflow-x: hidden;
+      padding: 10px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.2);
+   }
 }

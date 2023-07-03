@@ -187,3 +187,168 @@
          <div>123</div>
          <div>123</div>
       </Sider>
+
+      import React, { useState } from 'react';
+import styles from '@/assets/styles/operator/Sidebar.module.scss';
+
+import { Image, Input, Menu, Popover } from 'antd';
+import { useTranslation } from 'react-i18next';
+import Sider from 'antd/es/layout/Sider';
+import { UserOutlined, SettingOutlined, HomeOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router';
+
+const Sidebar = () => {
+   const navigate = useNavigate();
+
+   const [collapsed, setCollapsed] = useState(true);
+
+   const { t } = useTranslation();
+   function getItem(label, key, icon, children) {
+      return {
+         key,
+         icon,
+         label,
+         children,
+      };
+   }
+   const items = [
+      {
+         key: '1',
+         title: 'Custom Item',
+         icon: <UserOutlined />,
+         customChild: <span>Custom Child</span>,
+      },
+      {
+         key: '2',
+         title: 'Menu Item 2',
+      },
+      {
+         key: '3',
+         title: 'Menu Item 3',
+      },
+   ];
+
+   const ITEMS = [
+      {
+         key: 1,
+         label: 'User',
+         icon: <UserOutlined style={{ fontSize: '20px', color: 'white' }} />,
+         onClick: setCollapsed(!collapsed),
+
+         children: [
+            {
+               key: 1,
+               label: (
+                  <div className={styles.childrenBlock}>
+                     <label>
+                        Bvz
+                        <div>asdf</div>
+                     </label>
+                  </div>
+               ),
+               type: 'group',
+            },
+            {
+               key: 2,
+               label: (
+                  <div className={styles.childrenBlock}>
+                     <label>
+                        Bvz
+                        <div>asdf</div>
+                     </label>
+                  </div>
+               ),
+               type: 'group',
+            },
+            {
+               key: 3,
+               label: (
+                  <div className={styles.childrenBlock}>
+                     <label>
+                        Bvz
+                        <div>asdf</div>
+                     </label>
+                  </div>
+               ),
+               type: 'group',
+            },
+            {
+               key: 4,
+               label: (
+                  <div className={styles.childrenBlock}>
+                     <label>
+                        Bvz
+                        <div>asdf</div>
+                     </label>
+                  </div>
+               ),
+               type: 'group',
+            },
+            {
+               key: 5,
+               label: (
+                  <div className={styles.childrenBlock}>
+                     <label>
+                        Bvz
+                        <div>asdf</div>
+                     </label>
+                  </div>
+               ),
+               type: 'group',
+            },
+         ],
+      },
+      {
+         key: 2,
+         icon: <SettingOutlined style={{ fontSize: '20px', color: 'white' }} />,
+         label: 'settings',
+         // children: [],
+      },
+   ];
+
+   // const SIDE_ICONS = [
+   //    getItem(
+   //       t('sidebar.popover.profile'),
+   //       '1',
+   //       <UserOutlined style={{ fontSize: '20px', color: 'white' }} />,
+   //       [
+   //          getItem('element 1', '1'),
+   //          getItem('element 2', '2'),
+   //          getItem('element 3', '3'),
+   //          getItem('element 4', '4'),
+   //       ]
+   //    ),
+   //    getItem(
+   //       t('sidebar.popover.settings'),
+   //       '2',
+   //       <SettingOutlined style={{ fontSize: '20px', color: 'white' }} />
+   //    ),
+   // ];
+
+   return (
+      <Sider
+         width={350}
+         collapsible
+         collapsed={collapsed}
+         onCollapse={setCollapsed}
+         trigger={null}
+         style={{
+            height: '100vh',
+            minHeight: '100%',
+            overflow: 'auto',
+            backgroundColor: '#1e4a89',
+         }}
+      >
+         <Menu
+            className='custom-menu'
+            mode='inline'
+            onClick={() => setCollapsed(!collapsed)}
+            items={ITEMS}
+            triggerSubMenuAction='hover'
+            itemType='SubMenuType'
+         />
+      </Sider>
+   );
+};
+
+export default Sidebar;
