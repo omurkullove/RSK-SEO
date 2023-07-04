@@ -3,23 +3,17 @@ import stlyes from '@/assets/styles/operator/Navbar.module.scss';
 import { Avatar } from 'antd';
 import { useTranslation } from 'react-i18next';
 import navLogo from '@/assets/svg/navLogo.svg';
-import kg from '@/assets/svg/kg.svg';
-import en from '@/assets/svg/en.svg';
-import ru from '@/assets/svg/ru.svg';
+
 import { useOperator } from '@/services/operatorStore';
 import { UserOutlined } from '@ant-design/icons';
 
 const Navbar = ({ employee }) => {
    const talons = useOperator((state) => state.talons);
 
-   const { t, i18n } = useTranslation();
-   const [lang, setLang] = useState('ru');
-   const [date, setDate] = useState('');
+   const isDarkMode = useOperator((state) => state.isDarkMode);
 
-   const handleChangeLanguage = (language) => {
-      i18n.changeLanguage(language);
-      setLang(language);
-   };
+   const { t, i18n } = useTranslation();
+   const [date, setDate] = useState('');
 
    const getDate = () => {
       const date = new Date();
@@ -30,44 +24,26 @@ const Navbar = ({ employee }) => {
    }, []);
 
    return (
-      <div className={stlyes.main}>
+      <div className={stlyes.main} style={{ backgroundColor: isDarkMode && '#455E83' }}>
          <div className={stlyes.head}>
             <div className={stlyes.block1}>
                <img src={navLogo} alt='logo' />
-               <img
-                  src={kg}
-                  alt='kg'
-                  onClick={() => handleChangeLanguage('kg')}
-                  style={{ cursor: 'pointer' }}
-               />
-               <img
-                  src={ru}
-                  alt='ru'
-                  onClick={() => handleChangeLanguage('ru')}
-                  style={{ cursor: 'pointer' }}
-               />
-               <img
-                  src={en}
-                  alt='en'
-                  onClick={() => handleChangeLanguage('en')}
-                  style={{ cursor: 'pointer' }}
-               />
             </div>
             <div className={stlyes.avatarBlock}>
                <Avatar size={45} icon={<UserOutlined />} />
                <div className={stlyes.avatarChildBlock}>
-                  <p>{employee?.username}</p>
-                  <p>
+                  <p style={{ color: isDarkMode && 'white' }}>{employee?.username}</p>
+                  <p style={{ color: isDarkMode && '#92BFFF' }}>
                      {t('navbar.window')}: {employee.window}
                   </p>
                </div>
             </div>
          </div>
          <div className={stlyes.footer}>
-            <p>
+            <p style={{ color: isDarkMode && 'white' }}>
                {t('navbar.queue')}: {talons ? talons.length : 'Нет данных'}
             </p>
-            <p>
+            <p style={{ color: isDarkMode && 'white' }}>
                {t('navbar.date')}: {date}
             </p>
          </div>

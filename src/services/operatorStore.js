@@ -11,6 +11,8 @@ export const useOperator = create((set, get) => ({
    currentTalon: {},
    clients_per_day: {},
 
+   isDarkMode: false,
+
    loginLoading: false,
    getTalonsLoading: false,
    getProfileInfoLoading: false,
@@ -149,5 +151,8 @@ export const useOperator = create((set, get) => ({
       } finally {
          set({ getTalonsLoading: false });
       }
+   },
+   toggleDarkMode: (checked) => {
+      set({ isDarkMode: checked });
    },
 }));

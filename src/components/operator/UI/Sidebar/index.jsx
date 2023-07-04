@@ -3,7 +3,11 @@ import styles from '@/assets/styles/operator/Sidebar.module.scss';
 
 import { Image, Input, Menu, Popover } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { Switch } from 'antd';
 import Sider from 'antd/es/layout/Sider';
+import kg from '@/assets/svg/kg.svg';
+import en from '@/assets/svg/en.svg';
+import ru from '@/assets/svg/ru.svg';
 import {
    UserOutlined,
    SettingOutlined,
@@ -21,7 +25,14 @@ const Sidebar = () => {
 
    const [collapsed, setCollapsed] = useState(true);
 
-   const { t } = useTranslation();
+   const { t, i18n } = useTranslation();
+
+   const toggleDarkMode = useOperator((state) => state.toggleDarkMode);
+   const isDarkMode = useOperator((state) => state.isDarkMode);
+
+   const onChange = (checked) => {
+      toggleDarkMode(checked);
+   };
 
    const branchIndeficator = (branch) => {
       switch (branch) {
@@ -34,6 +45,12 @@ const Sidebar = () => {
          default:
             return { branch };
       }
+   };
+
+   const [lang, setLang] = useState('ru');
+   const handleChangeLanguage = (language) => {
+      i18n.changeLanguage(language);
+      setLang(language);
    };
 
    const ITEMS = [
@@ -138,7 +155,51 @@ const Sidebar = () => {
          key: 9,
          icon: <SettingOutlined style={{ fontSize: '20px', color: 'white' }} />,
          label: t('sidebar.settings'),
-         // children: [],
+         children: [
+            {
+               key: 10,
+               type: 'group',
+               label: (
+                  <label className={styles.langlable}>
+                     Выберите язык
+                     <div onClick={() => handleChangeLanguage('kg')}>
+                        <img src={kg} />
+                        <p>Кыргызча</p>
+                     </div>
+                  </label>
+               ),
+            },
+            {
+               key: 11,
+               type: 'group',
+               label: (
+                  <div className={styles.langBlock} onClick={() => handleChangeLanguage('ru')}>
+                     <img src={ru} alt='ru' />
+                     <p>Русский</p>
+                  </div>
+               ),
+            },
+            {
+               key: 12,
+               type: 'group',
+               label: (
+                  <div className={styles.langBlock} onClick={() => handleChangeLanguage('en')}>
+                     <img src={en} alt='en' />
+                     <p>English</p>
+                  </div>
+               ),
+            },
+            {
+               key: 13,
+               type: 'group',
+               label: (
+                  <div className={styles.switchBlock}>
+                     Ночная тема
+                     <Switch onChange={onChange} checked={isDarkMode} />
+                  </div>
+               ),
+            },
+         ],
       },
    ];
 
@@ -155,13 +216,16 @@ const Sidebar = () => {
             height: '100vh',
             minHeight: '100%',
             overflow: 'auto',
-            backgroundColor: '#1e4a89',
+            backgroundColor: isDarkMode ? '#001F31' : '#1e4a89',
             zIndex: 999,
          }}
       >
          <Menu
             triggerSubMenuAction=''
             className='custom-menu'
+            style={{
+               backgroundColor: isDarkMode ? '#001F31' : '#1e4a89',
+            }}
             mode='inline'
             items={ITEMS}
             subMenuOpenDelay={0.5}
