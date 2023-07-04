@@ -4,17 +4,14 @@ import axios from 'axios';
 import { create } from 'zustand';
 
 export const useRegistrar = create((set, get) => ({
-   // Я особо не стал трогать твой store, здесь сам по ТЗ
-
-   email: JSON.parse(localStorage.getItem('email')) || '',
    errors: [],
    token: JSON.parse(localStorage.getItem('token')) || {},
    talons: [],
    employee: {},
+   clients_per_day: {},
 
    loginLoading: false,
    getTalonsLoading: false,
-   getProfileInfoLoading: false,
    talons: [],
 
    getTalons: async () => {
@@ -29,21 +26,6 @@ export const useRegistrar = create((set, get) => ({
          console.log(error, ' <<<<<Ошибка при получений данных');
       } finally {
          set({ getTalonsLoading: false });
-      }
-   },
-   getProfileInfo: async (email) => {
-      set({ getProfileInfoLoading: true });
-      try {
-         const res = await axios.get(`${API}/employee/retrieve/${email}/`, {
-            headers: {
-               Authorization: `Bearer ${get().token.access}`,
-            },
-         });
-         set({ employee: res.data });
-      } catch (err) {
-         set({ errors: err });
-      } finally {
-         set({ getProfileInfoLoading: false });
       }
    },
 

@@ -15,7 +15,8 @@
          "status": {
             "completed": "Completed",
             "inProgress": "In Progress",
-            "expected": "Expected"
+            "expected": "Expected",
+            "cancelled": "Cancelled"
          },
          "serviceTime": {
             "min": "min"

@@ -17,11 +17,12 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
 import { useOperator } from '@/services/operatorStore';
+import { useMain } from '@/services/MainStore';
 
 const Sidebar = () => {
    const navigate = useNavigate();
 
-   const employee = useOperator((state) => state.employee);
+   const employee = useMain((state) => state.employee);
 
    const [collapsed, setCollapsed] = useState(true);
 

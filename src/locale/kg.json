@@ -15,7 +15,8 @@
          "status": {
             "completed": "Аякталды",
             "inProgress": "Жүргүзүлүүдө",
-            "expected": "Күтүлүүдө"
+            "expected": "Күтүлүүдө",
+            "cancelled": "Жокко чыгарылды"
          },
          "serviceTime": {
             "min": "мүнөт"

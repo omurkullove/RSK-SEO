@@ -20,14 +20,16 @@ import { calculateTimeDifference } from '@/utils/utils';
 import { useRegistrar } from '@/services/registrarStore';
 import { useNavigate } from 'react-router';
 import { useOperator } from '@/services/operatorStore';
+import { useMain } from '@/services/MainStore';
 
 const RegistrarHome = () => {
    const [searchValue, setSearchValue] = useState('1');
    const { t } = useTranslation();
    const [modalActive, setModalActive] = useState(false);
-   const employee = useRegistrar((state) => state.employee);
-   const getProfileInfo = useOperator((state) => state.getProfileInfo);
-   const getProfileInfoLoading = useRegistrar((state) => state.getProfileInfoLoading);
+
+   const employee = useMain((state) => state.employee);
+   const getProfileInfo = useMain((state) => state.getProfileInfo);
+   const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);
 
    console.log(searchValue, 'Input');
 
@@ -78,12 +80,12 @@ const RegistrarHome = () => {
          dataIndex: 'client_type',
          render: (value) => {
             switch (value) {
-               case 'Физ. лицо':
+               case 'Физ.лицо':
                   return <p className={styles.columnData}>{t('table.body.type.naturalPerson')}</p>;
-               case 'Юр. лицо':
+               case 'Юр.лицо':
                   return <p className={styles.columnData}>{t('table.body.type.legalЕntity')}</p>;
                default:
-                  return null;
+                  return <p className={styles.columnData}>{value}</p>;
             }
          },
       },
@@ -93,21 +95,39 @@ const RegistrarHome = () => {
          render: (value) => {
             switch (value) {
                case 1:
-                  return <p className={styles.columnData}>Кредитование</p>;
+                  return (
+                     <p className={styles.columnData}>{t('table.body.service.CreditFinancing')}</p>
+                  );
                case 2:
-                  return <p className={styles.columnData}>Обмен валют</p>;
+                  return (
+                     <p className={styles.columnData}>{t('table.body.service.CurrencyExchange')}</p>
+                  );
                case 3:
-                  return <p className={styles.columnData}>Денежные переводы</p>;
+                  return (
+                     <p className={styles.columnData}>{t('table.body.service.MoneyTransfers')}</p>
+                  );
                case 4:
-                  return <p className={styles.columnData}>Выпуск карты</p>;
+                  return (
+                     <p className={styles.columnData}>{t('table.body.service.CardIssuance')}</p>
+                  );
                case 5:
-                  return <p className={styles.columnData}>Получить перевод</p>;
+                  return (
+                     <p className={styles.columnData}>{t('table.body.service.ReceiveTransfer')}</p>
+                  );
                case 6:
-                  return <p className={styles.columnData}>Открыть счет</p>;
+                  return (
+                     <p className={styles.columnData}>{t('table.body.service.OpenAnAccount')}</p>
+                  );
                case 7:
-                  return <p className={styles.columnData}>Операции с ценными бумагами</p>;
+                  return (
+                     <p className={styles.columnData}>
+                        {t('table.body.service.SecuritiesOperations')}
+                     </p>
+                  );
                case 8:
-                  return <p className={styles.columnData}>Исламское финансирование</p>;
+                  return (
+                     <p className={styles.columnData}>{t('table.body.service.IslamicFinancing')}</p>
+                  );
                default:
                   return null;
             }
@@ -143,8 +163,8 @@ const RegistrarHome = () => {
                   );
                case 'canceled':
                   return (
-                     <p className={styles.columnDataStatus} style={{ color: 'red' }}>
-                        Отменен
+                     <p className={styles.columnDataStatus} style={{ color: '#B5051E' }}>
+                        {t('table.body.status.cancelled')}
                      </p>
                   );
                default:
@@ -158,7 +178,7 @@ const RegistrarHome = () => {
          render: (value, talon, index) => {
             return (
                <div className={styles.columnServiceBlock}>
-                  {talon?.status === 'completed' ? (
+                  {talon?.status === 'complited' ? (
                      <>
                         <p
                            className={styles.columnData}
@@ -170,7 +190,8 @@ const RegistrarHome = () => {
                                     : '#2E6C47',
                            }}
                         >
-                           {calculateTimeDifference(talon?.service_start, talon?.service_end)} мин
+                           {calculateTimeDifference(talon?.service_start, talon?.service_end)}{' '}
+                           {t('table.body.serviceTime.min')}
                         </p>
                         {calculateTimeDifference(talon?.service_start, talon?.service_end) > 3 &&
                         talon?.service_end ? (
@@ -315,6 +336,9 @@ const RegistrarHome = () => {
             </div>
 
             <Table
+               style={{
+                  marginBottom: '50px',
+               }}
                loading={getTalonsLoading}
                dataSource={filteredTalons}
                columns={columns.filter((column) => column.title)}

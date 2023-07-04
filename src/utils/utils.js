@@ -62,3 +62,10 @@ export const canceledClientsCounter = (today, yesterday) => {
 
    return res.toString();
 };
+
+export const isEmpty = (obj) => {
+   if (Object.keys(obj).length == 0) {
+      return false;
+   }
+   return true;
+};

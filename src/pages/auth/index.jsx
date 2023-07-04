@@ -12,6 +12,8 @@ import kg from '@/assets/svg/kg.svg';
 import en from '@/assets/svg/en.svg';
 import ru from '@/assets/svg/ru.svg';
 import { useTranslation } from 'react-i18next';
+import { useMain } from '@/services/MainStore';
+import { ShowMessage } from '@/utils/utils';
 
 const AuthPage = () => {
    const navigate = useNavigate();
@@ -28,7 +30,7 @@ const AuthPage = () => {
       localStorage.removeItem('email');
    }, []);
 
-   const login = useOperator((state) => state.login);
+   const login = useMain((state) => state.login);
 
    const hanldeLogin = async (values) => {
       await login(values, navigate);
@@ -108,7 +110,16 @@ const AuthPage = () => {
                         marginTop: '-20px',
                      }}
                   >
-                     <Link to='#' className={styles.link}>
+                     <Link
+                        to='#'
+                        className={styles.link}
+                        onClick={() =>
+                           ShowMessage(
+                              'warning',
+                              'Для восстановления пароля обратитесь к администратору'
+                           )
+                        }
+                     >
                         {t('auth.forgetPassword')}
                      </Link>
                   </Form.Item>

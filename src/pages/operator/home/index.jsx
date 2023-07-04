@@ -13,6 +13,7 @@ import {
    canceledClientsCounter,
    clientsCounter,
    formatTime,
+   isEmpty,
    returnUnderstandableDate,
    timeLimitSeconds,
 } from '@/utils/utils';
@@ -33,10 +34,10 @@ import darkModeAlert from '@/assets/svg/darkModeAlert.svg';
 
 import edit from '@/assets/svg/edit.svg';
 import deleteSvg from '@/assets/svg/delete.svg';
+import { useMain } from '@/services/MainStore';
 
 const HomePage = () => {
    // Store states & functions
-   const getProfileInfo = useOperator((state) => state.getProfileInfo);
    const transferTalonToEnd = useOperator((state) => state.transferTalonToEnd);
    const transferTalonToStart = useOperator((state) => state.transferTalonToStart);
    const serviceEnd = useOperator((state) => state.serviceEnd);
@@ -44,12 +45,14 @@ const HomePage = () => {
    const getTalons = useOperator((state) => state.getTalons);
    const deleteTalon = useOperator((state) => state.deleteTalon);
    const talons = useOperator((state) => state.talons);
-   const employee = useOperator((state) => state.employee);
    const getTalonsLoading = useOperator((state) => state.getTalonsLoading);
-   const getProfileInfoLoading = useOperator((state) => state.getProfileInfoLoading);
    const currentTalon = useOperator((state) => state.currentTalon);
    const clients_per_day = useOperator((state) => state.clients_per_day);
    const isDarkMode = useOperator((state) => state.isDarkMode);
+
+   const employee = useMain((state) => state.employee);
+   const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);
+   const getProfileInfo = useMain((state) => state.getProfileInfo);
 
    // Vanilla states
    const [isRunning, setIsRunning] = useState(false);
@@ -304,6 +307,7 @@ const HomePage = () => {
    const handleStart = async (token) => {
       await serviceStart(token);
       await getTalons();
+
       startStopwatch();
       setIsStart(true);
    };
@@ -443,18 +447,31 @@ const HomePage = () => {
                </div>
 
                <div className={styles.currentTalonBlock}>
-                  <p style={{ color: isDarkMode && '#DFDFDF' }}>{t('now')}</p>
-                  <ul>
-                     <li style={{ color: isDarkMode && '#FFF' }}>{currentTalon?.token}</li>
-                     <li style={{ color: isDarkMode && '#FFF' }}>
-                        {returnUnderstandableDate(currentTalon?.registered_at)}
-                     </li>
-                     <li style={{ color: isDarkMode && '#FFF' }}>
-                        {returnUnderstandableDate(currentTalon?.appointment_date)}
-                     </li>
-                     <li style={{ color: isDarkMode && '#FFF' }}>{currentTalon?.client_type}</li>
-                     <li style={{ color: isDarkMode && '#FFF' }}>{currentTalon?.service}</li>
-                  </ul>
+                  {currentTalon ? (
+                     <>
+                        <p style={{ color: isDarkMode && '#DFDFDF' }}>{t('now')}</p>
+                        <ul>
+                           <li style={{ color: isDarkMode && '#FFF' }}>{currentTalon?.token}</li>
+                           <li style={{ color: isDarkMode && '#FFF' }}>
+                              {returnUnderstandableDate(currentTalon?.registered_at)}
+                           </li>
+                           <li style={{ color: isDarkMode && '#FFF' }}>
+                              {returnUnderstandableDate(currentTalon?.appointment_date)}
+                           </li>
+                           <li style={{ color: isDarkMode && '#FFF' }}>
+                              {currentTalon?.client_type}
+                           </li>
+                           <li style={{ color: isDarkMode && '#FFF' }}>{currentTalon?.service}</li>
+                        </ul>
+                     </>
+                  ) : (
+                     <center>
+                        <p style={{ color: isDarkMode && '#DFDFDF' }}>
+                           На данный момент никого нет
+                        </p>
+                     </center>
+                  )}
+
                   <div>
                      <button
                         onClick={() => handleStart(currentTalon?.token)}
@@ -467,7 +484,7 @@ const HomePage = () => {
                                  : '#136E37',
                            color: isStart && 'rgb(197, 197, 197)',
                         }}
-                        disabled={isStart}
+                        disabled={currentTalon ? isStart : !isStart}
                      >
                         {t('button.start')}
                      </button>

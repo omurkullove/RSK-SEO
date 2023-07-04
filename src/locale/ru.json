@@ -15,7 +15,8 @@
          "status": {
             "completed": "Завершен",
             "inProgress": "В процессе",
-            "expected": "Ожидается"
+            "expected": "Ожидается",
+            "cancelled": "Отменен"
          },
          "serviceTime": {
             "min": "мин"
