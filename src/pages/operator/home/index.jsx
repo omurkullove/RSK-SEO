@@ -50,7 +50,6 @@ const HomePage = () => {
    const currentTalon = useOperator((state) => state.currentTalon);
    const clients_per_day = useOperator((state) => state.clients_per_day);
    const isDarkMode = useOperator((state) => state.isDarkMode);
-   const errors = useOperator((state) => state.errors);
 
    // Vanilla states
    const [isRunning, setIsRunning] = useState(false);
@@ -328,7 +327,6 @@ const HomePage = () => {
    // Timer
    const startStopwatch = () => {
       ShowMessage('loading', 'Началось время обслуживания', 8);
-
       setIsRunning(true);
    };
 

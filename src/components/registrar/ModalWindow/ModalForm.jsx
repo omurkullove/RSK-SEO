@@ -10,6 +10,10 @@ const handleChange = (value) => {
    console.log(`selected ${value}`);
 };
 
+const handlePrintClick = () => {
+   window.print();
+ };
+
 // Дата и время
 const onChange = (date, dateString) => {
    console.log(date, dateString);
@@ -38,32 +42,40 @@ export const ModalForm = ({ active, setActive }) => {
 
             <Select
                className={`${styles.modal__selects} ${styles.customSelect}`}
-               defaultValue='Услуга'
+               defaultValue='Услуги'
                onChange={handleChange}
                options={[
                   {
-                     value: 'Услуга 1',
-                     label: 'Услуга 1',
+                     value: 'Кредитование',
+                     label: 'Кредитование',
                   },
                   {
-                     value: 'Услуга 2',
-                     label: 'Услуга 2',
+                     value: 'Обмен валют',
+                     label: 'Обмен валют',
                   },
                   {
-                     value: 'Услуга 3',
-                     label: 'Услуга 3',
+                     value: 'Денежные переводы',
+                     label: 'Денежные переводы',
                   },
                   {
-                     value: 'Услуга 4',
-                     label: 'Услуга 4',
+                     value: 'Выпуск карты',
+                     label: 'Выпуск карты',
                   },
                   {
-                     value: 'Услуга 5',
-                     label: 'Услуга 5',
+                     value: 'Получить перевод',
+                     label: 'Получить перевод',
                   },
                   {
-                     value: 'Услуга 6',
-                     label: 'Услуга 6',
+                     value: 'Открыть счет',
+                     label: 'Открыть счет',
+                  },
+                  {
+                     value: 'Операции с ценными бумагами',
+                     label: 'Операции с ценными бумагами',
+                  },
+                  {
+                     value: 'Исламское финансирование',
+                     label: 'Исламское финансирование',
                   },
                ]}
                size='large'
@@ -128,7 +140,7 @@ export const ModalForm = ({ active, setActive }) => {
                size='large'
             />
 
-            <button className={styles.modal__button}>{t('newtalon.button2')}</button>
+            <button onClick={handlePrintClick} className={styles.modal__button}>{t('newtalon.button2')}</button>
          </div>
       </div>
    );

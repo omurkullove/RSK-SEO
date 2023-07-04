@@ -8,8 +8,10 @@ import KG from '@/assets/png/KG.png';
 import RU from '@/assets/png/RU.png';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
+import { useRegistrar } from '@/services/registrarStore';
+import { UserOutlined } from '@ant-design/icons';
 
-export const UserHeader = () => {
+export const UserHeader = ({ employee, searchValue, setSearchValue }) => {
    const { t, i18n } = useTranslation();
    const [lang, setLang] = useState('ru');
 
@@ -32,12 +34,20 @@ export const UserHeader = () => {
 
          <div className='main__search'>
             <img className={styles.search__logo} src={search} alt='logo' />
-            <input className={styles.search__input} placeholder='Поиск по реквизитам' type='text' />
+            <input
+               value={searchValue}
+               onChange={(event) => setSearchValue(event.target.value)}
+               className={styles.search__input}
+               placeholder='Поиск по номеру талона'
+               type='text'
+            />
          </div>
 
-         <div className={styles.user__avatar}>
-            <Avatar size={45} icon />
-            <p>Алина Тен</p>
+         <div className={styles.avatarBlock}>
+            <Avatar size={45} icon={<UserOutlined />} />
+            <div className={styles.avatarChildBlock}>
+               <p>{employee?.username}</p>
+            </div>
          </div>
       </div>
    );

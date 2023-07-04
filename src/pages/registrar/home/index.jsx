@@ -6,42 +6,51 @@ import { ModalForm } from '@/components/registrar/ModalWindow/ModalForm';
 import { Popover, Spin, Table } from 'antd';
 import { useState } from 'react';
 import arrowGreen from '@/assets/svg/arrowGreen.svg';
+
 import arrowRed from '@/assets/svg/arrowRed.svg';
 import edit from '@/assets/svg/edit.svg';
 import dots from '@/assets/svg/dots.svg';
 import { LoadingOutlined } from '@ant-design/icons';
-
+import { returnUnderstandableDate } from '@/utils/utils';
 import deleteSvg from '@/assets/svg/delete.svg';
 import alert from '@/assets/svg/1_6Alert.svg';
 import { useTranslation } from 'react-i18next';
 import MainLayout from '@/components/operator/UI/Layout';
-import Navbar from '@/components/operator/UI/Navbar';
-import { calculateTimeDifference, formatTime, returnUnderstandableDate } from '@/utils/utils';
+import { calculateTimeDifference } from '@/utils/utils';
 import { useRegistrar } from '@/services/registrarStore';
+import { useNavigate } from 'react-router';
+import { useOperator } from '@/services/operatorStore';
 
 const RegistrarHome = () => {
+   const [searchValue, setSearchValue] = useState('1');
    const { t } = useTranslation();
    const [modalActive, setModalActive] = useState(false);
+   const employee = useRegistrar((state) => state.employee);
+   const getProfileInfo = useOperator((state) => state.getProfileInfo);
+   const getProfileInfoLoading = useRegistrar((state) => state.getProfileInfoLoading);
 
-   const content = (
-      <div className={styles.popoverContent}>
-         <img src={edit} alt='edit' />
-         <img src={deleteSvg} alt='delete' />
-      </div>
-   );
+   console.log(searchValue, 'Input');
 
-   const tableContent = (client) => (
+   console.log(employee);
+
+   const tableContent = (talon) => (
       <div className={styles.tableContent}>
-         <div onClick={() => handleTransferClient(client)}>Перенести</div>
-         <div onClick={() => handleDeleteClient(client)}>Удалить</div>
+         <div onClick={() => handleTransferClient(talon)}>Изменить</div>
+         <div onClick={() => handleDeletetalon(talon)}>Удалить</div>
       </div>
    );
 
    const columns = [
       {
          title: <p className={styles.columnTitle}>№</p>,
-         dataIndex: 'id',
-         render: (value) => <p className={styles.columnData}>{value}</p>,
+         dataIndex: 'token',
+         render: (value) => {
+            if (value.includes(searchValue)) {
+               return <p className={styles.columnData}>{value}</p>;
+            } else {
+               return null;
+            }
+         },
       },
       {
          title: <p className={styles.columnTitle}>Дата регистрации</p>,
@@ -59,7 +68,6 @@ const RegistrarHome = () => {
          dataIndex: 'appointment_date',
          render: (value) => <p className={styles.columnData}>{returnUnderstandableDate(value)}</p>,
       },
-
       {
          title: <p className={styles.columnTitle}>Дата изменения</p>,
          dataIndex: 'updated_at',
@@ -72,59 +80,44 @@ const RegistrarHome = () => {
             switch (value) {
                case 'Физ. лицо':
                   return <p className={styles.columnData}>{t('table.body.type.naturalPerson')}</p>;
-
-                  break;
                case 'Юр. лицо':
                   return <p className={styles.columnData}>{t('table.body.type.legalЕntity')}</p>;
-
                default:
-                  break;
+                  return null;
             }
          },
       },
       {
          title: <p className={styles.columnTitle}>{t('table.titles.service')}</p>,
          dataIndex: 'service',
-
          render: (value) => {
             switch (value) {
                case 1:
                   return <p className={styles.columnData}>Кредитование</p>;
-                  break;
                case 2:
                   return <p className={styles.columnData}>Обмен валют</p>;
-                  break;
                case 3:
                   return <p className={styles.columnData}>Денежные переводы</p>;
-                  break;
                case 4:
                   return <p className={styles.columnData}>Выпуск карты</p>;
-                  break;
                case 5:
                   return <p className={styles.columnData}>Получить перевод</p>;
-                  break;
                case 6:
                   return <p className={styles.columnData}>Открыть счет</p>;
-                  break;
                case 7:
                   return <p className={styles.columnData}>Операции с ценными бумагами</p>;
-                  break;
                case 8:
                   return <p className={styles.columnData}>Исламское финансирование</p>;
-                  break;
-
                default:
-                  break;
+                  return null;
             }
          },
       },
       {
          title: <p className={styles.columnTitle}>Очередь</p>,
          dataIndex: 'queue',
-
          render: (value) => <p className={styles.columnData}>{value}</p>,
       },
-
       {
          title: <p className={styles.columnTitle}>{t('table.titles.status')}</p>,
          dataIndex: 'status',
@@ -142,16 +135,20 @@ const RegistrarHome = () => {
                         {t('table.body.status.expected')}
                      </p>
                   );
-
                case 'complited':
                   return (
                      <p className={styles.columnDataStatus} style={{ color: '#2E6C47' }}>
                         {t('table.body.status.completed')}
                      </p>
                   );
-
+               case 'canceled':
+                  return (
+                     <p className={styles.columnDataStatus} style={{ color: 'red' }}>
+                        Отменен
+                     </p>
+                  );
                default:
-                  break;
+                  return null;
             }
          },
       },
@@ -161,7 +158,7 @@ const RegistrarHome = () => {
          render: (value, talon, index) => {
             return (
                <div className={styles.columnServiceBlock}>
-                  {talon?.status === 'complited' ? (
+                  {talon?.status === 'completed' ? (
                      <>
                         <p
                            className={styles.columnData}
@@ -178,9 +175,7 @@ const RegistrarHome = () => {
                         {calculateTimeDifference(talon?.service_start, talon?.service_end) > 3 &&
                         talon?.service_end ? (
                            <img src={alert} alt='alert' className={styles.alert} />
-                        ) : (
-                           ''
-                        )}
+                        ) : null}
                      </>
                   ) : (
                      <>
@@ -207,12 +202,52 @@ const RegistrarHome = () => {
    const talons = useRegistrar((state) => state.talons);
    const getTalonsLoading = useRegistrar((state) => state.getTalonsLoading);
 
+   const navigate = useNavigate();
+
    useEffect(() => {
       getTalons();
+      getProfileInfo(JSON.parse(localStorage.getItem('email')));
+
+      if (!JSON.parse(localStorage.getItem('token'))) {
+         navigate('/');
+      }
    }, []);
    const antIcon = <LoadingOutlined style={{ fontSize: 54 }} spin />;
 
-   return getTalonsLoading ? (
+   const deleteTalon = useRegistrar((state) => state.deleteTalon);
+
+   const handleDeletetalon = async (talon) => {
+      try {
+         await deleteTalon(talon.token);
+         await getTalons();
+      } catch (error) {
+         console.log(error);
+      }
+   };
+
+   const filteredTalons = talons.filter((talon) => talon.token.includes(searchValue));
+
+   filteredTalons.sort((a, b) => {
+      // Compare the position of the searchValue in the token
+      const indexA = a.token.indexOf(searchValue);
+      const indexB = b.token.indexOf(searchValue);
+
+      if (indexA > -1 && indexB > -1) {
+         // Both talons have the searchValue in the token
+         return indexA - indexB;
+      } else if (indexA > -1) {
+         // Only talon A has the searchValue in the token
+         return -1;
+      } else if (indexB > -1) {
+         // Only talon B has the searchValue in the token
+         return 1;
+      } else {
+         // None of the talons have the searchValue in the token
+         return 0;
+      }
+   });
+
+   return getTalonsLoading && getProfileInfoLoading ? (
       <div
          style={{
             height: '100vh',
@@ -227,22 +262,21 @@ const RegistrarHome = () => {
          <h4>Идет подсчет данных....</h4>
       </div>
    ) : (
-      <MainLayout isSidebar={false} Navbar={<UserHeader />}>
+      <MainLayout
+         isSidebar={false}
+         Navbar={
+            <UserHeader
+               employee={employee}
+               searchValue={searchValue}
+               setSearchValue={setSearchValue}
+            />
+         }
+      >
          <div className={styles.main}>
             <div className={styles.mainCardBlock}>
                <div className={styles.cardBlock}>
                   <div className={styles.card1}>
                      <div className={styles.head}>
-                        <div>
-                           <Popover
-                              id='cardPopover'
-                              content={content}
-                              trigger='click'
-                              placement='rightTop'
-                           >
-                              <img src={dots} alt='dots' />
-                           </Popover>
-                        </div>
                         <p>{t('card.title1')}</p>
                      </div>
                      <div className={styles.body}>
@@ -258,16 +292,6 @@ const RegistrarHome = () => {
                   </div>
                   <div className={styles.card2}>
                      <div className={styles.head}>
-                        <div>
-                           <Popover
-                              id='cardPopover'
-                              content={content}
-                              trigger='click'
-                              placement='rightTop'
-                           >
-                              <img src={dots} alt='dots' />
-                           </Popover>
-                        </div>
                         <p>{t('card.title2')}</p>
                      </div>
                      <div className={styles.body}>
@@ -292,9 +316,9 @@ const RegistrarHome = () => {
 
             <Table
                loading={getTalonsLoading}
-               dataSource={talons}
-               columns={columns}
-               scroll={{ x: 1300 }}
+               dataSource={filteredTalons}
+               columns={columns.filter((column) => column.title)}
+               scroll={{ x: 1000 }}
                title={() => (
                   <p
                      style={{
@@ -304,7 +328,7 @@ const RegistrarHome = () => {
                         fontWeight: '600',
                      }}
                   >
-                     {t('table.titles.allClients')}
+                     {t('table.titles.allTalons')}
                   </p>
                )}
             />

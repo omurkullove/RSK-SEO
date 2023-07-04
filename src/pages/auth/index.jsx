@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form, Input } from 'antd';
 import { Link } from 'react-router-dom';
 import { useOperator } from '@/services/operatorStore';
+import { useRegistrar } from '@/services/registrarStore';
 
 import kg from '@/assets/svg/kg.svg';
 import en from '@/assets/svg/en.svg';
@@ -28,7 +29,7 @@ const AuthPage = () => {
    }, []);
 
    const login = useOperator((state) => state.login);
-   const token = useOperator((state) => state.token);
+
    const hanldeLogin = async (values) => {
       await login(values, navigate);
    };
