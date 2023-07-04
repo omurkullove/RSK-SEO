@@ -315,14 +315,7 @@ const HomePage = () => {
       setIsStart(false);
    };
 
-   // Popover's
-   const content = (
-      <div className={styles.popoverContent}>
-         <img src={edit} alt='edit' />
-         <img src={deleteSvg} alt='delete' />
-      </div>
-   );
-
+   // Popover
    const tableContent = (talon) => (
       <div className={styles.tableContent}>
          <div onClick={() => handleTransferToStart(talon)}>{t('table.body.popover.toStart')}</div>
@@ -402,16 +395,6 @@ const HomePage = () => {
                      style={{ backgroundColor: isDarkMode && '#374B67' }}
                   >
                      <div className={styles.head}>
-                        <div>
-                           <Popover
-                              id='cardPopover'
-                              content={content}
-                              trigger='click'
-                              placement='rightTop'
-                           >
-                              <img src={dots} alt='dots' />
-                           </Popover>
-                        </div>
                         <p style={{ color: isDarkMode && 'white' }}>{t('card.title1')}</p>
                      </div>
                      <div className={styles.body}>
@@ -438,16 +421,6 @@ const HomePage = () => {
                      style={{ backgroundColor: isDarkMode && '#374B67' }}
                   >
                      <div className={styles.head}>
-                        <div>
-                           <Popover
-                              id='cardPopover'
-                              content={content}
-                              trigger='click'
-                              placement='rightTop'
-                           >
-                              <img src={isDarkMode ? darkModeDots : dots} alt='dots' />
-                           </Popover>
-                        </div>
                         <p style={{ color: isDarkMode && 'white' }}>{t('card.title2')}</p>
                      </div>
                      <div className={styles.body}>
@@ -484,14 +457,6 @@ const HomePage = () => {
                      <li style={{ color: isDarkMode && '#FFF' }}>{currentTalon?.service}</li>
                   </ul>
                   <div>
-                     {/* 
-                     
-                     
-                     
-                     
-                     
-                     
-                     */}
                      <button
                         onClick={() => handleStart(currentTalon?.token)}
                         style={{
@@ -501,6 +466,7 @@ const HomePage = () => {
                                  : isStart && !isDarkMode
                                  ? '#A5A5A5'
                                  : '#136E37',
+                           color: isStart && 'rgb(197, 197, 197)',
                         }}
                         disabled={isStart}
                      >
@@ -516,6 +482,7 @@ const HomePage = () => {
                                  : !isStart && !isDarkMode
                                  ? '#A5A5A5'
                                  : '#136E37',
+                           color: !isStart && 'rgb(197, 197, 197)',
                         }}
                      >
                         {t('button.end')}
@@ -527,7 +494,7 @@ const HomePage = () => {
             <Table
                ref={tableRef}
                style={{
-                  backgroundColor: isDarkMode ? '#374B67' : '',
+                  marginBottom: '50px',
                }}
                className={isDarkMode ? 'dark_mode' : 'default_mode'}
                loading={getTalonsLoading}

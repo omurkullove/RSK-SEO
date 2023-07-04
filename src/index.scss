@@ -31,10 +31,6 @@
    display: none !important;
 }
 
-.custom-menu {
-   background-color: red;
-}
-
 .ant-menu-item {
    background-color: transparent !important;
    display: flex;
@@ -71,6 +67,12 @@
 .default_mode .ant-table-thead,
 .default_mode .ant-table-title,
 .default_mode .ant-table-thead,
-.default_mode.ant-table-cell {
+.default_mode .ant-table-cell {
    background-color: #fff !important;
+}
+
+.ant-pagination-item {
+   background: transparent !important;
+   border: 1px solid #374b67 !important;
+   color: #374b67 !important;
 }

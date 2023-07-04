@@ -162,7 +162,10 @@ const Sidebar = () => {
                label: (
                   <label className={styles.langlable}>
                      Выберите язык
-                     <div onClick={() => handleChangeLanguage('kg')}>
+                     <div
+                        onClick={() => handleChangeLanguage('kg')}
+                        style={{ backgroundColor: lang === 'kg' ? '#136E37' : '' }}
+                     >
                         <img src={kg} />
                         <p>Кыргызча</p>
                      </div>
@@ -173,7 +176,11 @@ const Sidebar = () => {
                key: 11,
                type: 'group',
                label: (
-                  <div className={styles.langBlock} onClick={() => handleChangeLanguage('ru')}>
+                  <div
+                     style={{ backgroundColor: lang === 'ru' ? '#136E37' : '' }}
+                     className={styles.langBlock}
+                     onClick={() => handleChangeLanguage('ru')}
+                  >
                      <img src={ru} alt='ru' />
                      <p>Русский</p>
                   </div>
@@ -183,7 +190,11 @@ const Sidebar = () => {
                key: 12,
                type: 'group',
                label: (
-                  <div className={styles.langBlock} onClick={() => handleChangeLanguage('en')}>
+                  <div
+                     style={{ backgroundColor: lang === 'en' ? '#136E37' : '' }}
+                     className={styles.langBlock}
+                     onClick={() => handleChangeLanguage('en')}
+                  >
                      <img src={en} alt='en' />
                      <p>English</p>
                   </div>

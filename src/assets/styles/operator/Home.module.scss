@@ -1,33 +1,5 @@
 @import '../variables.scss';
 
-.popoverContent {
-   display: flex;
-   padding: 5px;
-   border-radius: 0px 10px 10px 10px !important;
-   -webkit-border-radius: 0px 10px 10px 10px !important;
-   -moz-border-radius: 0px 10px 10px 10px !important;
-   -ms-border-radius: 0px 10px 10px 10px !important;
-   -o-border-radius: 0px 10px 10px 10px !important;
-   img {
-      cursor: pointer;
-      width: 100%;
-      margin: 0;
-      transition: 0.3s;
-      -webkit-transition: 0.3s;
-      -moz-transition: 0.3s;
-      -ms-transition: 0.3s;
-      -o-transition: 0.3s;
-
-      &:hover {
-         transform: scale(1.07);
-         -webkit-transform: scale(1.07);
-         -moz-transform: scale(1.07);
-         -ms-transform: scale(1.07);
-         -o-transform: scale(1.07);
-      }
-   }
-}
-
 .tableContent {
    color: white;
 
@@ -143,12 +115,13 @@
          display: flex;
          gap: 49px;
          padding: 15px;
+
          .card1 {
             background: #ffffff;
             border-radius: 20px;
             padding: 5px 20px 20px 20px;
             gap: 10px;
-            width: 250px;
+            width: 270px;
             box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 
             flex-direction: column;
@@ -157,18 +130,10 @@
             .head {
                display: flex;
                flex-direction: column;
+               min-height: 40px;
 
                :nth-child(1) {
-                  display: flex;
-                  justify-content: flex-end;
-
-                  img {
-                     cursor: pointer;
-                  }
-               }
-
-               :nth-child(2) {
-                  margin-top: -10px;
+                  margin-top: 10px;
                   font-size: 18px;
                   font-family: $Inter;
                   font-weight: 600;
@@ -178,9 +143,10 @@
 
             .body {
                display: flex;
-               justify-content: space-between;
+               justify-content: flex-start;
                align-items: center;
-               width: 90%;
+               width: 100%;
+               gap: 5px;
 
                :nth-child(1) {
                   background-color: #d8ffd1;
@@ -207,6 +173,7 @@
 
                p {
                   color: #2e6c47;
+
                   text-align: center;
                   font-size: 15px;
                   font-family: $Inter;
@@ -230,27 +197,21 @@
             border-radius: 20px;
             padding: 5px 20px 20px 20px;
             gap: 10px;
-            width: 260px;
+            width: 270px;
             box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 
             flex-direction: column;
             display: flex;
 
+            overflow-x: hidden;
+
             .head {
                display: flex;
                flex-direction: column;
+               min-height: 40px;
 
                :nth-child(1) {
-                  display: flex;
-                  justify-content: flex-end;
-
-                  img {
-                     cursor: pointer;
-                  }
-               }
-
-               :nth-child(2) {
-                  margin-top: -10px;
+                  margin-top: 10px;
                   font-size: 18px;
                   font-family: $Inter;
                   font-weight: 600;
@@ -260,9 +221,10 @@
 
             .body {
                display: flex;
-               justify-content: space-between;
+               justify-content: flex-start;
                align-items: center;
-               width: 90%;
+               width: 100%;
+               gap: 5px;
 
                :nth-child(1) {
                   background-color: #b5051e21;

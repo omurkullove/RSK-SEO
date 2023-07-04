@@ -3,6 +3,7 @@ import stlyes from '@/assets/styles/operator/Navbar.module.scss';
 import { Avatar } from 'antd';
 import { useTranslation } from 'react-i18next';
 import navLogo from '@/assets/svg/navLogo.svg';
+import darkModeLogo from '@/assets/svg/darkModeLogo.svg';
 
 import { useOperator } from '@/services/operatorStore';
 import { UserOutlined } from '@ant-design/icons';
@@ -27,7 +28,7 @@ const Navbar = ({ employee }) => {
       <div className={stlyes.main} style={{ backgroundColor: isDarkMode && '#455E83' }}>
          <div className={stlyes.head}>
             <div className={stlyes.block1}>
-               <img src={navLogo} alt='logo' />
+               <img src={isDarkMode ? darkModeLogo : navLogo} alt='logo' />
             </div>
             <div className={stlyes.avatarBlock}>
                <Avatar size={45} icon={<UserOutlined />} />

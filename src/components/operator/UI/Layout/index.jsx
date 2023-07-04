@@ -14,7 +14,9 @@ const MainLayout = ({ children, isSidebar, Navbar }) => {
                <Sidebar />
             </div>
          )}
-         <Layout style={{ backgroundColor: isDarkMode ? '#002A42' : '#F5F5F5' }}>
+         <Layout
+            style={{ backgroundColor: isDarkMode ? '#002A42' : '#F5F5F5', transition: '0.5s' }}
+         >
             {Navbar}
             <Layout.Content>{children}</Layout.Content>
          </Layout>
