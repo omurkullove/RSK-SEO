@@ -47,6 +47,9 @@ export const UserHeader = ({ employee, searchValue, setSearchValue }) => {
             <Avatar size={45} icon={<UserOutlined />} />
             <div className={styles.avatarChildBlock}>
                <p>{employee?.username}</p>
+               <p>
+                  {t('navbar.window')}:{employee?.window}
+               </p>
             </div>
          </div>
       </div>

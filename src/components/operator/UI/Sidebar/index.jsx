@@ -105,9 +105,11 @@ const Sidebar = () => {
                      <label>
                         {t('sidebar.service')}
                         <div>
-                           {employee?.service?.map((item) => (
-                              <p key={item?.id}>{item?.name}</p>
-                           ))}
+                           {employee?.service?.length ? (
+                              employee?.service?.map((item) => <p key={item?.id}>{item?.name}</p>)
+                           ) : (
+                              <p>Нет данных</p>
+                           )}
                         </div>
                      </label>
                   </div>

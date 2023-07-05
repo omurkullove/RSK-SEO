@@ -70,5 +70,14 @@
          line-height: 20px;
          font-family: $Inter;
       }
+
+      :nth-child(2) {
+         color: #1e4a89;
+         font-size: 13px;
+         font-weight: 600;
+         line-height: 20px;
+         margin-top: -2px;
+         font-family: $Poppins;
+      }
    }
 }

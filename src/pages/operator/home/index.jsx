@@ -286,8 +286,7 @@ const HomePage = () => {
    const handleDeletetalon = async (talon) => {
       try {
          await deleteTalon(talon.token);
-         console.log(talon);
-         await getTalons();
+         await getTalons(JSON.parse(localStorage.getItem('token')) || {});
       } catch (error) {
          console.log(error);
       }
@@ -295,18 +294,18 @@ const HomePage = () => {
 
    const handleTransferToEnd = async (talon) => {
       await transferTalonToEnd(talon.token);
-      await getTalons();
+      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
    };
 
    const handleTransferToStart = async (talon) => {
       await transferTalonToStart(talon.token);
-      await getTalons();
+      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
    };
 
    // Service operation
    const handleStart = async (token) => {
       await serviceStart(token);
-      await getTalons();
+      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
 
       startStopwatch();
       setIsStart(true);
@@ -314,7 +313,7 @@ const HomePage = () => {
 
    const handleEnd = async (token) => {
       await serviceEnd(token);
-      await getTalons();
+      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
       stopStopwatch();
       setIsStart(false);
    };
@@ -334,9 +333,9 @@ const HomePage = () => {
       setIsRunning(true);
    };
 
-   const stopStopwatch = () => {
+   const stopStopwatch = async () => {
       ShowMessage('success', 'Обслуживание  завершилось');
-
+      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
       setIsRunning(false);
       setSeconds(0);
    };
@@ -344,7 +343,7 @@ const HomePage = () => {
    // Effects
    // Fetch data
    useEffect(() => {
-      getTalons();
+      getTalons(JSON.parse(localStorage.getItem('token')) || {});
       getProfileInfo(JSON.parse(localStorage.getItem('email')));
 
       if (!JSON.parse(localStorage.getItem('token'))) {

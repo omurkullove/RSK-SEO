@@ -15,12 +15,12 @@ export const useOperator = create((set, get) => ({
    getTalonsLoading: false,
    transferTalonToEndLoading: false,
 
-   getTalons: async () => {
+   getTalons: async (token) => {
       set({ getTalonsLoading: true });
       try {
          const res = await axios.get(`${API}/employee/queue/`, {
             headers: {
-               Authorization: `Bearer ${get().token.access}`,
+               Authorization: `Bearer ${token.access}`,
             },
          });
          set({ talons: res.data.talons });

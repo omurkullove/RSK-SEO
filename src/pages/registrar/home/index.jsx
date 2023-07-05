@@ -31,10 +31,6 @@ const RegistrarHome = () => {
    const getProfileInfo = useMain((state) => state.getProfileInfo);
    const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);
 
-   console.log(searchValue, 'Input');
-
-   console.log(employee);
-
    const tableContent = (talon) => (
       <div className={styles.tableContent}>
          <div onClick={() => handleTransferClient(talon)}>Изменить</div>
@@ -284,7 +280,7 @@ const RegistrarHome = () => {
       </div>
    ) : (
       <MainLayout
-         isSidebar={false}
+         isSidebar={true}
          Navbar={
             <UserHeader
                employee={employee}
@@ -340,7 +336,10 @@ const RegistrarHome = () => {
                   marginBottom: '50px',
                }}
                loading={getTalonsLoading}
-               dataSource={filteredTalons}
+               dataSource={filteredTalons.map((item, index) => ({
+                  ...item,
+                  key: index,
+               }))}
                columns={columns.filter((column) => column.title)}
                scroll={{ x: 1000 }}
                title={() => (
