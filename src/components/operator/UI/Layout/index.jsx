@@ -3,9 +3,10 @@ import styles from '@/assets/styles/operator/Layout.module.scss';
 import Sidebar from '../Sidebar';
 import { Layout } from 'antd';
 import { useOperator } from '@/services/operatorStore';
+import { useMain } from '@/services/MainStore';
 
 const MainLayout = ({ children, isSidebar, Navbar }) => {
-   const isDarkMode = useOperator((state) => state.isDarkMode);
+   const isDarkMode = useMain((state) => state.isDarkMode);
 
    return (
       <Layout hasSider>

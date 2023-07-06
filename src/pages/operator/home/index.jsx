@@ -48,7 +48,7 @@ const HomePage = () => {
    const getTalonsLoading = useOperator((state) => state.getTalonsLoading);
    const currentTalon = useOperator((state) => state.currentTalon);
    const clients_per_day = useOperator((state) => state.clients_per_day);
-   const isDarkMode = useOperator((state) => state.isDarkMode);
+   const isDarkMode = useMain((state) => state.isDarkMode);
 
    const employee = useMain((state) => state.employee);
    const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);

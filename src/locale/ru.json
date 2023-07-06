@@ -5,11 +5,13 @@
          "name": "Имя",
          "appointment_date": "Дата назначения",
          "registered_at": "Время регистрации",
+         "editedDate": "Дата изменения",
          "benefit": "Льгота",
          "talons_type": "Тип",
          "service": "Услуга",
          "status": "Статус",
-         "serviceTime": "Время обслуживания"
+         "serviceTime": "Время обслуживания",
+         "queue": "Очередь"
       },
       "body": {
          "status": {
@@ -86,5 +88,15 @@
       "end": "Завершить обслуживание"
    },
 
-   "now": "Сейчас:"
+   "now": "Сейчас:",
+   "newTalon": {
+      "button1": "Новый талон",
+      "button2": "Печать"
+   },
+   "modal": {
+      "service": "Услуги",
+      "clientType": "Тип клиента",
+      "date": "Выберите дату",
+      "time": "Выберите время"
+   }
 }

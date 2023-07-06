@@ -5,11 +5,13 @@
          "name": "name",
          "appointment_date": "Appointement time",
          "registered_at": "Registration time",
+         "editedDate": "Edited time",
          "benefit": "Benefit",
          "talons_type": "Type",
          "service": "Service",
          "status": "Status",
-         "serviceTime": "Service Time"
+         "serviceTime": "Service Time",
+         "queue": "Queue"
       },
       "body": {
          "status": {
@@ -86,5 +88,15 @@
       "start": "Start maintenance",
       "end": "Complete maintenance"
    },
-   "now": "At the moment:"
+   "now": "At the moment:",
+   "newTalon": {
+      "button1": "New talon",
+      "button2": "Print"
+   },
+   "modal": {
+      "service": "Services",
+      "clientType": "Client Type",
+      "date": "Select Date",
+      "time": "Select Time"
+   }
 }

@@ -28,8 +28,8 @@ const Sidebar = () => {
 
    const { t, i18n } = useTranslation();
 
-   const toggleDarkMode = useOperator((state) => state.toggleDarkMode);
-   const isDarkMode = useOperator((state) => state.isDarkMode);
+   const toggleDarkMode = useMain((state) => state.toggleDarkMode);
+   const isDarkMode = useMain((state) => state.isDarkMode);
 
    const onChange = (checked) => {
       toggleDarkMode(checked);

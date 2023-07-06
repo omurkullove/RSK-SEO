@@ -7,6 +7,8 @@ export const useMain = create((set, get) => ({
    token: JSON.parse(localStorage.getItem('token')) || {},
    employee: {},
 
+   isDarkMode: false,
+
    getProfileInfoLoading: false,
 
    login: async (body, navigate) => {
@@ -47,5 +49,8 @@ export const useMain = create((set, get) => ({
       } finally {
          set({ getProfileInfoLoading: false });
       }
+   },
+   toggleDarkMode: (checked) => {
+      set({ isDarkMode: checked });
    },
 }));

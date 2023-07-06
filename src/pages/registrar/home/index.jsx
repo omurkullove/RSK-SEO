@@ -7,13 +7,18 @@ import { Popover, Spin, Table } from 'antd';
 import { useState } from 'react';
 import arrowGreen from '@/assets/svg/arrowGreen.svg';
 
+import darkModeArrowGreen from '@/assets/svg/darkModeArrowGreen.svg';
+import darkModeArrowRed from '@/assets/svg/darkModeArrowRed.svg';
 import arrowRed from '@/assets/svg/arrowRed.svg';
 import edit from '@/assets/svg/edit.svg';
 import dots from '@/assets/svg/dots.svg';
 import { LoadingOutlined } from '@ant-design/icons';
-import { returnUnderstandableDate } from '@/utils/utils';
+import { canceledClientsCounter, returnUnderstandableDate, timeLimitSeconds } from '@/utils/utils';
 import deleteSvg from '@/assets/svg/delete.svg';
 import alert from '@/assets/svg/1_6Alert.svg';
+import darkModeAlert from '@/assets/svg/darkModeAlert.svg';
+import darkModeDots from '@/assets/svg/darkModeDots.svg';
+
 import { useTranslation } from 'react-i18next';
 import MainLayout from '@/components/operator/UI/Layout';
 import { calculateTimeDifference } from '@/utils/utils';
@@ -23,13 +28,14 @@ import { useOperator } from '@/services/operatorStore';
 import { useMain } from '@/services/MainStore';
 
 const RegistrarHome = () => {
-   const [searchValue, setSearchValue] = useState('1');
+   const [searchValue, setSearchValue] = useState('');
    const { t } = useTranslation();
    const [modalActive, setModalActive] = useState(false);
-
    const employee = useMain((state) => state.employee);
    const getProfileInfo = useMain((state) => state.getProfileInfo);
    const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);
+
+   const isDarkMode = useMain((state) => state.isDarkMode);
 
    const tableContent = (talon) => (
       <div className={styles.tableContent}>
@@ -40,89 +46,155 @@ const RegistrarHome = () => {
 
    const columns = [
       {
-         title: <p className={styles.columnTitle}>№</p>,
+         title: (
+            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
+               №
+            </p>
+         ),
          dataIndex: 'token',
          render: (value) => {
             if (value.includes(searchValue)) {
-               return <p className={styles.columnData}>{value}</p>;
+               return (
+                  <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
+                     {value}
+                  </p>
+               );
             } else {
                return null;
             }
          },
       },
       {
-         title: <p className={styles.columnTitle}>Дата регистрации</p>,
+         title: (
+            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
+               {t('table.titles.registered_at')}
+            </p>
+         ),
          dataIndex: 'registered_at',
          render: (value, talon) => (
             <div>
-               <p className={styles.columnData} key={value?.token}>
+               <p
+                  className={styles.columnData}
+                  key={value?.token}
+                  style={{ color: isDarkMode && 'white' }}
+               >
                   {returnUnderstandableDate(value)}
                </p>
             </div>
          ),
       },
       {
-         title: <p className={styles.columnTitle}>Дата назначения</p>,
+         title: (
+            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
+               {t('table.titles.appointment_date')}
+            </p>
+         ),
          dataIndex: 'appointment_date',
-         render: (value) => <p className={styles.columnData}>{returnUnderstandableDate(value)}</p>,
+         render: (value) => (
+            <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
+               {returnUnderstandableDate(value)}
+            </p>
+         ),
       },
       {
-         title: <p className={styles.columnTitle}>Дата изменения</p>,
+         title: (
+            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
+               {t('table.titles.editedDate')}
+            </p>
+         ),
          dataIndex: 'updated_at',
-         render: (value) => <p className={styles.columnData}>{returnUnderstandableDate(value)}</p>,
+         render: (value) => (
+            <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
+               {returnUnderstandableDate(value)}
+            </p>
+         ),
       },
       {
-         title: <p className={styles.columnTitle}>{t('table.titles.talons_type')}</p>,
+         title: (
+            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
+               {t('table.titles.talons_type')}
+            </p>
+         ),
          dataIndex: 'client_type',
          render: (value) => {
             switch (value) {
                case 'Физ.лицо':
-                  return <p className={styles.columnData}>{t('table.body.type.naturalPerson')}</p>;
+                  return (
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+                        {t('table.body.type.naturalPerson')}
+                     </p>
+                  );
                case 'Юр.лицо':
-                  return <p className={styles.columnData}>{t('table.body.type.legalЕntity')}</p>;
+                  return (
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+                        {t('table.body.type.legalЕntity')}
+                     </p>
+                  );
                default:
-                  return <p className={styles.columnData}>{value}</p>;
+                  return (
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+                        {value}
+                     </p>
+                  );
             }
          },
       },
       {
-         title: <p className={styles.columnTitle}>{t('table.titles.service')}</p>,
+         title: (
+            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
+               {t('table.titles.service')}
+            </p>
+         ),
          dataIndex: 'service',
          render: (value) => {
             switch (value) {
                case 1:
                   return (
-                     <p className={styles.columnData}>{t('table.body.service.CreditFinancing')}</p>
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+                        {t('table.body.service.CreditFinancing')}
+                     </p>
                   );
                case 2:
                   return (
-                     <p className={styles.columnData}>{t('table.body.service.CurrencyExchange')}</p>
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+                        {t('table.body.service.CurrencyExchange')}
+                     </p>
                   );
                case 3:
                   return (
-                     <p className={styles.columnData}>{t('table.body.service.MoneyTransfers')}</p>
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+                        {t('table.body.service.MoneyTransfers')}
+                     </p>
                   );
                case 4:
                   return (
-                     <p className={styles.columnData}>{t('table.body.service.CardIssuance')}</p>
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+                        {t('table.body.service.CardIssuance')}
+                     </p>
                   );
                case 5:
                   return (
-                     <p className={styles.columnData}>{t('table.body.service.ReceiveTransfer')}</p>
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+                        {t('table.body.service.ReceiveTransfer')}
+                     </p>
                   );
                case 6:
                   return (
-                     <p className={styles.columnData}>{t('table.body.service.OpenAnAccount')}</p>
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+                        {t('table.body.service.OpenAnAccount')}
+                     </p>
                   );
                case 7:
                   return (
-                     <p className={styles.columnData}>
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
                         {t('table.body.service.SecuritiesOperations')}
                      </p>
                   );
                case 8:
                   return (
-                     <p className={styles.columnData}>{t('table.body.service.IslamicFinancing')}</p>
+                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+                        {t('table.body.service.IslamicFinancing')}
+                     </p>
                   );
                default:
                   return null;
@@ -130,46 +202,81 @@ const RegistrarHome = () => {
          },
       },
       {
-         title: <p className={styles.columnTitle}>Очередь</p>,
+         title: (
+            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
+               {t('table.titles.queue')}
+            </p>
+         ),
          dataIndex: 'queue',
-         render: (value) => <p className={styles.columnData}>{value}</p>,
+         render: (value) => (
+            <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
+               {value}
+            </p>
+         ),
       },
       {
-         title: <p className={styles.columnTitle}>{t('table.titles.status')}</p>,
+         title: (
+            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
+               {t('table.titles.status')}
+            </p>
+         ),
          dataIndex: 'status',
          render: (value) => {
             switch (value) {
                case 'in service':
                   return (
-                     <p className={styles.columnDataStatus} style={{ color: '#2E79BD' }}>
+                     <p
+                        className={styles.columnDataStatus}
+                        style={{ color: isDarkMode ? '#B9FFFB' : '#2E79BD' }}
+                     >
                         {t('table.body.status.inProgress')}
                      </p>
                   );
                case 'waiting':
                   return (
-                     <p className={styles.columnDataStatus} style={{ color: '#848484' }}>
+                     <p
+                        className={styles.columnDataStatus}
+                        style={{ color: isDarkMode ? '#88A5B5' : '#848484' }}
+                     >
                         {t('table.body.status.expected')}
                      </p>
                   );
                case 'complited':
                   return (
-                     <p className={styles.columnDataStatus} style={{ color: '#2E6C47' }}>
+                     <p
+                        className={styles.columnDataStatus}
+                        style={{ color: isDarkMode ? '#81E87F' : '#2E6C47' }}
+                     >
                         {t('table.body.status.completed')}
                      </p>
                   );
                case 'canceled':
                   return (
-                     <p className={styles.columnDataStatus} style={{ color: '#B5051E' }}>
+                     <p
+                        className={styles.columnDataStatus}
+                        style={{ color: isDarkMode ? '#FFC8D0' : '#B5051E' }}
+                     >
                         {t('table.body.status.cancelled')}
                      </p>
                   );
                default:
-                  return null;
+                  return (
+                     <p
+                        className={styles.columnDataStatus}
+                        style={{ color: isDarkMode ? 'white' : 'darkgray' }}
+                     >
+                        {value}
+                     </p>
+                  );
             }
          },
       },
       {
-         title: <p className={styles.columnTitle}>{t('table.titles.serviceTime')}</p>,
+         title: (
+            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
+               {t('table.titles.serviceTime')}
+            </p>
+         ),
          dataIndex: 'id',
          render: (value, talon, index) => {
             return (
@@ -181,22 +288,41 @@ const RegistrarHome = () => {
                            style={{
                               color:
                                  calculateTimeDifference(talon?.service_start, talon?.service_end) >
-                                 3
+                                    timeLimitSeconds && isDarkMode
+                                    ? '#FFC8D0'
+                                    : calculateTimeDifference(
+                                         talon?.service_start,
+                                         talon?.service_end
+                                      ) > timeLimitSeconds && !isDarkMode
                                     ? '#B5051E'
+                                    : calculateTimeDifference(
+                                         talon?.service_start,
+                                         talon?.service_end
+                                      ) < timeLimitSeconds && isDarkMode
+                                    ? '#81E87F'
                                     : '#2E6C47',
                            }}
                         >
                            {calculateTimeDifference(talon?.service_start, talon?.service_end)}{' '}
                            {t('table.body.serviceTime.min')}
                         </p>
-                        {calculateTimeDifference(talon?.service_start, talon?.service_end) > 3 &&
-                        talon?.service_end ? (
-                           <img src={alert} alt='alert' className={styles.alert} />
+                        {calculateTimeDifference(talon?.service_start, talon?.service_end) >
+                           timeLimitSeconds && talon?.service_end ? (
+                           <img
+                              src={isDarkMode ? darkModeAlert : alert}
+                              alt='alert'
+                              className={styles.alert}
+                           />
                         ) : null}
                      </>
                   ) : (
                      <>
-                        <p className={styles.columnDataStatus}>-</p>
+                        <p
+                           className={styles.columnDataStatus}
+                           style={{ color: isDarkMode && 'white' }}
+                        >
+                           -
+                        </p>
                         <div className={styles.childDiv}>
                            <Popover
                               content={tableContent(talon)}
@@ -204,7 +330,11 @@ const RegistrarHome = () => {
                               placement='leftTop'
                               id='tablePopover'
                            >
-                              <img src={dots} alt='dots' style={{ cursor: 'pointer' }} />
+                              <img
+                                 src={isDarkMode ? darkModeDots : dots}
+                                 alt='dots'
+                                 style={{ cursor: 'pointer' }}
+                              />
                            </Popover>
                         </div>
                      </>
@@ -292,40 +422,65 @@ const RegistrarHome = () => {
          <div className={styles.main}>
             <div className={styles.mainCardBlock}>
                <div className={styles.cardBlock}>
-                  <div className={styles.card1}>
+                  <div
+                     className={styles.card1}
+                     style={{ backgroundColor: isDarkMode && '#374B67' }}
+                  >
                      <div className={styles.head}>
-                        <p>{t('card.title1')}</p>
+                        <p style={{ color: isDarkMode && 'white' }}>{t('card.title1')}</p>
                      </div>
                      <div className={styles.body}>
-                        <div>
-                           <img src={arrowGreen} alt='arrow' />
-                           <span>3</span>
+                        <div style={{ backgroundColor: isDarkMode && '#136E37' }}>
+                           <img
+                              src={isDarkMode ? darkModeArrowGreen : arrowGreen}
+                              style={{ backgroundColor: isDarkMode && '#136E37' }}
+                              alt='arrow'
+                           />
+                           <span style={{ color: isDarkMode && '#A0FF9E' }}>
+                              5
+                              {/* {clientsCounter(clients_per_day?.today, clients_per_day?.yesterday)} */}
+                           </span>
                         </div>
-                        <p>{t('card.body')}</p>
+                        <p style={{ color: isDarkMode && '#A0FF9E' }}>{t('card.body')}</p>
                      </div>
                      <div className={styles.footer}>
-                        <p>16</p>
+                        <p style={{ color: isDarkMode && 'white' }}>
+                           {/* {clients_per_day?.today?.completed} */}
+                           16
+                        </p>
                      </div>
                   </div>
-                  <div className={styles.card2}>
+                  <div
+                     className={styles.card2}
+                     style={{ backgroundColor: isDarkMode && '#374B67' }}
+                  >
                      <div className={styles.head}>
-                        <p>{t('card.title2')}</p>
+                        <p style={{ color: isDarkMode && 'white' }}>{t('card.title2')}</p>
                      </div>
                      <div className={styles.body}>
-                        <div>
-                           <img src={arrowRed} alt='arrow' />
-                           <span>1</span>
+                        <div style={{ backgroundColor: isDarkMode && '#712828' }}>
+                           <img src={isDarkMode ? darkModeArrowRed : arrowRed} alt='arrow' />
+                           <span style={{ color: isDarkMode && '#FFC8D0' }}>
+                              {/* {canceledClientsCounter(
+                                 clients_per_day?.today,
+                                 clients_per_day?.yesterday
+                              )} */}
+                              7
+                           </span>
                         </div>
-                        <p>{t('card.body')}</p>
+                        <p style={{ color: isDarkMode && '#FFC8D0' }}>{t('card.body')}</p>
                      </div>
                      <div className={styles.footer}>
-                        <p>4</p>
+                        <p style={{ color: isDarkMode && 'white' }}>
+                           {/* {clients_per_day?.today?.canceled} */}
+                           15
+                        </p>
                      </div>
                   </div>
                </div>
                <div className={styles.buttonBlock}>
                   <button className={styles.newTalon} onClick={() => setModalActive(true)}>
-                     Новый талон
+                     {t('newTalon.button1')}
                   </button>
                   <ModalForm active={modalActive} setActive={setModalActive} />
                </div>
@@ -336,6 +491,7 @@ const RegistrarHome = () => {
                   marginBottom: '50px',
                }}
                loading={getTalonsLoading}
+               className={isDarkMode ? 'dark_mode' : 'default_mode'}
                dataSource={filteredTalons.map((item, index) => ({
                   ...item,
                   key: index,
@@ -346,7 +502,8 @@ const RegistrarHome = () => {
                   <p
                      style={{
                         fontFamily: "'Inter', sanf-serif",
-                        color: '#2B2B2B',
+                        color: isDarkMode ? 'white' : '#2B2B2B',
+
                         fontSize: '18px',
                         fontWeight: '600',
                      }}

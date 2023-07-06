@@ -7,11 +7,12 @@ import darkModeLogo from '@/assets/svg/darkModeLogo.svg';
 
 import { useOperator } from '@/services/operatorStore';
 import { UserOutlined } from '@ant-design/icons';
+import { useMain } from '@/services/MainStore';
 
 const Navbar = ({ employee }) => {
    const talons = useOperator((state) => state.talons);
 
-   const isDarkMode = useOperator((state) => state.isDarkMode);
+   const isDarkMode = useMain((state) => state.isDarkMode);
 
    const { t, i18n } = useTranslation();
    const [date, setDate] = useState('');
