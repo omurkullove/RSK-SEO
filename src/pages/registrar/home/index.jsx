@@ -53,7 +53,7 @@ const RegistrarHome = () => {
          ),
          dataIndex: 'token',
          render: (value) => {
-            if (value.includes(searchValue)) {
+            if (value?.includes(searchValue)) {
                return (
                   <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
                      {value}
@@ -373,6 +373,7 @@ const RegistrarHome = () => {
    };
 
    const filteredTalons = talons.filter((talon) => talon.token.includes(searchValue));
+   console.log(filteredTalons, searchValue);
 
    filteredTalons.sort((a, b) => {
       // Compare the position of the searchValue in the token

@@ -1,0 +1,66 @@
+@import '../variables.scss';
+
+.modal {
+   height: 100vh;
+   width: 100vw;
+   background-color: rgba(0, 0, 0, 0.4);
+   position: fixed;
+   top: 0;
+   right: 0;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 999;
+
+   opacity: 0;
+   pointer-events: none;
+   transition: 0.5s;
+
+   &__content {
+      border-radius: 12px;
+      background-color: #fff;
+      height: min-content;
+      width: 400px;
+      padding: 15px;
+      p {
+         margin-bottom: 15px;
+         text-align: center;
+         font-family: $Inter;
+         font-size: 18px;
+         font-weight: 600;
+         line-height: 20px;
+      }
+
+      .buttonBlock {
+         display: flex;
+         justify-content: flex-end;
+         align-items: center;
+         gap: 10px;
+         margin-top: 15px;
+
+         button {
+            padding: 10px;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            -ms-border-radius: 8px;
+            -o-border-radius: 8px;
+            cursor: pointer;
+         }
+
+         :nth-child(1) {
+            background-color: red;
+         }
+
+         :nth-child(2) {
+            background-color: green;
+         }
+      }
+   }
+   &.active {
+      pointer-events: all;
+      opacity: 1;
+   }
+}

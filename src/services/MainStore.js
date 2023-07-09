@@ -6,6 +6,7 @@ export const useMain = create((set, get) => ({
    email: {},
    token: JSON.parse(localStorage.getItem('token')) || {},
    employee: {},
+   isSuperAdmin: false,
 
    isDarkMode: false,
 
@@ -24,6 +25,10 @@ export const useMain = create((set, get) => ({
             case 'registrar':
                navigate('/registrar/home');
                break;
+            case 'admin':
+            case 'super_admin':
+               navigate('/admin/home');
+               break;
 
             default:
                break;
@@ -38,7 +43,7 @@ export const useMain = create((set, get) => ({
    getProfileInfo: async (email) => {
       set({ getProfileInfoLoading: true });
       try {
-         const res = await axios.get(`${API}/employee/retrieve/${email}/`, {
+         const res = await axios.get(`${API}/employee/retrieve`, {
             headers: {
                Authorization: `Bearer ${get().token.access}`,
             },
@@ -52,5 +57,19 @@ export const useMain = create((set, get) => ({
    },
    toggleDarkMode: (checked) => {
       set({ isDarkMode: checked });
+   },
+   adminIdentifier: () => {
+      const admin = JSON.parse(localStorage.getItem('token'));
+      switch (admin.position) {
+         case 'admin':
+            set({ isSuperAdmin: false });
+            break;
+         case 'super_admin':
+            set({ isSuperAdmin: true });
+            break;
+
+         default:
+            set({ isSuperAdmin: false });
+      }
    },
 }));

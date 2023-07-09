@@ -40,7 +40,7 @@ export const UserHeader = ({ employee, searchValue, setSearchValue }) => {
             <img className={styles.search__logo} src={search} alt='logo' />
             <input
                value={searchValue}
-               onChange={(event) => setSearchValue(event.target.value)}
+               onChange={(event) => setSearchValue(event.target.value.toUpperCase())}
                className={styles.search__input}
                placeholder='Поиск по номеру талона'
                type='text'

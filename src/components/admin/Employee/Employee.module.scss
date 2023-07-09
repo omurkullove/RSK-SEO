@@ -1,0 +1,54 @@
+@import '../../../assets/styles/variables.scss';
+
+.tableTitle {
+   color: #1e4a89;
+   text-align: center;
+   font-size: 13px;
+   font-family: $Inter;
+   font-weight: 600;
+   line-height: 20px;
+}
+
+.tableData {
+   color: #2b2b2b;
+   text-align: center;
+   font-size: 16px;
+   font-family: $Inter;
+   font-weight: 600;
+   line-height: 20px;
+}
+
+.email {
+   cursor: pointer;
+   text-decoration: underline;
+   transition: 0.2s;
+   -webkit-transition: 0.2s;
+   -moz-transition: 0.2s;
+   -ms-transition: 0.2s;
+   -o-transition: 0.2s;
+   &:hover {
+      color: #2968c1;
+   }
+}
+
+.tableBlock {
+   .buttonBlock {
+      margin-top: 40px;
+      display: flex;
+      justify-content: flex-end;
+      button {
+         background-color: #1e4a89;
+         font-family: $Inter;
+         color: white;
+         border: none;
+         border-radius: 10px;
+         -webkit-border-radius: 10px;
+         -moz-border-radius: 10px;
+         -ms-border-radius: 10px;
+         -o-border-radius: 10px;
+         padding: 10px;
+         font-weight: 600;
+         cursor: pointer;
+      }
+   }
+}

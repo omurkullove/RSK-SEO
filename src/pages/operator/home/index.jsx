@@ -19,7 +19,7 @@ import {
 } from '@/utils/utils';
 
 // UI
-import { Popover, Table, Spin, Statistic } from 'antd';
+import { Popover, Table, Spin, Statistic, Select } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import styles from '@/assets/styles/operator/Home.module.scss';
 import dots from '@/assets/svg/dots.svg';
@@ -32,9 +32,12 @@ import arrowRed from '@/assets/svg/arrowRed.svg';
 import alert from '@/assets/svg/1_6Alert.svg';
 import darkModeAlert from '@/assets/svg/darkModeAlert.svg';
 
+import Modal from '@/components/operator/Modal/Modal';
+
 import edit from '@/assets/svg/edit.svg';
 import deleteSvg from '@/assets/svg/delete.svg';
 import { useMain } from '@/services/MainStore';
+import { ModalForm } from '@/components/registrar/ModalWindow/ModalForm';
 
 const HomePage = () => {
    // Store states & functions
@@ -48,6 +51,7 @@ const HomePage = () => {
    const getTalonsLoading = useOperator((state) => state.getTalonsLoading);
    const currentTalon = useOperator((state) => state.currentTalon);
    const clients_per_day = useOperator((state) => state.clients_per_day);
+
    const isDarkMode = useMain((state) => state.isDarkMode);
 
    const employee = useMain((state) => state.employee);
@@ -58,6 +62,8 @@ const HomePage = () => {
    const [isRunning, setIsRunning] = useState(false);
    const [seconds, setSeconds] = useState(0);
    const [isStart, setIsStart] = useState(false);
+   const [isModal, setIsModal] = useState(false);
+   const [modalTalon, setModalTalon] = useState();
 
    const tableRef = useRef(null);
 
@@ -302,6 +308,11 @@ const HomePage = () => {
       await getTalons(JSON.parse(localStorage.getItem('token')) || {});
    };
 
+   const hanldeOpenModal = (talon) => {
+      setModalTalon(talon);
+      setIsModal(true);
+   };
+
    // Service operation
    const handleStart = async (token) => {
       await serviceStart(token);
@@ -323,6 +334,7 @@ const HomePage = () => {
       <div className={styles.tableContent}>
          <div onClick={() => handleTransferToStart(talon)}>{t('table.body.popover.toStart')}</div>
          <div onClick={() => handleTransferToEnd(talon)}>{t('table.body.popover.toEnd')}</div>
+         <div onClick={() => hanldeOpenModal(talon)}>{t('table.body.popover.queue')}</div>
          <div onClick={() => handleDeletetalon(talon)}>{t('table.body.popover.delete')}</div>
       </div>
    );
@@ -449,6 +461,7 @@ const HomePage = () => {
                   {currentTalon ? (
                      <>
                         <p style={{ color: isDarkMode && '#DFDFDF' }}>{t('now')}</p>
+
                         <ul>
                            <li style={{ color: isDarkMode && '#FFF' }}>{currentTalon?.token}</li>
                            <li style={{ color: isDarkMode && '#FFF' }}>
@@ -504,6 +517,7 @@ const HomePage = () => {
                      </button>
                   </div>
                </div>
+               <Modal isModal={isModal} setIsModal={setIsModal} talon={modalTalon} />
             </div>
 
             <Table
@@ -523,9 +537,9 @@ const HomePage = () => {
                   <p
                      style={{
                         fontFamily: "'Inter', sanf-serif",
-                        color: isDarkMode ? 'white' : '#2B2B2B',
                         fontSize: '18px',
                         fontWeight: '600',
+                        color: isDarkMode ? 'white' : '#2B2B2B',
                      }}
                   >
                      {t('table.titles.allTalons')}

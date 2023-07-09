@@ -18,6 +18,7 @@ import {
 import { useNavigate } from 'react-router';
 import { useOperator } from '@/services/operatorStore';
 import { useMain } from '@/services/MainStore';
+import { branchIndeficator } from '@/utils/utils';
 
 const Sidebar = () => {
    const navigate = useNavigate();
@@ -33,19 +34,6 @@ const Sidebar = () => {
 
    const onChange = (checked) => {
       toggleDarkMode(checked);
-   };
-
-   const branchIndeficator = (branch) => {
-      switch (branch) {
-         case 1:
-            return 'Бишкек, Киевская 77';
-         case 2:
-            return 'Каракол, Кулакунова 89';
-         case 3:
-            return 'Ош, Курманжан датка 124';
-         default:
-            return { branch };
-      }
    };
 
    const [lang, setLang] = useState('ru');
@@ -79,7 +67,7 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.position')}
-                        <div>{employee?.position === 'registrar' ? 'Регистратор' : 'Оператор'}</div>
+                        <div>{employee?.position}</div>
                      </label>
                   </div>
                ),
@@ -146,7 +134,7 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.branch')}
-                        <div>{branchIndeficator(employee?.branch)}</div>
+                        <div>{employee?.branch}</div>
                      </label>
                   </div>
                ),

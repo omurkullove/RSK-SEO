@@ -44,7 +44,8 @@
          "popover": {
             "delete": "Delete",
             "toStart": "Transfer to start",
-            "toEnd": "Transfer to end"
+            "toEnd": "Transfer to end",
+            "queue": "Transfet to other queue"
          }
       }
    },

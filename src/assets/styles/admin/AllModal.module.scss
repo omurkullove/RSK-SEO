@@ -1,0 +1,595 @@
+// employee
+
+@import '../variables.scss';
+
+.wrapper {
+   height: 100vh;
+   width: 100vw;
+   background-color: rgba(0, 0, 0, 0.4);
+   position: fixed;
+   top: 0;
+   right: 0;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 999;
+   opacity: 0;
+   pointer-events: none;
+   transition: 0.5s;
+   -webkit-transition: 0.5s;
+   -moz-transition: 0.5s;
+   -ms-transition: 0.5s;
+   -o-transition: 0.5s;
+
+   &.active {
+      pointer-events: all;
+      opacity: 1;
+   }
+}
+
+.employeeMain {
+   background-color: #fff;
+   height: min-content;
+   width: 1000px;
+   height: min-content;
+
+   border-radius: 20px;
+   -webkit-border-radius: 20px;
+   -moz-border-radius: 20px;
+   -ms-border-radius: 20px;
+   -o-border-radius: 20px;
+
+   .head {
+      padding-inline: 20px;
+      height: 75px;
+      display: flex;
+      background-color: #eefaff;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 20px 20px 0 0;
+      -webkit-border-radius: 20px 20px 0 0;
+      -moz-border-radius: 20px 20px 0 0;
+      -ms-border-radius: 20px 20px 0 0;
+      -o-border-radius: 20px 20px 0 0;
+      border-bottom: 1px solid #5c5c5c;
+
+      p {
+         color: #1e4a89;
+         width: 55%;
+         font-family: $Inter;
+
+         font-size: 20px;
+         font-weight: 600;
+      }
+
+      input {
+         border: none;
+         margin-right: 100px;
+         outline: none !important;
+         background: transparent;
+         width: 185px;
+         color: #2b2b2b;
+         font-family: $Inter;
+         font-size: 18px;
+         font-style: normal;
+         font-weight: 600;
+      }
+   }
+
+   .body {
+      padding-inline: 20px;
+      column-gap: 20px;
+
+      .line {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         margin-top: 20px;
+
+         p {
+            width: 55%;
+            color: #1e4a89;
+            font-family: $Inter;
+            font-size: 17px;
+            font-style: normal;
+            font-weight: 600;
+         }
+
+         input {
+            border: none;
+            margin-right: 100px;
+            outline: none !important;
+            background: transparent;
+            width: 185px;
+            color: #2b2b2b;
+            font-family: $Inter;
+            font-size: 17px;
+            font-weight: 600;
+         }
+      }
+   }
+   .footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 20px;
+      margin-top: 20px;
+      gap: 10px;
+
+      button {
+         padding: 10px;
+         border: none;
+         color: white;
+         border-radius: 8px;
+         -webkit-border-radius: 8px;
+         -moz-border-radius: 8px;
+         -ms-border-radius: 8px;
+         -o-border-radius: 8px;
+         cursor: pointer;
+      }
+
+      :nth-child(1) {
+         background-color: red;
+      }
+      :nth-child(2) {
+         background-color: #1e4a89;
+      }
+
+      :nth-child(3) {
+         background-color: green;
+      }
+   }
+}
+
+// Queue
+
+.queueMain {
+   background-color: #fff;
+   height: min-content;
+   width: 1000px;
+   height: min-content;
+
+   border-radius: 20px;
+   -webkit-border-radius: 20px;
+   -moz-border-radius: 20px;
+   -ms-border-radius: 20px;
+   -o-border-radius: 20px;
+
+   .head {
+      padding-inline: 20px;
+      height: 75px;
+      display: flex;
+      background-color: #eefaff;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 20px 20px 0 0;
+      -webkit-border-radius: 20px 20px 0 0;
+      -moz-border-radius: 20px 20px 0 0;
+      -ms-border-radius: 20px 20px 0 0;
+      -o-border-radius: 20px 20px 0 0;
+      border-bottom: 1px solid #5c5c5c;
+
+      input {
+         color: #1e4a89;
+         width: 55%;
+         border: none;
+
+         font-size: 20px;
+         font-weight: 600;
+
+         outline: none !important;
+         background: transparent;
+      }
+   }
+   .body {
+      padding-inline: 20px;
+      column-gap: 20px;
+
+      .line {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         margin-top: 20px;
+
+         p {
+            width: 55%;
+            color: #1e4a89;
+            font-family: $Inter;
+            font-size: 17px;
+            font-style: normal;
+            font-weight: 600;
+         }
+
+         input {
+            border: none;
+            margin-right: 100px;
+            outline: none !important;
+            background: transparent;
+            width: 185px;
+            color: #2b2b2b;
+            font-family: $Inter;
+            font-size: 17px;
+            font-weight: 600;
+         }
+      }
+      .footer {
+         display: flex;
+         justify-content: flex-end;
+         align-items: center;
+         margin-top: 20px;
+         gap: 10px;
+         padding: 20px;
+
+         button {
+            padding: 10px;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            -ms-border-radius: 8px;
+            -o-border-radius: 8px;
+            cursor: pointer;
+         }
+
+         :nth-child(1) {
+            background-color: red;
+         }
+         :nth-child(2) {
+            background-color: #1e4a89;
+         }
+
+         :nth-child(3) {
+            background-color: green;
+         }
+      }
+   }
+}
+
+// Create Queue
+
+.createQueueMain {
+   background-color: #fff;
+   width: 400px;
+   height: min-content;
+   padding-bottom: 20px;
+
+   border-radius: 20px;
+   -webkit-border-radius: 20px;
+   -moz-border-radius: 20px;
+   -ms-border-radius: 20px;
+   -o-border-radius: 20px;
+
+   .head {
+      background-color: #eefaff;
+      border-bottom: 1px solid #d7d7d7;
+      padding-inline: 20px;
+      border-radius: 20px 20px 0 0;
+      -webkit-border-radius: 20px 20px 0 0;
+      -moz-border-radius: 20px 20px 0 0;
+      -ms-border-radius: 20px 20px 0 0;
+      -o-border-radius: 20px 20px 0 0;
+      padding: 10px;
+
+      p {
+         color: #1e4a89;
+         width: 55%;
+         font-family: $Inter;
+
+         font-size: 20px;
+         font-weight: 600;
+      }
+   }
+
+   form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-inline: 20px;
+
+      input {
+         margin-top: 25px;
+         width: 100%;
+         padding: 8px;
+         outline: none !important;
+         border-radius: 7px;
+         -webkit-border-radius: 7px;
+         -moz-border-radius: 7px;
+         -ms-border-radius: 7px;
+         -o-border-radius: 7px;
+         border: 3px solid #5a6c74;
+      }
+
+      .footer {
+         margin-top: 25px;
+         display: flex;
+         justify-content: flex-end;
+         width: 100%;
+         gap: 10px;
+
+         button {
+            background-color: #1e4a89;
+            font-family: $Inter;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            -ms-border-radius: 10px;
+            -o-border-radius: 10px;
+            padding: 10px;
+            font-weight: 600;
+            cursor: pointer;
+         }
+         :nth-child(1) {
+            background-color: lightslategray;
+         }
+         :nth-child(2) {
+            background-color: #1e4a89;
+         }
+      }
+   }
+}
+
+.createServiceMain {
+   background-color: #fff;
+   width: 400px;
+   height: min-content;
+   padding-bottom: 20px;
+
+   border-radius: 20px;
+   -webkit-border-radius: 20px;
+   -moz-border-radius: 20px;
+   -ms-border-radius: 20px;
+   -o-border-radius: 20px;
+
+   .head {
+      background-color: #eefaff;
+      border-bottom: 1px solid #d7d7d7;
+      padding-inline: 20px;
+      border-radius: 20px 20px 0 0;
+      -webkit-border-radius: 20px 20px 0 0;
+      -moz-border-radius: 20px 20px 0 0;
+      -ms-border-radius: 20px 20px 0 0;
+      -o-border-radius: 20px 20px 0 0;
+      padding: 10px;
+
+      p {
+         color: #1e4a89;
+         width: 55%;
+         font-family: $Inter;
+
+         font-size: 20px;
+         font-weight: 600;
+      }
+   }
+
+   form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-inline: 20px;
+
+      input {
+         margin-top: 25px;
+         width: 100%;
+         padding: 8px;
+         outline: none !important;
+         border-radius: 7px;
+         -webkit-border-radius: 7px;
+         -moz-border-radius: 7px;
+         -ms-border-radius: 7px;
+         -o-border-radius: 7px;
+         border: 3px solid #5a6c74;
+      }
+
+      .footer {
+         margin-top: 25px;
+         display: flex;
+         justify-content: flex-end;
+         width: 100%;
+         gap: 10px;
+
+         button {
+            background-color: #1e4a89;
+            font-family: $Inter;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            -ms-border-radius: 10px;
+            -o-border-radius: 10px;
+            padding: 10px;
+            font-weight: 600;
+            cursor: pointer;
+         }
+         :nth-child(1) {
+            background-color: lightslategray;
+         }
+         :nth-child(2) {
+            background-color: #1e4a89;
+         }
+      }
+   }
+}
+
+.serviceMain {
+   background-color: #fff;
+   height: min-content;
+   width: 1000px;
+   height: min-content;
+
+   border-radius: 20px;
+   -webkit-border-radius: 20px;
+   -moz-border-radius: 20px;
+   -ms-border-radius: 20px;
+   -o-border-radius: 20px;
+
+   .head {
+      padding-inline: 20px;
+      height: 75px;
+      display: flex;
+      background-color: #eefaff;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 20px 20px 0 0;
+      -webkit-border-radius: 20px 20px 0 0;
+      -moz-border-radius: 20px 20px 0 0;
+      -ms-border-radius: 20px 20px 0 0;
+      -o-border-radius: 20px 20px 0 0;
+      border-bottom: 1px solid #5c5c5c;
+
+      input {
+         color: #1e4a89;
+         width: 55%;
+         border: none;
+
+         font-size: 20px;
+         font-weight: 600;
+
+         outline: none !important;
+         background: transparent;
+      }
+   }
+   .body {
+      padding-inline: 20px;
+      column-gap: 20px;
+
+      .line {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         margin-top: 20px;
+
+         p {
+            width: 55%;
+            color: #1e4a89;
+            font-family: $Inter;
+            font-size: 17px;
+            font-style: normal;
+            font-weight: 600;
+         }
+
+         input {
+            border: none;
+            margin-right: 100px;
+            outline: none !important;
+            background: transparent;
+            width: 185px;
+            color: #2b2b2b;
+            font-family: $Inter;
+            font-size: 17px;
+            font-weight: 600;
+         }
+      }
+      .footer {
+         display: flex;
+         justify-content: flex-end;
+         align-items: center;
+         margin-top: 20px;
+         gap: 10px;
+         padding: 20px;
+
+         button {
+            padding: 10px;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            -ms-border-radius: 8px;
+            -o-border-radius: 8px;
+            cursor: pointer;
+         }
+
+         :nth-child(1) {
+            background-color: red;
+         }
+         :nth-child(2) {
+            background-color: #1e4a89;
+         }
+
+         :nth-child(3) {
+            background-color: green;
+         }
+      }
+   }
+}
+
+.employeeCreateMain {
+   background-color: #fff;
+   width: 500px;
+   height: 700px;
+   overflow-y: scroll;
+   padding-bottom: 20px;
+
+   .head {
+      background-color: #eefaff;
+      border-bottom: 1px solid #d7d7d7;
+      padding-inline: 20px;
+
+      padding: 10px;
+
+      p {
+         color: #1e4a89;
+         width: 55%;
+         font-family: $Inter;
+
+         font-size: 20px;
+         font-weight: 600;
+      }
+   }
+
+   form {
+      display: flex;
+      flex-direction: column;
+      padding-inline: 30px;
+
+      label {
+         margin-top: 25px;
+         font-weight: bold;
+      }
+
+      input {
+         width: 100%;
+         padding: 8px;
+         outline: none !important;
+         border-radius: 7px;
+         -webkit-border-radius: 7px;
+         -moz-border-radius: 7px;
+         -ms-border-radius: 7px;
+         -o-border-radius: 7px;
+         border: 3px solid #5a6c74;
+      }
+
+      .footer {
+         margin-top: 25px;
+         display: flex;
+         justify-content: flex-end;
+         width: 100%;
+         gap: 10px;
+
+         button {
+            background-color: #1e4a89;
+            font-family: $Inter;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            -ms-border-radius: 10px;
+            -o-border-radius: 10px;
+            padding: 10px;
+            font-weight: 600;
+            cursor: pointer;
+         }
+         :nth-child(1) {
+            background-color: lightslategray;
+         }
+         :nth-child(2) {
+            background-color: #1e4a89;
+         }
+      }
+   }
+}

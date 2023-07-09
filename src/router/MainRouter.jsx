@@ -6,6 +6,7 @@ import AuthPage from '@/pages/auth';
 
 import RootRegistrar from '@/pages/registrar';
 import RootOpertor from '@/pages/operator';
+import RootAdmin from '@/pages/admin';
 
 const MainRouter = () => {
    return (
@@ -13,6 +14,7 @@ const MainRouter = () => {
          <Route path='/' element={<AuthPage />} />
          <Route path='/operator/*' element={<RootOpertor />} />
          <Route path='/registrar/*' element={<RootRegistrar />} />
+         <Route path='/admin/*' element={<RootAdmin />} />
       </Routes>
    );
 };

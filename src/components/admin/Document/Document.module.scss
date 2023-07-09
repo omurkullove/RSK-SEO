@@ -1,0 +1,114 @@
+@import '../../../assets/styles/variables.scss';
+
+.documentBlock {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   height: 100%;
+
+   form {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+      align-items: center;
+      flex-direction: column;
+      gap: 25px;
+      font-family: $Inter;
+      width: 500px;
+      background-color: white;
+
+      .inputBlock {
+         display: flex;
+         align-items: center;
+
+         width: 100%;
+         gap: 100px;
+
+         p {
+            width: 10%;
+            font-weight: 600;
+            font-size: 16px;
+         }
+
+         input {
+            padding: 5px;
+            outline: none !important;
+            border: 1px solid black;
+            border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            -ms-border-radius: 5px;
+            -o-border-radius: 5px;
+         }
+      }
+
+      .buttonBlock {
+         display: flex;
+         justify-content: flex-end;
+         width: 100%;
+
+         button {
+            background-color: #1e4a89;
+            font-family: $Inter;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            -ms-border-radius: 10px;
+            -o-border-radius: 10px;
+            padding: 10px;
+            font-weight: 600;
+            cursor: pointer;
+         }
+      }
+   }
+
+   .list {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 50px;
+      gap: 20px;
+      font-family: $Inter;
+
+      .test_doc {
+         width: 200px;
+         background-color: #f8f8f8;
+         padding: 20px;
+         border-radius: 8px;
+         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+         margin-bottom: 20px;
+         height: 150px;
+      }
+
+      .doc_id {
+         font-weight: bold;
+         color: #333;
+         margin-bottom: 5px;
+      }
+
+      .doc_name {
+         font-size: 18px;
+         margin-bottom: 10px;
+         max-height: 50px;
+         min-height: 50px;
+         overflow: hidden;
+      }
+
+      .doc_link {
+         color: #007bff;
+         text-decoration: none;
+         transition: color 0.3s;
+         background: transparent;
+         border: none;
+         margin: 2px;
+         font-size: 15px;
+         cursor: pointer;
+
+         &:hover {
+            color: #0056b3;
+         }
+      }
+   }
+}

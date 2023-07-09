@@ -60,6 +60,20 @@ export const useOperator = create((set, get) => ({
          set({ getTalonsLoading: false });
       }
    },
+   transferTalonToAnotherQueue: async (talonId, queueId) => {
+      set({ getTalonsLoading: true });
+      try {
+         const res = await axios.get(`${API}/talon/transfer/${talonId}/${queueId}`, {
+            headers: {
+               Authorization: `Bearer ${get().token.access}`,
+            },
+         });
+      } catch (err) {
+         set({ errors: err });
+      } finally {
+         set({ getTalonsLoading: false });
+      }
+   },
 
    deleteTalon: async (id) => {
       set({ getTalonsLoading: true });

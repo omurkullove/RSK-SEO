@@ -34,6 +34,7 @@ const AuthPage = () => {
 
    const hanldeLogin = async (values) => {
       await login(values, navigate);
+      console.log(values);
    };
 
    return (
