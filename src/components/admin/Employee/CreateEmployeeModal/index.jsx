@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import ModalWrapper from '../../ModalWrapper';
-import { useMain } from '@/services/MainStore';
-import { selectModalStyles } from '@/utils/utils';
 import { Checkbox, Select } from 'antd';
+import { CustomModalLoading, selectModalStyles } from '@/utils/utils';
+import React, { useEffect, useState } from 'react';
+
+import ModalWrapper from '../../ModalWrapper';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
 import { useAdmin } from '@/services/adminStore';
+import { useMain } from '@/services/MainStore';
 
 const CreateEmployeeModal = ({ isCreateEmpModal, setIsCreateEmpModal }) => {
    const [employee, setEmployee] = useState();
@@ -29,8 +30,8 @@ const CreateEmployeeModal = ({ isCreateEmpModal, setIsCreateEmpModal }) => {
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-      await createEmployee(JSON.parse(localStorage.getItem('token')), employee);
-      await getEmployeeList(JSON.parse(localStorage.getItem('token')));
+      await createEmployee(employee);
+      await getEmployeeList();
 
       setIsCreateEmpModal(false);
    };
@@ -46,8 +47,8 @@ const CreateEmployeeModal = ({ isCreateEmpModal, setIsCreateEmpModal }) => {
    }));
 
    useEffect(() => {
-      getBranchList(JSON.parse(localStorage.getItem('token')));
-      getServiceList(JSON.parse(localStorage.getItem('token')));
+      getBranchList();
+      getServiceList();
    }, []);
 
    return (
@@ -64,7 +65,7 @@ const CreateEmployeeModal = ({ isCreateEmpModal, setIsCreateEmpModal }) => {
             </div>
             <form action='submit' onSubmit={handleSubmit}>
                {isBranchListLoading && isServiceListLoading ? (
-                  <p>Loading...</p>
+                  <CustomModalLoading />
                ) : (
                   <>
                      <label htmlFor='email'>Email:</label>
@@ -175,16 +176,6 @@ const CreateEmployeeModal = ({ isCreateEmpModal, setIsCreateEmpModal }) => {
                         placeholder='Авто вызов талона'
                      />
 
-                     <label htmlFor='is_staff'>Is staff:</label>
-                     <Checkbox
-                        onChange={(e) => handleEdit('is_staff', e.target.checked)}
-                        defaultChecked={false}
-                        name='is_staff'
-                        type='checkbox'
-                        id='is_staff'
-                        placeholder='Is staff'
-                     />
-
                      <label htmlFor='is_active'>Is active:</label>
                      <Checkbox
                         onChange={(e) => handleEdit('is_active', e.target.checked)}
@@ -207,12 +198,13 @@ const CreateEmployeeModal = ({ isCreateEmpModal, setIsCreateEmpModal }) => {
 
                      <label htmlFor='service'>Услуги:</label>
                      <Select
-                        onChange={(value) => handleEdit('service', [value])}
+                        mode='multiple'
+                        onChange={(value) => handleEdit('service', [...value])}
                         name='service'
                         id='service'
-                        defaultValue={1}
                         placeholder='Услуги'
                         options={serviceOptions}
+                        value={employee?.service}
                         style={(selectModalStyles, { marginTop: 0 })}
                      />
 

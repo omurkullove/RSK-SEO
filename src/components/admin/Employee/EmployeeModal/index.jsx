@@ -1,19 +1,34 @@
-import { useMain } from '@/services/MainStore';
-import React, { useState } from 'react';
-import styles from '@/assets/styles/admin/AllModal.module.scss';
-import info_icon from '@/assets/svg/Info_icon.svg';
-import { branchIndeficator, serviceIndetificator } from '@/utils/utils';
-import { Alert, Popover } from 'antd';
+import { Alert, DatePicker, Popover, Select, TimePicker } from 'antd';
+import {
+   CustomModalLoading,
+   branchIndeficator,
+   returnUnderstandableDate,
+   selectModalStyles,
+   serviceIndetificator,
+} from '@/utils/utils';
+import React, { useEffect, useState } from 'react';
+
 import ModalWrapper from '@/components/admin/ModalWrapper';
+import info_icon from '@/assets/svg/Info_icon.svg';
+import styles from '@/assets/styles/admin/AllModal.module.scss';
 import { useAdmin } from '@/services/adminStore';
+import { useMain } from '@/services/MainStore';
 
 const EmployeeModal = ({ setIsModal, isModal, employee }) => {
    const isDarkMode = useMain((state) => state.isDarkMode);
 
    const [newEmployee, setNewEmployee] = useState(employee);
 
+   const isServiceListLoading = useAdmin((state) => state.isServiceListLoading);
+   const serviceList = useAdmin((state) => state.serviceList);
+   const getServiceList = useAdmin((state) => state.getServiceList);
+
    const deleteEmployee = useAdmin((state) => state.deleteEmployee);
+   const editEmployee = useAdmin((state) => state.editEmployee);
    const getEmployeeList = useAdmin((state) => state.getEmployeeList);
+   const getBranchList = useAdmin((state) => state.getBranchList);
+   const branchList = useAdmin((state) => state.branchList);
+   const isBranchListLoading = useAdmin((state) => state.getBranchList);
 
    const TBody = [
       {
@@ -27,7 +42,10 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          ),
          id: 1,
          title: 'Филиал*',
-         data: employee.branch ? branchIndeficator(employee.branch) : '-',
+         data: employee.branch
+            ? // ? branchList?.find((item) => item.id === employee.branch)[('city', 'address')]
+              employee.branch
+            : '-',
          name: 'branch',
          required: true,
       },
@@ -93,6 +111,16 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
       },
       {
          hintAlert: (
+            <Alert message='Информация о текущем поле' type='info' showIcon description='Время' />
+         ),
+         id: 6,
+         title: 'Последнее время логина',
+         data: employee.last_login ? returnUnderstandableDate(employee.last_login) : undefined,
+         name: 'last_login',
+         required: true,
+      },
+      {
+         hintAlert: (
             <Alert
                message='Информация о текущем поле'
                type='info'
@@ -100,7 +128,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
                description='Ключевое слово: active или no active'
             />
          ),
-         id: 6,
+         id: 7,
          title: 'Текущий статус*',
          data: employee.status,
          name: 'status',
@@ -115,7 +143,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
                description='Число, любое значение'
             />
          ),
-         id: 7,
+         id: 8,
          title: 'Максимальное количество переносов клиента',
          data: employee.max_transport,
          name: 'max_transport',
@@ -125,9 +153,14 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          hintAlert: (
             <Alert message='Информация о текущем поле' type='info' showIcon description='...' />
          ),
-         id: 8,
+         id: 9,
          title: 'Очереди, которые обслуживает данный сотрудник*',
-         data: employee.service.length ? employee.service.map((item) => item) : undefined,
+         data: serviceList?.length
+            ? serviceList?.map((item) => ({
+                 label: item?.description,
+                 value: item?.id,
+              }))
+            : undefined,
          name: 'service',
          required: true,
       },
@@ -140,7 +173,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
                description='Логическое значение: true или false'
             />
          ),
-         id: 9,
+         id: 10,
          title: 'Предусмотрен ли автоматический вызов клиента',
          data: employee.auto_call,
          name: 'auto_call',
@@ -155,7 +188,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
                description='Число, например: 4.7'
             />
          ),
-         id: 10,
+         id: 11,
          title: 'Рейтинг сотрудника',
          data: employee.rating,
          name: 'rating',
@@ -163,25 +196,63 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
       },
    ];
 
-   const handleEdit = (e) => {
-      setIsStartEdit(true);
-      const { value, name } = e.target;
-      setNewEmployee((prev) => ({
-         ...prev,
-         [name]: value,
-      }));
+   const handleEdit = (name, value) => {
+      if (name === 'service') {
+         setNewEmployee((prev) => ({
+            ...prev,
+            [name]: [...value],
+         }));
+      } else {
+         setNewEmployee((prev) => ({
+            ...prev,
+            [name]: value,
+         }));
+      }
    };
 
-   const handleSave = (e) => {
+   useEffect(() => {
+      getServiceList();
+      getBranchList();
+   }, []);
+
+   const handleSave = async (e) => {
       e.preventDefault();
-      console.log(newEmployee);
-   };
+      const isosDate = new Date(newEmployee.last_login);
+      console.log(isosDate);
 
-   const handleDelete = async () => {
-      await deleteEmployee(JSON.parse(localStorage.getItem('token')), employee.id);
-      await getEmployeeList(JSON.parse(localStorage.getItem('token')));
+      await editEmployee(employee.id, {
+         ...newEmployee,
+         last_login: isosDate.toISOString(),
+      });
+      await getEmployeeList();
 
       setIsModal(false);
+   };
+
+   const serviceOptions = serviceList?.map((item) => ({
+      label: item?.name,
+      value: item?.id,
+   }));
+
+   const branchOptions = branchList?.map((item) => ({
+      label: `${item?.city}, ${item?.address}`,
+      value: item?.id,
+   }));
+
+   const handleDelete = async () => {
+      await deleteEmployee(employee.id);
+      await getEmployeeList();
+
+      setIsModal(false);
+   };
+
+   const serviceIndetificator = (service, serviseIdArray) => {
+      const serviceNames = serviseIdArray.map((id) => {
+         const foundService = serviceList.find((item) => item.id === id);
+         return foundService ? foundService.name : null;
+      });
+
+      return serviceNames;
    };
 
    return (
@@ -216,36 +287,59 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
                   <img src={info_icon} alt='edit' style={{ width: '24px', cursor: 'pointer' }} />
                </Popover>
             </div>
-            <form className={styles.body} onSubmit={handleSave}>
-               {TBody.map((item) => (
-                  <div className={styles.line} key={item.id}>
-                     <p>{item.title}:</p>
-                     <input
-                        required={item.required}
-                        defaultValue={typeof item.data === 'undefined' ? '-' : item.data}
-                        name={item.name}
-                        type='text'
-                        onChange={(e) => handleEdit(e)}
-                     />
-                     <Popover content={item.hintAlert} trigger={'hover'}>
-                        <img
-                           src={info_icon}
-                           alt='edit'
-                           style={{ width: '24px', cursor: 'pointer' }}
-                        />
-                     </Popover>
+            {isServiceListLoading && isBranchListLoading ? (
+               <CustomModalLoading />
+            ) : (
+               <form className={styles.body} onSubmit={handleSave}>
+                  {TBody.map((item) => (
+                     <div className={styles.line} key={item.id}>
+                        <p>{item.title}:</p>
+                        {item.name === 'service' ? (
+                           <Select
+                              mode='multiple'
+                              onChange={(value) => handleEdit('service', value)}
+                              options={serviceOptions}
+                              style={{ width: '255px', marginRight: '40px' }}
+                              defaultValue={serviceIndetificator(serviceList, employee.service)}
+                              value={newEmployee.service}
+                           />
+                        ) : item.name === 'branch' ? (
+                           <Select
+                              onChange={(value) => handleEdit('branch', value)}
+                              options={branchOptions}
+                              style={{ width: '255px', marginRight: '40px' }}
+                              defaultValue={employee.branch}
+                           />
+                        ) : (
+                           <input
+                              required={item.required}
+                              defaultValue={typeof item.data === 'undefined' ? '-' : item.data}
+                              name={item.name}
+                              onChange={(e) => handleEdit(item.name, e.target.value)}
+                              placeholder={item.name === 'last_login' ? 'MM.DD HH:MM' : item.title}
+                           />
+                        )}
+
+                        <Popover content={item.hintAlert} trigger={'hover'}>
+                           <img
+                              src={info_icon}
+                              alt='edit'
+                              style={{ width: '24px', cursor: 'pointer' }}
+                           />
+                        </Popover>
+                     </div>
+                  ))}
+                  <div className={styles.footer}>
+                     <button onClick={handleDelete} type='button'>
+                        Удалить
+                     </button>
+                     <button onClick={() => setIsModal(false)} type='button'>
+                        Отмена
+                     </button>
+                     <button type='submit'>Сохранить</button>
                   </div>
-               ))}
-               <div className={styles.footer}>
-                  <button onClick={handleDelete} type='reset'>
-                     Удалить
-                  </button>
-                  <button onClick={() => setIsModal(false)} type='reset'>
-                     Отмена
-                  </button>
-                  <button type='submit'>Сохранить</button>
-               </div>
-            </form>
+               </form>
+            )}
          </div>
       </ModalWrapper>
    );

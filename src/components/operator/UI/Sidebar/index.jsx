@@ -92,9 +92,15 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.service')}
-                        <div>
+                        <div
+                           style={{
+                              flexDirection: employee?.service?.length ? 'column' : 'row',
+                              alignItems: employee?.service?.length ? 'flex-start' : 'center',
+                              gap: '5px',
+                           }}
+                        >
                            {employee?.service?.length ? (
-                              employee?.service?.map((item) => <p key={item?.id}>{item?.name}</p>)
+                              employee?.service?.map((item) => <p key={item?.id}>- {item?.name}</p>)
                            ) : (
                               <p>Нет данных</p>
                            )}
@@ -110,7 +116,7 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.window')}
-                        <div>№{employee?.window}</div>
+                        <div>{employee?.window ? employee?.window : 'Нет данных'}</div>
                      </label>
                   </div>
                ),
@@ -122,7 +128,7 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.shiftTime')}
-                        <div>{employee?.shift}</div>
+                        <div>{employee?.shift ? employee?.shift : 'Нет данных'}</div>
                      </label>
                   </div>
                ),
@@ -134,7 +140,7 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.branch')}
-                        <div>{employee?.branch}</div>
+                        <div>{employee?.branch ? employee?.branch : 'Нет данных'}</div>
                      </label>
                   </div>
                ),

@@ -1,49 +1,37 @@
-import MainLayout from '@/components/operator/UI/Layout';
 import React, { useEffect, useState } from 'react';
-import styles from '@/assets/styles/admin/Home.module.scss';
-import Navbar from '@/components/admin/Navbar';
-import { useMain } from '@/services/MainStore';
-import {
-   ShowMessage,
-   branchIndeficator,
-   returnEmployee,
-   serviceIndetificator,
-} from '@/utils/utils';
-import { Spin, Table } from 'antd';
-import { useAdmin } from '@/services/adminStore';
-import { LoadingOutlined } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
-// import EmployeeModal from '@/components/admin/Employee/EmployeeModal';
-// import QueueModal from '@/components/admin/QueueModal';
-// import CreateQueueModal from '@/components/admin/createQueueModal';
-// import CreateServiceModal from '@/components/admin/CreateServiceModal';
-// import ServiceModal from '@/components/admin/serviceModal';
-import { useNavigate } from 'react-router';
+
+import Document from '@/components/admin/Document';
 import EmployeeTable from '@/components/admin/Employee/EmployeeTable';
+import { LoadingOutlined } from '@ant-design/icons';
+import MainLayout from '@/components/operator/UI/Layout';
+import Navbar from '@/components/admin/Navbar';
 import Queue from '@/components/admin/Queue';
 import Service from '@/components/admin/ServiceAll';
-import Document from '@/components/admin/Document';
+import { ShowMessage } from '@/utils/utils';
+import { Spin } from 'antd';
+import styles from '@/assets/styles/admin/Home.module.scss';
+import { useAdmin } from '@/services/adminStore';
+import { useMain } from '@/services/MainStore';
+import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
    // store
    const employee = useMain((state) => state.employee);
    const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);
    const getProfileInfo = useMain((state) => state.getProfileInfo);
-   const isDarkMode = useMain((state) => state.isDarkMode);
-   const employeeList = useAdmin((state) => state.employeeList);
+
    const getEmployeeList = useAdmin((state) => state.getEmployeeList);
    const isEmployeeListLoading = useAdmin((state) => state.isEmployeeListLoading);
 
    const adminIdentifier = useMain((state) => state.adminIdentifier);
    const isSuperAdmin = useMain((state) => state.isSuperAdmin);
 
-   // Vanila states
-   const [isEmpModal, setIsEmpModal] = useState(false);
+   const getTalonStats = useAdmin((state) => state.getTalonStats);
+   const talonsStats = useAdmin((state) => state.talonsStats);
 
-   const [choosedEployee, setChoosedEmployee] = useState();
-   const [choosedQueue, setChoosedQueue] = useState();
+   // Vanila states
    const [currentCard, setCurrentCard] = useState(1);
-   const [choosedService, setChoosedService] = useState();
 
    const navigate = useNavigate();
 
@@ -94,13 +82,9 @@ const HomePage = () => {
 
    useEffect(() => {
       getProfileInfo(JSON.parse(localStorage.getItem('email')));
-      getEmployeeList(JSON.parse(localStorage.getItem('token')));
+      getEmployeeList();
       adminIdentifier();
    }, []);
-
-   // useEffect(() => {
-   //    getQueueList(JSON.parse(localStorage.getItem('token')));
-   // }, []);
 
    return getProfileInfoLoading && isEmployeeListLoading ? (
       <div

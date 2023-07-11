@@ -1,10 +1,11 @@
+import { CustomModalLoading, selectModalStyles } from '@/utils/utils';
 import React, { useEffect, useState } from 'react';
-import styles from '@/assets/styles/admin/AllModal.module.scss';
-import { useMain } from '@/services/MainStore';
-import { useAdmin } from '@/services/adminStore';
+
 import ModalWrapper from '@/components/admin/ModalWrapper';
 import { Select } from 'antd';
-import { selectModalStyles } from '@/utils/utils';
+import styles from '@/assets/styles/admin/AllModal.module.scss';
+import { useAdmin } from '@/services/adminStore';
+import { useMain } from '@/services/MainStore';
 
 const CreateServiceModal = ({ isCreateServiceModal, setIsCreateServiceModal }) => {
    const isDarkMode = useMain((state) => state.isDarkMode);
@@ -20,7 +21,7 @@ const CreateServiceModal = ({ isCreateServiceModal, setIsCreateServiceModal }) =
    const handleEdit = (name, value) => {
       let newValue;
       if (name === 'documents') {
-         newValue = [value];
+         newValue = [...value];
       } else if (name === 'lang_name') {
          newValue = [];
       } else {
@@ -35,8 +36,8 @@ const CreateServiceModal = ({ isCreateServiceModal, setIsCreateServiceModal }) =
 
    const handleCreateService = async (e) => {
       e.preventDefault();
-      await createService(JSON.parse(localStorage.getItem('token')), service);
-      await getServiceList(JSON.parse(localStorage.getItem('token')));
+      await createService(service);
+      await getServiceList();
       setIsCreateServiceModal(false);
    };
 
@@ -46,7 +47,7 @@ const CreateServiceModal = ({ isCreateServiceModal, setIsCreateServiceModal }) =
    }));
 
    useEffect(() => {
-      getDocuments(JSON.parse(localStorage.getItem('token')));
+      getDocuments();
    }, []);
 
    return (
@@ -63,7 +64,7 @@ const CreateServiceModal = ({ isCreateServiceModal, setIsCreateServiceModal }) =
             </div>
             <form action='submit' onSubmit={handleCreateService}>
                {isDocumentsLoading ? (
-                  <p>Loading...</p>
+                  <CustomModalLoading />
                ) : (
                   <>
                      <input
@@ -95,6 +96,7 @@ const CreateServiceModal = ({ isCreateServiceModal, setIsCreateServiceModal }) =
                      />
 
                      <Select
+                        mode='multiple'
                         onChange={(value) => handleEdit('documents', value)}
                         required
                         placeholder='Документы*'

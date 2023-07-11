@@ -3,7 +3,7 @@ import styles from '@/assets/styles/admin/AllModal.module.scss';
 import { useMain } from '@/services/MainStore';
 import { useAdmin } from '@/services/adminStore';
 import { Select } from 'antd';
-import { selectModalStyles } from '@/utils/utils';
+import { CustomModalLoading, selectModalStyles } from '@/utils/utils';
 import ModalWrapper from '@/components/admin/ModalWrapper';
 
 const CreateQueueModal = ({ isCreateQueModal, setIsCreateQueModal }) => {
@@ -29,8 +29,8 @@ const CreateQueueModal = ({ isCreateQueModal, setIsCreateQueModal }) => {
 
    const handleCreateQueue = async (e) => {
       e.preventDefault();
-      await createQueue(JSON.parse(localStorage.getItem('token')), queue);
-      await getQueueList(JSON.parse(localStorage.getItem('token')));
+      await createQueue(queue);
+      await getQueueList();
       setIsCreateQueModal(false);
    };
 
@@ -45,8 +45,8 @@ const CreateQueueModal = ({ isCreateQueModal, setIsCreateQueModal }) => {
    }));
 
    useEffect(() => {
-      getBranchList(JSON.parse(localStorage.getItem('token')));
-      getServiceList(JSON.parse(localStorage.getItem('token')));
+      getBranchList();
+      getServiceList();
    }, []);
 
    return (
@@ -59,7 +59,7 @@ const CreateQueueModal = ({ isCreateQueModal, setIsCreateQueModal }) => {
             }}
          >
             {isBranchListLoading && isServiceListLoading ? (
-               <p>Loading...</p>
+               <CustomModalLoading />
             ) : (
                <>
                   <div className={styles.head}>

@@ -12,6 +12,7 @@
       padding-inline: 5px;
       height: 130px;
       overflow-x: auto;
+      justify-content: flex-start;
 
       .card {
          margin-right: 20px;
@@ -64,7 +65,7 @@
    }
 }
 
-@media (min-width: 1440px) {
+@media (min-width: 1800px) {
    .main {
       .cardMainBlock {
          justify-content: space-between;

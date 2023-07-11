@@ -1,8 +1,9 @@
-import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, message } from 'antd';
+
+import { LoadingOutlined } from '@ant-design/icons';
 import { t } from 'i18next';
 
-export const API = 'http://0.0.0.0:8000';
+export const API = 'https://rskseo.pythonanywhere.com';
 
 export const antIcon = <LoadingOutlined style={{ fontSize: 54 }} spin />;
 
@@ -21,6 +22,25 @@ export const CustomLoading = () => {
       >
          <Spin indicator={antIcon} size='50' />
          <h4>Идет подсчет данных....</h4>
+      </div>
+   );
+};
+export const CustomModalLoading = () => {
+   return (
+      <div
+         style={{
+            minHeight: '30vh',
+            maxHeight: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            gap: '20px',
+            background: 'transparent',
+         }}
+      >
+         <Spin indicator={antIcon} size='50' />
+         <h1>Загузка</h1>
       </div>
    );
 };
@@ -45,7 +65,7 @@ export function calculateTimeDifference(startTime, endTime) {
    return minutes;
 }
 
-export function returnUnderstandableDate(date) {
+export function returnUnderstandableDate(date, reverse) {
    const inputDate = new Date(date);
 
    const options = {

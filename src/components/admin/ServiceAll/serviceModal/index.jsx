@@ -1,40 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ModalWrapper from '@/components/admin/ModalWrapper';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
 import { useMain } from '@/services/MainStore';
 import { useAdmin } from '@/services/adminStore';
 import info_icon from '@/assets/svg/Info_icon.svg';
-import { Popover, Alert } from 'antd';
+import { Popover, Alert, Select } from 'antd';
+import { CustomModalLoading, selectModalStyles } from '@/utils/utils';
 
 const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
    const isDarkMode = useMain((state) => state.isDarkMode);
-   const [serviceState, setServiceState] = useState(service);
+   const [newService, setNewService] = useState(service);
 
-   const handleEdit = (e) => {
-      const { value, name, type } = e.target;
-      const processedValue = type === 'number' ? Number(value) : value;
+   const getDocuments = useAdmin((state) => state.getDocuments);
+   const documents = useAdmin((state) => state.documents);
+   const isDocumentsLoading = useAdmin((state) => state.isDocumentsLoading);
+
+   const getServiceList = useAdmin((state) => state.getServiceList);
+   const editService = useAdmin((state) => state.editService);
+   const deleteService = useAdmin((state) => state.deleteService);
+
+   const handleEdit = (name, value) => {
+      let newValue;
 
       if (name === 'documents') {
-         setServiceState((prev) => ({
-            ...prev,
-            [name]: [+processedValue],
-         }));
+         newValue = [...value];
       } else if (name === 'lang_name') {
-         setServiceState((prev) => ({
-            ...prev,
-            [name]: [+processedValue],
-         }));
+         newValue = [];
       } else {
-         setServiceState((prev) => ({
-            ...prev,
-            [name]: processedValue,
-         }));
+         newValue = value;
       }
+
+      setNewService((prev) => ({
+         ...prev,
+         [name]: newValue,
+      }));
    };
 
-   const handleSave = (e) => {
+   const handleSave = async (e) => {
       e.preventDefault();
-      console.log(serviceState);
+      await editService(service.id, newService);
+      await getServiceList();
+
+      setIsServiceModal(false);
+   };
+
+   const hanldeDelete = async () => {
+      await deleteService(service.id);
+      await getServiceList();
+
+      setIsServiceModal(false);
    };
 
    const TBody = [
@@ -43,32 +57,59 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
          title: 'ID',
          data: service.id,
          name: 'id',
+         type: 'number',
       },
       {
          id: 2,
          title: 'Название',
          data: service.name,
          name: 'name',
+         type: 'text',
       },
       {
          id: 3,
          title: 'Cреднее время обслуживания',
          data: service.average_time,
          name: 'average_time',
+         type: 'number',
       },
       {
          id: 4,
          title: 'Авто перенос',
          data: service.auto_transport,
          name: 'auto_transport',
+         type: 'text',
       },
       {
          id: 5,
          title: 'Услуга для переноса',
          data: service.service_to_auto_transport,
          name: 'service_to_auto_transport',
+         type: 'number',
+      },
+      {
+         id: 6,
+         title: 'Ин. язык',
+         data: service.lang_name,
+         name: 'lang_name',
+         type: 'number',
+      },
+      {
+         id: 7,
+         title: 'Документы',
+         data: documents.length
+            ? documents?.map((item) => ({
+                 label: item?.name,
+                 value: item?.id,
+              }))
+            : null,
+         name: 'documents',
       },
    ];
+
+   useEffect(() => {
+      getDocuments();
+   }, []);
 
    return (
       <ModalWrapper isOpen={isServiceModal} setIsOpen={setIsServiceModal}>
@@ -80,33 +121,61 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
             }}
          >
             <div className={styles.head}>
-               <input defaultValue={service.name} onChange={(e) => handleEdit(e)} name='service' />
+               <input
+                  defaultValue={service.name}
+                  type='text'
+                  onChange={(e) => handleEdit('name', e.target.value)}
+               />
                <img src={info_icon} alt='info' style={{ width: '24px', cursor: 'pointer' }} />
             </div>
 
-            <form className={styles.body} onSubmit={handleSave} action='submit'>
-               {TBody.map((item) => (
-                  <div className={styles.line} key={item.id}>
-                     <p>{item.title}:</p>
+            {isDocumentsLoading ? (
+               <CustomModalLoading />
+            ) : (
+               <form className={styles.body} onSubmit={handleSave} action='submit'>
+                  {TBody.map((item) => (
+                     <div className={styles.line} key={item.id}>
+                        <p>{item.title}:</p>
 
-                     <input
-                        name={item.name}
-                        defaultValue={
-                           typeof item.data === 'undefined' || item.data === null ? '-' : item.data
-                        }
-                        onChange={(e) => handleEdit(e)}
-                     />
-                     <img src={info_icon} alt='info' style={{ width: '24px', cursor: 'pointer' }} />
+                        {item.name === 'documents' ? (
+                           <Select
+                              mode='multiple'
+                              onChange={(value) => handleEdit('documents', value)}
+                              style={{ width: '185px', marginRight: '100px' }}
+                              options={item.data}
+                              value={newService.documents}
+                              defaultValue={service.documents}
+                           />
+                        ) : (
+                           <input
+                              type={item.type}
+                              readOnly={item.name === 'id' ? true : false}
+                              defaultValue={
+                                 typeof item.data === 'undefined' || item.data === null
+                                    ? '-'
+                                    : item.data
+                              }
+                              onChange={(e) => handleEdit(item.name, e.target.value)}
+                           />
+                        )}
+                        <img
+                           src={info_icon}
+                           alt='info'
+                           style={{ width: '24px', cursor: 'pointer' }}
+                        />
+                     </div>
+                  ))}
+                  <div className={styles.footer}>
+                     <button onClick={hanldeDelete} type='button'>
+                        Удалить
+                     </button>
+                     <button onClick={() => setIsServiceModal(false)} type='button'>
+                        Отмена
+                     </button>
+                     <button type='submit'>Сохранить</button>
                   </div>
-               ))}
-               <div className={styles.footer}>
-                  <button otype='reset'>Удалить</button>
-                  <button onClick={() => setIsServiceModal(false)} type='reset'>
-                     Отмена
-                  </button>
-                  <button type='submit'>Сохранить</button>
-               </div>
-            </form>
+               </form>
+            )}
          </div>
       </ModalWrapper>
    );

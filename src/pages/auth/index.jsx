@@ -3,7 +3,7 @@ import styles from '@/assets/styles/main/Auth.module.scss';
 import logo from '@/assets/svg/bigLogo.svg';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Form, Input } from 'antd';
+import { Alert, Button, Form, Input } from 'antd';
 import { Link } from 'react-router-dom';
 import { useOperator } from '@/services/operatorStore';
 import { useRegistrar } from '@/services/registrarStore';

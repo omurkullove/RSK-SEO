@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
 import { useMain } from '@/services/MainStore';
-import { branchIndeficator, serviceIndetificator } from '@/utils/utils';
+import { CustomModalLoading, branchIndeficator, serviceIndetificator } from '@/utils/utils';
 import info_icon from '@/assets/svg/Info_icon.svg';
-import { Popover, Alert } from 'antd';
+import { Popover, Alert, Select } from 'antd';
 import { useAdmin } from '@/services/adminStore';
 import ModalWrapper from '@/components/admin/ModalWrapper';
 
-const QueueModal = ({ isQueModal, setIsQueModal, queue }) => {
+const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
    const isDarkMode = useMain((state) => state.isDarkMode);
+
+   const editQueue = useAdmin((state) => state.editQueue);
 
    const [newQueue, setNewQueue] = useState(queue);
 
@@ -102,14 +104,25 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue }) => {
    const deleteQueue = useAdmin((state) => state.deleteQueue);
    const getQueueList = useAdmin((state) => state.getQueueList);
 
-   const handleSave = (e) => {
+   const handleSave = async (e) => {
       e.preventDefault();
+      await editQueue(queue.id, newQueue);
+      await getQueueList();
+
+      setIsQueModal(false);
    };
    const handleDelete = async (e, id) => {
       e.preventDefault();
-      await deleteQueue(JSON.parse(localStorage.getItem('token')), id);
-      await getQueueList(JSON.parse(localStorage.getItem('token')));
+      await deleteQueue(id);
+      await getQueueList();
+
+      setIsQueModal(false);
    };
+
+   const serviceOptions = serviceList?.map((item) => ({
+      label: item?.name,
+      value: item?.id,
+   }));
 
    return (
       <ModalWrapper isOpen={isQueModal} setIsOpen={setIsQueModal}>
@@ -133,20 +146,30 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue }) => {
                {TBody.map((item) => (
                   <div className={styles.line} key={item.id}>
                      <p>{item.title}:</p>
-
-                     <input
-                        name={item.name}
-                        defaultValue={typeof item.data === 'undefined' ? '-' : item.data}
-                        onChange={(e) => handleEdit(e)}
-                     />
+                     {item.name === 'service' ? (
+                        <Select
+                           options={serviceOptions}
+                           defaultValue={
+                              serviceList.find((service) => service.id === queue.service)?.name
+                           }
+                           style={{ width: '185px', marginRight: '100px' }}
+                        />
+                     ) : (
+                        <input
+                           readOnly={item.name === 'id' ? true : false}
+                           name={item.name}
+                           defaultValue={typeof item.data === 'undefined' ? '-' : item.data}
+                           onChange={(e) => handleEdit(e)}
+                        />
+                     )}
                      <img src={info_icon} alt='info' style={{ width: '24px', cursor: 'pointer' }} />
                   </div>
                ))}
                <div className={styles.footer}>
-                  <button onClick={(e) => handleDelete(e, newQueue.id)} type='reset'>
+                  <button onClick={(e) => handleDelete(e, newQueue.id)} type='button'>
                      Удалить
                   </button>
-                  <button onClick={() => setIsQueModal(false)} type='reset'>
+                  <button onClick={() => setIsQueModal(false)} type='button'>
                      Отмена
                   </button>
                   <button type='submit'>Сохранить</button>

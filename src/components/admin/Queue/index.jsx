@@ -13,6 +13,8 @@ const Queue = () => {
 
    const adminIdentifier = useMain((state) => state.adminIdentifier);
    const isSuperAdmin = useMain((state) => state.isSuperAdmin);
+   const getServiceList = useAdmin((state) => state.getServiceList);
+   const serviceList = useAdmin((state) => state.serviceList);
 
    const [isQueModal, setIsQueModal] = useState(false);
    const [isCreateQueModal, setIsCreateQueModal] = useState(false);
@@ -25,11 +27,12 @@ const Queue = () => {
    };
 
    useEffect(() => {
-      getQueueList(JSON.parse(localStorage.getItem('token')));
+      getQueueList();
       adminIdentifier();
+      getServiceList();
    }, []);
 
-   return isQueueListLoading ? (
+   return isQueueListLoading && getServiceList ? (
       <CustomLoading />
    ) : (
       <>
@@ -41,7 +44,7 @@ const Queue = () => {
                {queueList.length ? (
                   queueList?.map((item) => (
                      <div key={item.id} onClick={() => handleOpenQueueModal(item)}>
-                        {item?.description ? item?.description : item?.id}
+                        {serviceList.find((service) => service.id === item.service)?.name}
                      </div>
                   ))
                ) : (
@@ -59,6 +62,7 @@ const Queue = () => {
                isQueModal={isQueModal}
                setIsQueModal={setIsQueModal}
                queue={choosedQueue}
+               serviceList={serviceList}
             />
          )}
          {isCreateQueModal && (

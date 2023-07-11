@@ -40,17 +40,17 @@ const Document = () => {
       forData.append('name', document.name);
       forData.append('required', document.required);
 
-      await submitDocuments(JSON.parse(localStorage.getItem('token')), forData);
-      await getDocuments(JSON.parse(localStorage.getItem('token')));
+      await submitDocuments(forData);
+      await getDocuments();
    };
 
    const handleDeleteDocument = async (id) => {
-      await deleteDocument(JSON.parse(localStorage.getItem('token')), id);
-      await getDocuments(JSON.parse(localStorage.getItem('token')));
+      await deleteDocument(id);
+      await getDocuments();
    };
 
    useEffect(() => {
-      getDocuments(JSON.parse(localStorage.getItem('token')));
+      getDocuments();
    }, []);
 
    return isDocumentsLoading ? (

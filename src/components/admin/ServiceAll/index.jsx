@@ -1,9 +1,10 @@
-import { CustomLoading, serviceIndetificator } from '@/utils/utils';
-import styles from './Service.module.scss';
 import React, { useEffect, useState } from 'react';
-import { useAdmin } from '@/services/adminStore';
-import ServiceModal from './serviceModal';
+
 import CreateServiceModal from './CreateServiceModal';
+import { CustomLoading } from '@/utils/utils';
+import ServiceModal from './serviceModal';
+import styles from './Service.module.scss';
+import { useAdmin } from '@/services/adminStore';
 import { useMain } from '@/services/MainStore';
 
 const Service = () => {
@@ -25,7 +26,7 @@ const Service = () => {
    };
 
    useEffect(() => {
-      getServiceList(JSON.parse(localStorage.getItem('token')));
+      getServiceList();
       adminIdentifier();
    }, []);
 
