@@ -19,7 +19,7 @@ export const useOperator = create((set, get) => ({
    getTalons: async () => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axiosInstance(`${API}/employee/queue/`);
+         const res = await axiosInstance('/employee/queue/');
          set({ talons: res.data.talons });
          set({ clients_per_day: res.data.clients_per_day });
          set({ currentTalon: res.data.talons[0] });
@@ -33,7 +33,7 @@ export const useOperator = create((set, get) => ({
    transferTalonToEnd: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axiosInstance(`${API}/talon/end/${id}/`);
+         const res = await axiosInstance(`/talon/end/${id}/`);
       } catch (err) {
          ShowMessage('error', err.message);
       } finally {
@@ -44,7 +44,7 @@ export const useOperator = create((set, get) => ({
    transferTalonToStart: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axiosInstance(`${API}/talon/start/${id}/`);
+         const res = await axiosInstance(`/talon/start/${id}/`);
       } catch (err) {
          ShowMessage('error', err.message);
       } finally {
@@ -54,7 +54,7 @@ export const useOperator = create((set, get) => ({
    transferTalonToAnotherQueue: async (talonId, queueId) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axiosInstance(`${API}/talon/transfer/${talonId}/${queueId}`);
+         const res = await axiosInstance(`/talon/transfer/${talonId}/${queueId}`);
       } catch (err) {
          ShowMessage('error', err.message);
       } finally {
@@ -65,7 +65,7 @@ export const useOperator = create((set, get) => ({
    deleteTalon: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axiosInstance(`${API}/talon/remove/${id}/`);
+         const res = await axiosInstance(`/talon/remove/${id}/`);
       } catch (err) {
          ShowMessage('error', err.message);
       } finally {
@@ -76,7 +76,7 @@ export const useOperator = create((set, get) => ({
    serviceStart: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axiosInstance(`${API}/talon/service-start/${id}/`);
+         const res = await axiosInstance(`/talon/service-start/${id}/`);
       } catch (err) {
          ShowMessage('error', err.message);
       } finally {
@@ -87,7 +87,7 @@ export const useOperator = create((set, get) => ({
    serviceEnd: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axiosInstance(`${API}/talon/service-end/${id}/`);
+         const res = await axiosInstance(`/talon/service-end/${id}/`);
       } catch (err) {
          ShowMessage('error', err.message);
       } finally {

@@ -19,7 +19,7 @@ export const useRegistrar = create((set, get) => ({
    getTalons: async () => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axiosInstance(`${API}/employee/registrator/`);
+         const res = await axiosInstance('/employee/registrator/');
          set({ talons: res.data.talons });
          set({ clients_per_day: res.data.clients_per_day });
       } catch (error) {
@@ -32,7 +32,7 @@ export const useRegistrar = create((set, get) => ({
    // Print talon with personal id
    printTalons: async () => {
       try {
-         await axiosInstance.post(`${API}/talons/print`, { id });
+         await axiosInstance.post(`/talons/print`, { id });
          console.log(' <<< Успешно распечатан талон с id:', id);
       } catch (error) {
          ShowMessage('error', error.message);
@@ -43,7 +43,7 @@ export const useRegistrar = create((set, get) => ({
    deleteTalon: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axiosInstance(`${API}/talon/remove/${id}/`);
+         const res = await axiosInstance(`/talon/remove/${id}/`);
       } catch (error) {
          ShowMessage('error', error.message);
       } finally {
