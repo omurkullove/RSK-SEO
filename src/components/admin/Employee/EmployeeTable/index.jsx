@@ -1,11 +1,12 @@
-import { useMain } from '@/services/MainStore';
-import { useAdmin } from '@/services/adminStore';
-import React, { useState } from 'react';
-import styles from '../Employee.module.scss';
-import { CustomLoading, antIcon, returnEmployee } from '@/utils/utils';
+import { CustomLoading, antIcon, branchIndeficator, returnEmployee } from '@/utils/utils';
+import React, { useEffect, useState } from 'react';
 import { Spin, Table } from 'antd';
-import EmployeeModal from '../EmployeeModal';
+
 import CreateEmployeeModal from '../CreateEmployeeModal';
+import EmployeeModal from '../EmployeeModal';
+import styles from '../Employee.module.scss';
+import { useAdmin } from '@/services/adminStore';
+import { useMain } from '@/services/MainStore';
 
 const EmployeeTable = () => {
    const isDarkMode = useMain((state) => state.isDarkMode);
@@ -16,16 +17,28 @@ const EmployeeTable = () => {
    const [isModal, setIsModal] = useState(false);
    const [isCreateEmpModal, setIsCreateEmpModal] = useState(false);
 
+   const getBranchList = useAdmin((state) => state.getBranchList);
+   const branchList = useAdmin((state) => state.branchList);
+   const isBranchListLoading = useAdmin((state) => state.isBranchListLoading);
+
    const choosePerson = (email) => {
       setEmployee(returnEmployee(email, employeeList));
       setIsModal(true);
    };
 
+   useEffect(() => {
+      getBranchList();
+   }, []);
+
    const columns = [
       {
          dataIndex: 'username',
          title: <p className={styles.tableTitle}>ФИО</p>,
-         render: (value) => <p className={styles.tableData}>{value}</p>,
+         render: (value) => (
+            <p className={styles.tableData} style={{ textAlign: 'start' }}>
+               {value}
+            </p>
+         ),
          sorter: (a, b) => a.username.localeCompare(b.username, 'ru'),
          sortDirections: ['ascend'],
          defaultSortOrder: 'ascend',
@@ -46,8 +59,14 @@ const EmployeeTable = () => {
          dataIndex: 'branch',
          title: <p className={styles.tableTitle}>Филиал</p>,
          render: (value) => (
-            <p className={styles.tableData}>{typeof value === 'undefined' ? '-' : value}</p>
+            <p className={styles.tableData}>{branchIndeficator(branchList, value)}</p>
          ),
+         filters: branchList?.map((item) => ({
+            text: `${item.city}, ${item.address}`,
+            value: item.id,
+         })),
+
+         onFilter: (value, record) => record.branch === value,
       },
       {
          dataIndex: 'shift',
@@ -56,7 +75,7 @@ const EmployeeTable = () => {
       },
    ];
 
-   return isEmployeeListLoading ? (
+   return isEmployeeListLoading && isBranchListLoading ? (
       <CustomLoading />
    ) : (
       <div className={styles.tableBlock}>

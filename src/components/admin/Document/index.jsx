@@ -1,8 +1,10 @@
-import { CustomLoading } from '@/utils/utils';
-import styles from './Document.module.scss';
 import React, { useEffect, useState } from 'react';
-import { useAdmin } from '@/services/adminStore';
+
 import Checkbox from 'antd/es/checkbox/Checkbox';
+import { CustomLoading } from '@/utils/utils';
+import EditDocumentModal from './EditDocumentModal';
+import styles from './Document.module.scss';
+import { useAdmin } from '@/services/adminStore';
 
 const Document = () => {
    const forData = new FormData();
@@ -12,10 +14,13 @@ const Document = () => {
    const isDocumentsLoading = useAdmin((state) => state.isDocumentsLoading);
    const submitDocuments = useAdmin((state) => state.submitDocuments);
    const deleteDocument = useAdmin((state) => state.deleteDocument);
+   const editDocument = useAdmin((state) => state.editDocument);
 
    const [document, setDocument] = useState();
+   const [isEditDocumentModal, setIsEditDocumentModal] = useState(false);
+   const [choosedDocument, setChoosedDocument] = useState();
 
-   const editDocument = (e) => {
+   const handleCreateDocument = (e) => {
       const { value, name, type, checked } = e.target;
       let editedValue;
 
@@ -49,6 +54,11 @@ const Document = () => {
       await getDocuments();
    };
 
+   const handleOpenModal = (id) => {
+      setIsEditDocumentModal(true);
+      setChoosedDocument(documents?.find((item) => item.id === id));
+   };
+
    useEffect(() => {
       getDocuments();
    }, []);
@@ -61,7 +71,7 @@ const Document = () => {
             <div className={styles.inputBlock}>
                <p>Название:</p>
                <input
-                  onChange={(e) => editDocument(e)}
+                  onChange={(e) => handleCreateDocument(e)}
                   type='text'
                   placeholder='Название'
                   name='name'
@@ -70,7 +80,7 @@ const Document = () => {
             <div className={styles.inputBlock}>
                <p>Файл:</p>
                <input
-                  onChange={(e) => editDocument(e)}
+                  onChange={(e) => handleCreateDocument(e)}
                   type='file'
                   name='file'
                   accept='.pdf, .txt, .doc, .docx'
@@ -79,7 +89,7 @@ const Document = () => {
             <div className={styles.inputBlock}>
                <p>Обязательно:</p>
                <Checkbox
-                  onChange={(e) => editDocument(e)}
+                  onChange={(e) => handleCreateDocument(e)}
                   name='required'
                   type='checkbox'
                   defaultChecked={false}
@@ -88,7 +98,7 @@ const Document = () => {
             <div className={styles.inputBlock}>
                <p>Англ:</p>
                <input
-                  onChange={(e) => editDocument(e)}
+                  onChange={(e) => handleCreateDocument(e)}
                   type='text'
                   placeholder='Англ'
                   name='lang_name'
@@ -99,22 +109,39 @@ const Document = () => {
             </div>
          </form>
 
+         {isEditDocumentModal && (
+            <EditDocumentModal
+               isEditDocumentModal={isEditDocumentModal}
+               setIsEditDocumentModal={setIsEditDocumentModal}
+               documnet={choosedDocument}
+            />
+         )}
          <div className={styles.list}>
             {documents?.map((item) => (
                <div className={styles.test_doc} key={item.id}>
                   <div className={styles.doc_id}>ID: {item?.id}</div>
                   <div className={styles.doc_name}>Name: {item?.name}</div>
-                  <a
-                     className={styles.doc_link}
-                     href={item?.file}
-                     target='_blank'
-                     rel='noopener noreferrer'
-                  >
-                     Открыть
-                  </a>
-                  <button onClick={() => handleDeleteDocument(item.id)} className={styles.doc_link}>
-                     Удалить
-                  </button>
+
+                  <div className={styles.footer}>
+                     <a
+                        className={styles.doc_link}
+                        href={item?.file}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                     >
+                        Открыть
+                     </a>
+
+                     <button onClick={() => handleOpenModal(item.id)} className={styles.doc_link}>
+                        Изменить
+                     </button>
+                     <button
+                        onClick={() => handleDeleteDocument(item.id)}
+                        className={styles.doc_link}
+                     >
+                        Удалить
+                     </button>
+                  </div>
                </div>
             ))}
          </div>

@@ -1,6 +1,7 @@
-import { create } from 'zustand';
 import { API, ShowMessage } from '@/utils/utils';
-import axios from 'axios';
+
+import { axiosInstance } from '@/axios';
+import { create } from 'zustand';
 
 export const useOperator = create((set, get) => ({
    errors: [],
@@ -8,24 +9,22 @@ export const useOperator = create((set, get) => ({
    talons: [],
    currentTalon: {},
    clients_per_day: {},
+   queueBranch: [],
 
    loginLoading: false,
    getTalonsLoading: false,
    transferTalonToEndLoading: false,
+   isBranchLoading: false,
 
-   getTalons: async (token) => {
+   getTalons: async () => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axios.get(`${API}/employee/queue/`, {
-            headers: {
-               Authorization: `Bearer ${token.access}`,
-            },
-         });
+         const res = await axiosInstance(`${API}/employee/queue/`);
          set({ talons: res.data.talons });
          set({ clients_per_day: res.data.clients_per_day });
          set({ currentTalon: res.data.talons[0] });
       } catch (err) {
-         set({ errors: err });
+         ShowMessage('error', err.message);
       } finally {
          set({ getTalonsLoading: false });
       }
@@ -34,13 +33,9 @@ export const useOperator = create((set, get) => ({
    transferTalonToEnd: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axios.get(`${API}/talon/end/${id}/`, {
-            headers: {
-               Authorization: `Bearer ${get().token.access}`,
-            },
-         });
+         const res = await axiosInstance(`${API}/talon/end/${id}/`);
       } catch (err) {
-         set({ errors: err });
+         ShowMessage('error', err.message);
       } finally {
          set({ getTalonsLoading: false });
       }
@@ -49,13 +44,9 @@ export const useOperator = create((set, get) => ({
    transferTalonToStart: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axios.get(`${API}/talon/start/${id}/`, {
-            headers: {
-               Authorization: `Bearer ${get().token.access}`,
-            },
-         });
+         const res = await axiosInstance(`${API}/talon/start/${id}/`);
       } catch (err) {
-         set({ errors: err });
+         ShowMessage('error', err.message);
       } finally {
          set({ getTalonsLoading: false });
       }
@@ -63,13 +54,9 @@ export const useOperator = create((set, get) => ({
    transferTalonToAnotherQueue: async (talonId, queueId) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axios.get(`${API}/talon/transfer/${talonId}/${queueId}`, {
-            headers: {
-               Authorization: `Bearer ${get().token.access}`,
-            },
-         });
+         const res = await axiosInstance(`${API}/talon/transfer/${talonId}/${queueId}`);
       } catch (err) {
-         set({ errors: err });
+         ShowMessage('error', err.message);
       } finally {
          set({ getTalonsLoading: false });
       }
@@ -78,13 +65,9 @@ export const useOperator = create((set, get) => ({
    deleteTalon: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axios.get(`${API}/talon/remove/${id}/`, {
-            headers: {
-               Authorization: `Bearer ${get().token.access}`,
-            },
-         });
+         const res = await axiosInstance(`${API}/talon/remove/${id}/`);
       } catch (err) {
-         set({ errors: err });
+         ShowMessage('error', err.message);
       } finally {
          set({ getTalonsLoading: false });
       }
@@ -93,13 +76,9 @@ export const useOperator = create((set, get) => ({
    serviceStart: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axios.get(`${API}/talon/service-start/${id}/`, {
-            headers: {
-               Authorization: `Bearer ${get().token.access}`,
-            },
-         });
+         const res = await axiosInstance(`${API}/talon/service-start/${id}/`);
       } catch (err) {
-         set({ errors: err });
+         ShowMessage('error', err.message);
       } finally {
          set({ getTalonsLoading: false });
       }
@@ -108,15 +87,24 @@ export const useOperator = create((set, get) => ({
    serviceEnd: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axios.get(`${API}/talon/service-end/${id}/`, {
-            headers: {
-               Authorization: `Bearer ${get().token.access}`,
-            },
-         });
+         const res = await axiosInstance(`${API}/talon/service-end/${id}/`);
       } catch (err) {
-         set({ errors: err });
+         ShowMessage('error', err.message);
       } finally {
          set({ getTalonsLoading: false });
+      }
+   },
+
+   getBranchQueues: async (id) => {
+      set({ isBranchLoading: true });
+
+      try {
+         const res = await axiosInstance(`/branch/queue/${id}`);
+         set({ queueBranch: res.data });
+      } catch (err) {
+         ShowMessage('error', err.message);
+      } finally {
+         set({ isBranchLoading: false });
       }
    },
 }));

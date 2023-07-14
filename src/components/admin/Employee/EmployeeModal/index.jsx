@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useState } from 'react';
 
 import ModalWrapper from '@/components/admin/ModalWrapper';
+import { alertComponents } from '@/utils/popoverHint';
 import info_icon from '@/assets/svg/Info_icon.svg';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
 import { useAdmin } from '@/services/adminStore';
@@ -28,36 +29,20 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
    const getEmployeeList = useAdmin((state) => state.getEmployeeList);
    const getBranchList = useAdmin((state) => state.getBranchList);
    const branchList = useAdmin((state) => state.branchList);
-   const isBranchListLoading = useAdmin((state) => state.getBranchList);
+   const isBranchListLoading = useAdmin((state) => state.isBranchListLoading);
 
    const TBody = [
       {
-         hintAlert: (
-            <Alert
-               message='Информация о текущем поле'
-               type='info'
-               showIcon
-               description='Строка, любое значение'
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.selectKeyWord} />,
+
          id: 1,
          title: 'Филиал*',
-         data: employee.branch
-            ? // ? branchList?.find((item) => item.id === employee.branch)[('city', 'address')]
-              employee.branch
-            : '-',
+         data: employee.branch ? employee.branch : '-',
          name: 'branch',
          required: true,
       },
       {
-         hintAlert: (
-            <Alert
-               message='Информация о текущем поле'
-               type='info'
-               showIcon
-               description='число, любое значение'
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.numberAny} />,
          id: 2,
          title: 'Окно*',
          data: employee.window.length ? employee.window : undefined,
@@ -65,14 +50,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          required: true,
       },
       {
-         hintAlert: (
-            <Alert
-               message='Информация о текущем поле'
-               type='info'
-               showIcon
-               description='Ключевое слово: "registrar, operator, admin"'
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.positionKeyWords} />,
          id: 3,
          title: 'Должность*',
          data: employee.position,
@@ -80,14 +58,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          required: true,
       },
       {
-         hintAlert: (
-            <Alert
-               message='Информация о текущем поле'
-               type='info'
-               showIcon
-               description='Дата, любое значение, например: 12:45-15:00'
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.dateAny} />,
          id: 4,
          title: 'Смена',
          data: employee.shift.length ? employee.shift : undefined,
@@ -95,14 +66,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          required: false,
       },
       {
-         hintAlert: (
-            <Alert
-               message='Информация о текущем поле'
-               type='info'
-               showIcon
-               description='Любое значение'
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.stingAny} />,
          id: 5,
          title: 'Комментарий',
          data: employee.comment.length ? employee.comment : undefined,
@@ -110,9 +74,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          required: false,
       },
       {
-         hintAlert: (
-            <Alert message='Информация о текущем поле' type='info' showIcon description='Время' />
-         ),
+         hintAlert: <Alert {...alertComponents.dataKeyText} />,
          id: 6,
          title: 'Последнее время логина',
          data: employee.last_login ? returnUnderstandableDate(employee.last_login) : undefined,
@@ -120,14 +82,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          required: true,
       },
       {
-         hintAlert: (
-            <Alert
-               message='Информация о текущем поле'
-               type='info'
-               showIcon
-               description='Ключевое слово: active или no active'
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.statusKeyWord} />,
          id: 7,
          title: 'Текущий статус*',
          data: employee.status,
@@ -135,14 +90,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          required: true,
       },
       {
-         hintAlert: (
-            <Alert
-               message='Информация о текущем поле'
-               type='info'
-               showIcon
-               description='Число, любое значение'
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.numberAny} />,
          id: 8,
          title: 'Максимальное количество переносов клиента',
          data: employee.max_transport,
@@ -150,9 +98,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          required: false,
       },
       {
-         hintAlert: (
-            <Alert message='Информация о текущем поле' type='info' showIcon description='...' />
-         ),
+         hintAlert: <Alert {...alertComponents.selectKeyWord} />,
          id: 9,
          title: 'Очереди, которые обслуживает данный сотрудник*',
          data: serviceList?.length
@@ -165,14 +111,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          required: true,
       },
       {
-         hintAlert: (
-            <Alert
-               message='Информация о текущем поле'
-               type='info'
-               showIcon
-               description='Логическое значение: true или false'
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.booleanKey} />,
          id: 10,
          title: 'Предусмотрен ли автоматический вызов клиента',
          data: employee.auto_call,
@@ -180,14 +119,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          required: false,
       },
       {
-         hintAlert: (
-            <Alert
-               message='Информация о текущем поле'
-               type='info'
-               showIcon
-               description='Число, например: 4.7'
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.numberAny} />,
          id: 11,
          title: 'Рейтинг сотрудника',
          data: employee.rating,
@@ -246,15 +178,6 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
       setIsModal(false);
    };
 
-   const serviceIndetificator = (service, serviseIdArray) => {
-      const serviceNames = serviseIdArray.map((id) => {
-         const foundService = serviceList.find((item) => item.id === id);
-         return foundService ? foundService.name : null;
-      });
-
-      return serviceNames;
-   };
-
    return (
       <ModalWrapper isOpen={isModal} setIsOpen={setIsModal}>
          <div
@@ -269,7 +192,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
                <input
                   required={true}
                   defaultValue={newEmployee.username}
-                  onChange={(e) => handleEdit(e)}
+                  onChange={(e) => handleEdit('username', e.target.value)}
                   name='username'
                   type='text'
                />
@@ -308,7 +231,8 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
                               onChange={(value) => handleEdit('branch', value)}
                               options={branchOptions}
                               style={{ width: '255px', marginRight: '40px' }}
-                              defaultValue={employee.branch}
+                              defaultValue={branchIndeficator(branchList, employee.branch)}
+                              value={newEmployee.branch}
                            />
                         ) : (
                            <input

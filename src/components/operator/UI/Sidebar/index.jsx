@@ -1,24 +1,25 @@
-import React, { useState } from 'react';
-import styles from '@/assets/styles/operator/Sidebar.module.scss';
-
-import { Image, Input, Menu, Popover } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { Switch } from 'antd';
-import Sider from 'antd/es/layout/Sider';
-import kg from '@/assets/svg/kg.svg';
-import en from '@/assets/svg/en.svg';
-import ru from '@/assets/svg/ru.svg';
 import {
-   UserOutlined,
-   SettingOutlined,
-   HomeOutlined,
    CaretDownOutlined,
    DownOutlined,
+   HomeOutlined,
+   SettingOutlined,
+   UserOutlined,
 } from '@ant-design/icons';
+import { Image, Input, Menu, Popover } from 'antd';
+import React, { useEffect, useState } from 'react';
+
+import Sider from 'antd/es/layout/Sider';
+import { Switch } from 'antd';
+import { branchIndeficator } from '@/utils/utils';
+import en from '@/assets/svg/en.svg';
+import kg from '@/assets/svg/kg.svg';
+import ru from '@/assets/svg/ru.svg';
+import styles from '@/assets/styles/operator/Sidebar.module.scss';
+import { useAdmin } from '@/services/adminStore';
+import { useMain } from '@/services/MainStore';
 import { useNavigate } from 'react-router';
 import { useOperator } from '@/services/operatorStore';
-import { useMain } from '@/services/MainStore';
-import { branchIndeficator } from '@/utils/utils';
+import { useTranslation } from 'react-i18next';
 
 const Sidebar = () => {
    const navigate = useNavigate();
@@ -31,6 +32,9 @@ const Sidebar = () => {
 
    const toggleDarkMode = useMain((state) => state.toggleDarkMode);
    const isDarkMode = useMain((state) => state.isDarkMode);
+
+   const getBranchList = useAdmin((state) => state.getBranchList);
+   const branchList = useAdmin((state) => state.branchList);
 
    const onChange = (checked) => {
       toggleDarkMode(checked);
@@ -140,7 +144,7 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.branch')}
-                        <div>{employee?.branch ? employee?.branch : 'Нет данных'}</div>
+                        <div>{branchIndeficator(branchList, employee.branch)}</div>
                      </label>
                   </div>
                ),
@@ -210,6 +214,10 @@ const Sidebar = () => {
          ],
       },
    ];
+
+   useEffect(() => {
+      getBranchList();
+   }, []);
 
    return (
       <Sider

@@ -207,18 +207,15 @@ export const useAdmin = create((set, get) => ({
          set({ isDocumentsLoading: false });
       }
    },
-
-   // Stats
-
-   // getTalonStats: async () => {
-   //    set({ isTalonStatsLoading: true });
-   //    try {
-   //       const res = await axiosInstance('/stats/rating/');
-   //       set({ talonStats: res.data });
-   //    } catch (err) {
-   //       ShowMessage('error', err.message);
-   //    } finally {
-   //       set({ isTalonStatsLoading: false });
-   //    }
-   // },
+   editDocument: async (id, body) => {
+      set({ isDocumentsLoading: true });
+      try {
+         await axiosInstance.put(`/admin_panel/documents/${id}/`, body);
+         ShowMessage('success', 'Документ успешно изменен');
+      } catch (err) {
+         ShowMessage('error', err.message);
+      } finally {
+         set({ isDocumentsLoading: false });
+      }
+   },
 }));

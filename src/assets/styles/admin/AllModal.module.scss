@@ -593,3 +593,79 @@
       }
    }
 }
+
+.editDocumentMain {
+   background-color: #fff;
+   width: 500px;
+   height: 500px;
+   padding-bottom: 20px;
+
+   .head {
+      background-color: #eefaff;
+      border-bottom: 1px solid #d7d7d7;
+      padding-inline: 20px;
+
+      padding: 10px;
+
+      p {
+         color: #1e4a89;
+         width: 55%;
+         font-family: $Inter;
+
+         font-size: 20px;
+         font-weight: 600;
+      }
+   }
+
+   form {
+      display: flex;
+      flex-direction: column;
+      padding-inline: 30px;
+
+      label {
+         margin-top: 25px;
+         font-weight: bold;
+      }
+
+      input {
+         width: 100%;
+         padding: 8px;
+         outline: none !important;
+         border-radius: 7px;
+         -webkit-border-radius: 7px;
+         -moz-border-radius: 7px;
+         -ms-border-radius: 7px;
+         -o-border-radius: 7px;
+         border: 3px solid #5a6c74;
+      }
+
+      .footer {
+         margin-top: 25px;
+         display: flex;
+         justify-content: flex-end;
+         width: 100%;
+         gap: 10px;
+
+         button {
+            background-color: #1e4a89;
+            font-family: $Inter;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            -ms-border-radius: 10px;
+            -o-border-radius: 10px;
+            padding: 10px;
+            font-weight: 600;
+            cursor: pointer;
+         }
+         :nth-child(1) {
+            background-color: lightslategray;
+         }
+         :nth-child(2) {
+            background-color: #1e4a89;
+         }
+      }
+   }
+}

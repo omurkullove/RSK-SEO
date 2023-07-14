@@ -45,7 +45,7 @@ export const CustomModalLoading = () => {
    );
 };
 
-export const timeLimitSeconds = 900;
+export const timeLimitSeconds = 10;
 
 export const ShowMessage = (type, text, duration) => {
    message.open({
@@ -112,18 +112,6 @@ export const isEmpty = (obj) => {
    }
    return true;
 };
-export const branchIndeficator = (branch) => {
-   switch (branch) {
-      case 1:
-         return 'Бишкек, Киевская 77';
-      case 2:
-         return 'Каракол, Кулакунова 89';
-      case 3:
-         return 'Ош, Курманжан датка 124';
-      default:
-         return { branch };
-   }
-};
 
 export const returnEmployee = (email, list) => {
    if (email && list) {
@@ -133,28 +121,28 @@ export const returnEmployee = (email, list) => {
    console.log('Данные были переданы не корректно');
 };
 
-export const serviceIndetificator = (service) => {
-   switch (service) {
-      case 1:
-         return t('table.body.service.CreditFinancing');
-      case 2:
-         return t('table.body.service.CurrencyExchange');
-      case 3:
-         return t('table.body.service.MoneyTransfers');
-      case 4:
-         return t('table.body.service.CardIssuance');
-      case 5:
-         return t('table.body.service.ReceiveTransfer');
-      case 6:
-         return t('table.body.service.OpenAnAccount');
-      case 7:
-         return t('table.body.service.SecuritiesOperations');
-      case 8:
-         return t('table.body.service.IslamicFinancing');
-      default:
-         return 'Сервис не определен';
-   }
-};
+// export const serviceIndetificator = (service) => {
+//    switch (service) {
+//       case 1:
+//          return t('table.body.service.CreditFinancing');
+//       case 2:
+//          return t('table.body.service.CurrencyExchange');
+//       case 3:
+//          return t('table.body.service.MoneyTransfers');
+//       case 4:
+//          return t('table.body.service.CardIssuance');
+//       case 5:
+//          return t('table.body.service.ReceiveTransfer');
+//       case 6:
+//          return t('table.body.service.OpenAnAccount');
+//       case 7:
+//          return t('table.body.service.SecuritiesOperations');
+//       case 8:
+//          return t('table.body.service.IslamicFinancing');
+//       default:
+//          return 'Сервис не определен';
+//    }
+// };
 
 export const selectModalStyles = {
    width: '100%',
@@ -166,4 +154,25 @@ export const selectModalStyles = {
    borderRadius: '7px',
    outline: 'none',
    padding: '2px',
+};
+
+export const serviceIndetificator = (service, serviseIdArray) => {
+   if (typeof serviseIdArray === 'object') {
+      const serviceNames = serviseIdArray.map((id) => {
+         const foundService = service.find((item) => item.id === id);
+         return foundService ? foundService.name : null;
+      });
+      return serviceNames;
+   } else {
+      return service.find((item) => item.id === serviseIdArray)?.name;
+   }
+};
+
+export const branchIndeficator = (branchList, itemBranch) => {
+   if (itemBranch) {
+      const branch = branchList?.find((item) => item.id === itemBranch);
+      return `${branch?.city}, ${branch?.address}`;
+   } else {
+      return 'Филиал не обнаружен';
+   }
 };

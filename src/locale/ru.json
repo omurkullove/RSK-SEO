@@ -72,7 +72,7 @@
    },
    "auth": {
       "placeholder": {
-         "email": "Потча",
+         "email": "Почта",
          "password": "Пароль"
       },
       "forgetPassword": "Забыли пароль ?",

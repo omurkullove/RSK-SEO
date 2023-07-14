@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import styles from '@/assets/styles/operator/Modal.module.scss';
-import { Select } from 'antd';
-import { useMain } from '@/services/MainStore';
-import { useTranslation } from 'react-i18next';
-import { useOperator } from '@/services/operatorStore';
-import { ShowMessage } from '@/utils/utils';
+import { CustomLoading, ShowMessage } from '@/utils/utils';
+import React, { useEffect, useState } from 'react';
 
-const Modal = ({ isModal, setIsModal, talon }) => {
+import { Select } from 'antd';
+import styles from '@/assets/styles/operator/Modal.module.scss';
+import { useMain } from '@/services/MainStore';
+import { useOperator } from '@/services/operatorStore';
+import { useTranslation } from 'react-i18next';
+
+const Modal = ({ isModal, setIsModal, talon, queueBranch, serviceList }) => {
    const isDarkMode = useMain((state) => state.isDarkMode);
    const transferTalonToAnotherQueue = useOperator((state) => state.transferTalonToAnotherQueue);
    const getTalonsLoading = useOperator((state) => state.getTalonsLoading);
@@ -16,13 +17,18 @@ const Modal = ({ isModal, setIsModal, talon }) => {
 
    const handleTransferToAnotherQueue = async () => {
       console.log(talon, branch);
-      await transferTalonToAnotherQueue(talon.token, 3);
-      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
+      await transferTalonToAnotherQueue(talon.token, branch);
+      await getTalons();
       if (!getTalonsLoading) {
          ShowMessage('success', 'Талон успешно перенесен!');
       }
       setIsModal(false);
    };
+
+   const options = queueBranch?.queues?.map((item) => ({
+      label: serviceList?.find((service) => service?.id === item.service)?.name,
+      value: item?.id,
+   }));
 
    return (
       <div
@@ -43,40 +49,7 @@ const Modal = ({ isModal, setIsModal, talon }) => {
                className={''}
                onSelect={(value) => setBranch(value)}
                placeholder={'Выбрать очередь'}
-               options={[
-                  {
-                     value: 1,
-                     label: t('table.body.service.CreditFinancing'),
-                  },
-                  {
-                     value: 2,
-                     label: t('table.body.service.CurrencyExchange'),
-                  },
-                  {
-                     value: 3,
-                     label: t('table.body.service.MoneyTransfers'),
-                  },
-                  {
-                     value: 4,
-                     label: t('table.body.service.CardIssuance'),
-                  },
-                  {
-                     value: 5,
-                     label: t('table.body.service.ReceiveTransfer'),
-                  },
-                  {
-                     value: 6,
-                     label: t('table.body.service.OpenAnAccount'),
-                  },
-                  {
-                     value: 7,
-                     label: t('table.body.service.SecuritiesOperations'),
-                  },
-                  {
-                     value: 8,
-                     label: t('table.body.service.IslamicFinancing'),
-                  },
-               ]}
+               options={options}
                size='large'
             />
             <div className={styles.buttonBlock}>

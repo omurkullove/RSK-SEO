@@ -1,12 +1,10 @@
-import React from 'react';
-
 import { Route, Routes } from 'react-router';
 
 import AuthPage from '@/pages/auth';
-
-import RootRegistrar from '@/pages/registrar';
-import RootOpertor from '@/pages/operator';
+import React from 'react';
 import RootAdmin from '@/pages/admin';
+import RootOpertor from '@/pages/operator';
+import RootRegistrar from '@/pages/registrar';
 
 const MainRouter = () => {
    return (

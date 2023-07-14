@@ -1,7 +1,9 @@
-import zustand from 'zustand';
-import { API } from '@/utils/utils';
+import { API, ShowMessage } from '@/utils/utils';
+
 import axios from 'axios';
+import { axiosInstance } from '@/axios';
 import { create } from 'zustand';
+import zustand from 'zustand';
 
 export const useRegistrar = create((set, get) => ({
    errors: [],
@@ -17,13 +19,11 @@ export const useRegistrar = create((set, get) => ({
    getTalons: async () => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axios.get(`${API}/talon/`);
-
-         set({
-            talons: res.data,
-         });
+         const res = await axiosInstance(`${API}/employee/registrator/`);
+         set({ talons: res.data.talons });
+         set({ clients_per_day: res.data.clients_per_day });
       } catch (error) {
-         console.log(error, ' <<<<<Ошибка при получений данных');
+         ShowMessage('error', error.message);
       } finally {
          set({ getTalonsLoading: false });
       }
@@ -32,10 +32,10 @@ export const useRegistrar = create((set, get) => ({
    // Print talon with personal id
    printTalons: async () => {
       try {
-         await axios.post(`${API}/talons/print`, { id });
+         await axiosInstance.post(`${API}/talons/print`, { id });
          console.log(' <<< Успешно распечатан талон с id:', id);
       } catch (error) {
-         console.log(error, '<<<< Ошибка при распечатки талона');
+         ShowMessage('error', error.message);
       }
    },
 
@@ -43,26 +43,11 @@ export const useRegistrar = create((set, get) => ({
    deleteTalon: async (id) => {
       set({ getTalonsLoading: true });
       try {
-         const res = await axios.get(`${API}/talon/remove/${id}/`, {
-            headers: {
-               Authorization: `Bearer ${get().token.access}`,
-            },
-         });
-      } catch (err) {
-         set({ errors: err });
+         const res = await axiosInstance(`${API}/talon/remove/${id}/`);
+      } catch (error) {
+         ShowMessage('error', error.message);
       } finally {
          set({ getTalonsLoading: false });
       }
    },
-
-   //   Edit and Update talon
-
-   // editTalon: async (talonData) => {
-   //    try {
-   //       await axios.patch(`${API}/talons/edit`, talonData);
-   //       console.log('<<<<< Успешно отредактирован талон с id >>>', talonData.id);
-   //    } catch (error) {
-   //       console.log(error, '<<<<< Ошибка при редактировании талона>>');
-   //    }
-   // },
 }));

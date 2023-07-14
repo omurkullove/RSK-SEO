@@ -1,90 +1,58 @@
-import React, { useEffect, useState } from 'react';
-import styles from '@/assets/styles/admin/AllModal.module.scss';
-import { useMain } from '@/services/MainStore';
+import { Alert, Popover, Select } from 'antd';
 import { CustomModalLoading, branchIndeficator, serviceIndetificator } from '@/utils/utils';
-import info_icon from '@/assets/svg/Info_icon.svg';
-import { Popover, Alert, Select } from 'antd';
-import { useAdmin } from '@/services/adminStore';
+import React, { useEffect, useState } from 'react';
+
 import ModalWrapper from '@/components/admin/ModalWrapper';
+import { alertComponents } from '@/utils/popoverHint';
+import info_icon from '@/assets/svg/Info_icon.svg';
+import styles from '@/assets/styles/admin/AllModal.module.scss';
+import { useAdmin } from '@/services/adminStore';
+import { useMain } from '@/services/MainStore';
 
 const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
    const isDarkMode = useMain((state) => state.isDarkMode);
 
    const editQueue = useAdmin((state) => state.editQueue);
+   const adminIdentifier = useMain((state) => state.adminIdentifier);
+   const isSuperAdmin = useMain((state) => state.isSuperAdmin);
+
+   const getBranchList = useAdmin((state) => state.getBranchList);
+   const branchList = useAdmin((state) => state.branchList);
+   const isBranchListLoading = useAdmin((state) => state.isBranchListLoading);
 
    const [newQueue, setNewQueue] = useState(queue);
 
    const TBody = [
       {
-         hintAlert: () => (
-            <Alert
-               type='warning'
-               message='Информация о текущем поле'
-               description='Желательно не изменять'
-               showIcon
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.idHint} />,
          id: 1,
          title: 'ID',
          data: queue.id,
          name: 'id',
       },
       {
-         hintAlert: () => (
-            <Alert
-               message='Информация о текущем поле'
-               description='Любое значение'
-               showIcon
-               type='info'
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.stingAny} />,
          id: 2,
          title: 'Описание',
          data: queue.description ? queue.description : undefined,
          name: 'description',
       },
       {
-         hintAlert: () => (
-            <Alert
-               message='Информация о текущем поле'
-               description='Ключевые числа и их значения :
-               1 - Кредитование; 
-               2 - Обмен валюты;
-               3 - Денежные переводы;
-               4 - Выдача карт;
-               5 - Получение перевода;
-               6 - Открытие счета;
-               7 - Операции с ценными бумагами;
-               8 - Исламское финансирование;
-               '
-               showIcon
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.selectKeyWord} />,
          id: 3,
          title: 'Услуга',
-         data: queue.description ? queue.description : undefined,
+         data: newQueue.service,
          name: 'service',
       },
       {
-         hintAlert: () => (
-            <Alert
-               message='Информация о текущем поле'
-               description='
-         Ключевые чила и их значения:
-         1 - Бишкек, Киевская 77
-         2 - Каракол, Кулакунова 89
-         3 - Ош, Курманжан датка 124
-         '
-               showIcon
-            />
-         ),
+         hintAlert: <Alert {...alertComponents.selectKeyWord} />,
          id: 4,
          title: 'Филиал',
-         data: branchIndeficator(queue.branch),
+         data: queue?.branch,
          name: 'branch',
       },
       {
-         hintAlert: () => <Alert message='Информация о текущем поле' description='' showIcon />,
+         hintAlert: <Alert {...alertComponents.numberAny} />,
          id: 5,
          title: 'Всего талонов',
          data: queue.talon_count,
@@ -92,9 +60,7 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
       },
    ];
 
-   const handleEdit = (e) => {
-      const { value, name } = e.target;
-
+   const handleEdit = (name, value) => {
       setNewQueue((prev) => ({
          ...prev,
          [name]: value,
@@ -119,8 +85,19 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
       setIsQueModal(false);
    };
 
+   useEffect(() => {
+      adminIdentifier();
+      getBranchList();
+      console.log(isBranchListLoading);
+   }, []);
+
    const serviceOptions = serviceList?.map((item) => ({
       label: item?.name,
+      value: item?.id,
+   }));
+
+   const branchOptions = branchList?.map((item) => ({
+      label: `${item?.city}, ${item?.address}`,
       value: item?.id,
    }));
 
@@ -135,46 +112,76 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
          >
             <div className={styles.head}>
                <input
+                  readOnly={!isSuperAdmin}
                   defaultValue={queue.description}
                   onChange={(e) => handleEdit(e)}
                   name='service'
                />
-               <img src={info_icon} alt='info' style={{ width: '24px', cursor: 'pointer' }} />
+               <Popover trigger={'hover'} content={<Alert {...alertComponents.stingAny} />}>
+                  <img src={info_icon} alt='info' style={{ width: '24px', cursor: 'pointer' }} />
+               </Popover>
             </div>
-
-            <form className={styles.body} onSubmit={handleSave} action='submit'>
-               {TBody.map((item) => (
-                  <div className={styles.line} key={item.id}>
-                     <p>{item.title}:</p>
-                     {item.name === 'service' ? (
-                        <Select
-                           options={serviceOptions}
-                           defaultValue={
-                              serviceList.find((service) => service.id === queue.service)?.name
-                           }
-                           style={{ width: '185px', marginRight: '100px' }}
-                        />
+            {isBranchListLoading ? (
+               <CustomModalLoading />
+            ) : (
+               <form className={styles.body} onSubmit={handleSave} action='submit'>
+                  {TBody.map((item) => (
+                     <div className={styles.line} key={item.id}>
+                        <p>{item.title}:</p>
+                        {item.name === 'service' ? (
+                           <Select
+                              value={newQueue.service}
+                              onChange={(value) => handleEdit('service', value)}
+                              disabled={!isSuperAdmin}
+                              options={serviceOptions}
+                              defaultValue={serviceIndetificator(serviceList, queue.service)}
+                              style={{ width: '185px', marginRight: '100px' }}
+                           />
+                        ) : item.name === 'branch' ? (
+                           <Select
+                              value={newQueue.branch}
+                              onChange={(value) => handleEdit('branch', value)}
+                              disabled={!isSuperAdmin}
+                              options={branchOptions}
+                              defaultValue={branchIndeficator(serviceList, queue.branch)}
+                              style={{ width: '185px', marginRight: '100px' }}
+                           />
+                        ) : (
+                           <input
+                              readOnly={item.name === 'id' || !isSuperAdmin ? true : false}
+                              name={item.name}
+                              defaultValue={typeof item.data === 'undefined' ? '-' : item.data}
+                              onChange={(e) => handleEdit(item.name, e.target.value)}
+                           />
+                        )}
+                        <Popover content={item.hintAlert} trigger={'hover'}>
+                           <img
+                              src={info_icon}
+                              alt='info'
+                              style={{ width: '24px', cursor: 'pointer' }}
+                           />
+                        </Popover>
+                     </div>
+                  ))}
+                  <div className={styles.footer}>
+                     {isSuperAdmin ? (
+                        <>
+                           <button onClick={(e) => handleDelete(e, newQueue.id)} type='button'>
+                              Удалить
+                           </button>
+                           <button onClick={() => setIsQueModal(false)} type='button'>
+                              Отмена
+                           </button>
+                           <button type='submit'>Сохранить</button>
+                        </>
                      ) : (
-                        <input
-                           readOnly={item.name === 'id' ? true : false}
-                           name={item.name}
-                           defaultValue={typeof item.data === 'undefined' ? '-' : item.data}
-                           onChange={(e) => handleEdit(e)}
-                        />
+                        <button onClick={() => setIsQueModal(false)} type='button'>
+                           Закрыть
+                        </button>
                      )}
-                     <img src={info_icon} alt='info' style={{ width: '24px', cursor: 'pointer' }} />
                   </div>
-               ))}
-               <div className={styles.footer}>
-                  <button onClick={(e) => handleDelete(e, newQueue.id)} type='button'>
-                     Удалить
-                  </button>
-                  <button onClick={() => setIsQueModal(false)} type='button'>
-                     Отмена
-                  </button>
-                  <button type='submit'>Сохранить</button>
-               </div>
-            </form>
+               </form>
+            )}
          </div>
       </ModalWrapper>
    );

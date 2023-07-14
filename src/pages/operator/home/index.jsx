@@ -1,12 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
-
-// Components & modules
-import MainLayout from '@/components/operator/UI/Layout';
-import Navbar from '@/components/operator/UI/Navbar';
-import { useOperator } from '@/services/operatorStore';
-
+// UI
+import { Popover, Select, Spin, Statistic, Table } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 // Utils
 import {
    ShowMessage,
@@ -18,26 +12,28 @@ import {
    timeLimitSeconds,
 } from '@/utils/utils';
 
-// UI
-import { Popover, Table, Spin, Statistic, Select } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import styles from '@/assets/styles/operator/Home.module.scss';
-import dots from '@/assets/svg/dots.svg';
-import darkModeDots from '@/assets/svg/darkModeDots.svg';
+// Components & modules
+import MainLayout from '@/components/operator/UI/Layout';
+import Modal from '@/components/operator/Modal/Modal';
+import { ModalForm } from '@/components/registrar/ModalWindow/ModalForm';
+import Navbar from '@/components/operator/UI/Navbar';
+import alert from '@/assets/svg/1_6Alert.svg';
 import arrowGreen from '@/assets/svg/arrowGreen.svg';
+import arrowRed from '@/assets/svg/arrowRed.svg';
+import darkModeAlert from '@/assets/svg/darkModeAlert.svg';
 import darkModeArrowGreen from '@/assets/svg/darkModeArrowGreen.svg';
 import darkModeArrowRed from '@/assets/svg/darkModeArrowRed.svg';
-
-import arrowRed from '@/assets/svg/arrowRed.svg';
-import alert from '@/assets/svg/1_6Alert.svg';
-import darkModeAlert from '@/assets/svg/darkModeAlert.svg';
-
-import Modal from '@/components/operator/Modal/Modal';
-
-import edit from '@/assets/svg/edit.svg';
+import darkModeDots from '@/assets/svg/darkModeDots.svg';
 import deleteSvg from '@/assets/svg/delete.svg';
+import dots from '@/assets/svg/dots.svg';
+import edit from '@/assets/svg/edit.svg';
+import styles from '@/assets/styles/operator/Home.module.scss';
+import { useAdmin } from '@/services/adminStore';
 import { useMain } from '@/services/MainStore';
-import { ModalForm } from '@/components/registrar/ModalWindow/ModalForm';
+import { useNavigate } from 'react-router';
+import { useOperator } from '@/services/operatorStore';
+import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
    // Store states & functions
@@ -57,6 +53,13 @@ const HomePage = () => {
    const employee = useMain((state) => state.employee);
    const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);
    const getProfileInfo = useMain((state) => state.getProfileInfo);
+
+   const getBranchQueues = useOperator((state) => state.getBranchQueues);
+   const queueBranch = useOperator((state) => state.queueBranch);
+
+   const isServiceListLoading = useAdmin((state) => state.isServiceListLoading);
+   const serviceList = useAdmin((state) => state.serviceList);
+   const getServiceList = useAdmin((state) => state.getServiceList);
 
    // Vanilla states
    const [isRunning, setIsRunning] = useState(false);
@@ -92,6 +95,11 @@ const HomePage = () => {
                </p>
             </div>
          ),
+         filters: [...new Set(talons?.map((item) => item?.token[0]))].map((type) => ({
+            text: type,
+            value: type,
+         })),
+         onFilter: (value, record) => record?.token[0] === value,
       },
       {
          title: (
@@ -155,6 +163,12 @@ const HomePage = () => {
                   );
             }
          },
+
+         filters: [...new Set(talons?.map((item) => item?.client_type))].map((type) => ({
+            text: type,
+            value: type,
+         })),
+         onFilter: (value, record) => record.client_type === value,
       },
       {
          title: (
@@ -163,12 +177,18 @@ const HomePage = () => {
             </p>
          ),
          dataIndex: 'service',
-
          render: (value) => (
             <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
                {value}
             </p>
          ),
+         filters: employee?.service?.length
+            ? employee?.service?.map((item) => ({
+                 text: item?.name,
+                 value: item?.name,
+              }))
+            : null,
+         onFilter: (value, record) => record.service === value,
       },
 
       {
@@ -311,6 +331,7 @@ const HomePage = () => {
    const hanldeOpenModal = (talon) => {
       setModalTalon(talon);
       setIsModal(true);
+      getBranchQueues(employee?.branch);
    };
 
    // Service operation
@@ -357,6 +378,7 @@ const HomePage = () => {
    useEffect(() => {
       getTalons(JSON.parse(localStorage.getItem('token')) || {});
       getProfileInfo(JSON.parse(localStorage.getItem('email')));
+      getServiceList();
 
       if (!JSON.parse(localStorage.getItem('token'))) {
          navigate('/');
@@ -385,7 +407,7 @@ const HomePage = () => {
       return () => clearInterval(interval);
    }, [isRunning]);
 
-   return getTalonsLoading && getProfileInfoLoading ? (
+   return getTalonsLoading && getProfileInfoLoading && isServiceListLoading ? (
       <div
          style={{
             height: '100vh',
@@ -517,7 +539,13 @@ const HomePage = () => {
                      </button>
                   </div>
                </div>
-               <Modal isModal={isModal} setIsModal={setIsModal} talon={modalTalon} />
+               <Modal
+                  isModal={isModal}
+                  setIsModal={setIsModal}
+                  talon={modalTalon}
+                  queueBranch={queueBranch}
+                  serviceList={serviceList}
+               />
             </div>
 
             <Table

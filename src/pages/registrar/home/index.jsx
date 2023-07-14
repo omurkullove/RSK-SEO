@@ -1,46 +1,53 @@
-import React, { useEffect } from 'react';
-
-import { UserHeader } from '@/components/registrar/Navbar/Navbar-1-7';
-import styles from '@/assets/styles/registrar/Main.module.scss';
-import { ModalForm } from '@/components/registrar/ModalWindow/ModalForm';
 import { Popover, Spin, Table } from 'antd';
-import { useState } from 'react';
-import arrowGreen from '@/assets/svg/arrowGreen.svg';
+import React, { useEffect } from 'react';
+import {
+   canceledClientsCounter,
+   clientsCounter,
+   returnUnderstandableDate,
+   timeLimitSeconds,
+} from '@/utils/utils';
 
+import { LoadingOutlined } from '@ant-design/icons';
+import MainLayout from '@/components/operator/UI/Layout';
+import { ModalForm } from '@/components/registrar/ModalWindow/ModalForm';
+import { UserHeader } from '@/components/registrar/Navbar/Navbar-1-7';
+import alert from '@/assets/svg/1_6Alert.svg';
+import arrowGreen from '@/assets/svg/arrowGreen.svg';
+import arrowRed from '@/assets/svg/arrowRed.svg';
+import { calculateTimeDifference } from '@/utils/utils';
+import darkModeAlert from '@/assets/svg/darkModeAlert.svg';
 import darkModeArrowGreen from '@/assets/svg/darkModeArrowGreen.svg';
 import darkModeArrowRed from '@/assets/svg/darkModeArrowRed.svg';
-import arrowRed from '@/assets/svg/arrowRed.svg';
-import edit from '@/assets/svg/edit.svg';
-import dots from '@/assets/svg/dots.svg';
-import { LoadingOutlined } from '@ant-design/icons';
-import { canceledClientsCounter, returnUnderstandableDate, timeLimitSeconds } from '@/utils/utils';
-import deleteSvg from '@/assets/svg/delete.svg';
-import alert from '@/assets/svg/1_6Alert.svg';
-import darkModeAlert from '@/assets/svg/darkModeAlert.svg';
 import darkModeDots from '@/assets/svg/darkModeDots.svg';
-
-import { useTranslation } from 'react-i18next';
-import MainLayout from '@/components/operator/UI/Layout';
-import { calculateTimeDifference } from '@/utils/utils';
-import { useRegistrar } from '@/services/registrarStore';
-import { useNavigate } from 'react-router';
-import { useOperator } from '@/services/operatorStore';
+import dots from '@/assets/svg/dots.svg';
+import styles from '@/assets/styles/registrar/Main.module.scss';
 import { useMain } from '@/services/MainStore';
+import { useNavigate } from 'react-router';
+import { useRegistrar } from '@/services/registrarStore';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const RegistrarHome = () => {
-   const [searchValue, setSearchValue] = useState('');
    const { t } = useTranslation();
-   const [modalActive, setModalActive] = useState(false);
+
    const employee = useMain((state) => state.employee);
    const getProfileInfo = useMain((state) => state.getProfileInfo);
    const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);
+   const clients_per_day = useRegistrar((state) => state.clients_per_day);
+   const getTalons = useRegistrar((state) => state.getTalons);
+   const talons = useRegistrar((state) => state.talons);
+   const getTalonsLoading = useRegistrar((state) => state.getTalonsLoading);
+   const deleteTalon = useRegistrar((state) => state.deleteTalon);
 
    const isDarkMode = useMain((state) => state.isDarkMode);
 
+   const [modalActive, setModalActive] = useState(false);
+   const [searchValue, setSearchValue] = useState('');
+
    const tableContent = (talon) => (
       <div className={styles.tableContent}>
-         <div onClick={() => handleTransferClient(talon)}>Изменить</div>
-         <div onClick={() => handleDeletetalon(talon)}>Удалить</div>
+         {/* <div onClick={() => handleTransferClient(talon)}>Изменить</div> */}
+         <div onClick={() => handleDeletetalon(talon)}>Отменить</div>
       </div>
    );
 
@@ -63,6 +70,11 @@ const RegistrarHome = () => {
                return null;
             }
          },
+         filters: [...new Set(talons?.map((item) => item?.token[0]))].map((type) => ({
+            text: type,
+            value: type,
+         })),
+         onFilter: (value, record) => record?.token[0] === value,
       },
       {
          title: (
@@ -99,19 +111,6 @@ const RegistrarHome = () => {
       {
          title: (
             <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
-               {t('table.titles.editedDate')}
-            </p>
-         ),
-         dataIndex: 'updated_at',
-         render: (value) => (
-            <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
-               {returnUnderstandableDate(value)}
-            </p>
-         ),
-      },
-      {
-         title: (
-            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
                {t('table.titles.talons_type')}
             </p>
          ),
@@ -138,6 +137,11 @@ const RegistrarHome = () => {
                   );
             }
          },
+         filters: [...new Set(talons?.map((item) => item?.client_type))].map((type) => ({
+            text: type,
+            value: type,
+         })),
+         onFilter: (value, record) => record.client_type === value,
       },
       {
          title: (
@@ -146,73 +150,14 @@ const RegistrarHome = () => {
             </p>
          ),
          dataIndex: 'service',
-         render: (value) => {
-            switch (value) {
-               case 1:
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {t('table.body.service.CreditFinancing')}
-                     </p>
-                  );
-               case 2:
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {t('table.body.service.CurrencyExchange')}
-                     </p>
-                  );
-               case 3:
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {t('table.body.service.MoneyTransfers')}
-                     </p>
-                  );
-               case 4:
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {t('table.body.service.CardIssuance')}
-                     </p>
-                  );
-               case 5:
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {t('table.body.service.ReceiveTransfer')}
-                     </p>
-                  );
-               case 6:
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {t('table.body.service.OpenAnAccount')}
-                     </p>
-                  );
-               case 7:
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {t('table.body.service.SecuritiesOperations')}
-                     </p>
-                  );
-               case 8:
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {t('table.body.service.IslamicFinancing')}
-                     </p>
-                  );
-               default:
-                  return null;
-            }
-         },
-      },
-      {
-         title: (
-            <p className={styles.columnTitle} style={{ color: isDarkMode && '#92BFFF' }}>
-               {t('table.titles.queue')}
-            </p>
-         ),
-         dataIndex: 'queue',
-         render: (value) => (
-            <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
-               {value}
-            </p>
-         ),
+         render: (value) => <p className={styles.columnData}>{value}</p>,
+         filters: employee?.service?.length
+            ? employee?.service?.map((item) => ({
+                 text: item?.name,
+                 value: item?.name,
+              }))
+            : null,
+         onFilter: (value, record) => record.service === value,
       },
       {
          title: (
@@ -270,6 +215,26 @@ const RegistrarHome = () => {
                   );
             }
          },
+         filters: [
+            {
+               text: 'В процессе',
+               value: 'in service',
+            },
+            {
+               text: 'Завершен',
+               value: 'completed',
+            },
+            {
+               text: 'Отменен',
+               value: 'canceled',
+            },
+            {
+               text: 'В ожидании',
+               value: 'waiting',
+            },
+         ],
+
+         onFilter: (value, record) => record.status === value,
       },
       {
          title: (
@@ -281,7 +246,7 @@ const RegistrarHome = () => {
          render: (value, talon, index) => {
             return (
                <div className={styles.columnServiceBlock}>
-                  {talon?.status === 'complited' ? (
+                  {talon?.service_end ? (
                      <>
                         <p
                            className={styles.columnData}
@@ -342,26 +307,15 @@ const RegistrarHome = () => {
                </div>
             );
          },
+         sorter: (a, b) =>
+            calculateTimeDifference(a?.service_start, a?.service_end) -
+            calculateTimeDifference(b?.service_start, b?.service_end),
       },
    ];
 
-   const getTalons = useRegistrar((state) => state.getTalons);
-   const talons = useRegistrar((state) => state.talons);
-   const getTalonsLoading = useRegistrar((state) => state.getTalonsLoading);
-
    const navigate = useNavigate();
 
-   useEffect(() => {
-      getTalons();
-      getProfileInfo(JSON.parse(localStorage.getItem('email')));
-
-      if (!JSON.parse(localStorage.getItem('token'))) {
-         navigate('/');
-      }
-   }, []);
    const antIcon = <LoadingOutlined style={{ fontSize: 54 }} spin />;
-
-   const deleteTalon = useRegistrar((state) => state.deleteTalon);
 
    const handleDeletetalon = async (talon) => {
       try {
@@ -372,28 +326,31 @@ const RegistrarHome = () => {
       }
    };
 
-   const filteredTalons = talons.filter((talon) => talon.token.includes(searchValue));
-   console.log(filteredTalons, searchValue);
+   const filteredTalons = talons?.filter((talon) => talon.token.includes(searchValue));
 
    filteredTalons.sort((a, b) => {
-      // Compare the position of the searchValue in the token
       const indexA = a.token.indexOf(searchValue);
       const indexB = b.token.indexOf(searchValue);
 
       if (indexA > -1 && indexB > -1) {
-         // Both talons have the searchValue in the token
          return indexA - indexB;
       } else if (indexA > -1) {
-         // Only talon A has the searchValue in the token
          return -1;
       } else if (indexB > -1) {
-         // Only talon B has the searchValue in the token
          return 1;
       } else {
-         // None of the talons have the searchValue in the token
          return 0;
       }
    });
+
+   useEffect(() => {
+      getTalons();
+      getProfileInfo(JSON.parse(localStorage.getItem('email')));
+
+      if (!JSON.parse(localStorage.getItem('token'))) {
+         navigate('/');
+      }
+   }, []);
 
    return getTalonsLoading && getProfileInfoLoading ? (
       <div
@@ -438,16 +395,14 @@ const RegistrarHome = () => {
                               alt='arrow'
                            />
                            <span style={{ color: isDarkMode && '#A0FF9E' }}>
-                              5
-                              {/* {clientsCounter(clients_per_day?.today, clients_per_day?.yesterday)} */}
+                              {clientsCounter(clients_per_day?.today, clients_per_day?.yesterday)}
                            </span>
                         </div>
                         <p style={{ color: isDarkMode && '#A0FF9E' }}>{t('card.body')}</p>
                      </div>
                      <div className={styles.footer}>
                         <p style={{ color: isDarkMode && 'white' }}>
-                           {/* {clients_per_day?.today?.completed} */}
-                           16
+                           {clients_per_day?.today?.completed}
                         </p>
                      </div>
                   </div>
@@ -462,19 +417,17 @@ const RegistrarHome = () => {
                         <div style={{ backgroundColor: isDarkMode && '#712828' }}>
                            <img src={isDarkMode ? darkModeArrowRed : arrowRed} alt='arrow' />
                            <span style={{ color: isDarkMode && '#FFC8D0' }}>
-                              {/* {canceledClientsCounter(
+                              {canceledClientsCounter(
                                  clients_per_day?.today,
                                  clients_per_day?.yesterday
-                              )} */}
-                              7
+                              )}
                            </span>
                         </div>
                         <p style={{ color: isDarkMode && '#FFC8D0' }}>{t('card.body')}</p>
                      </div>
                      <div className={styles.footer}>
                         <p style={{ color: isDarkMode && 'white' }}>
-                           {/* {clients_per_day?.today?.canceled} */}
-                           15
+                           {clients_per_day?.today?.canceled}
                         </p>
                      </div>
                   </div>

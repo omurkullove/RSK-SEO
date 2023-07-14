@@ -71,19 +71,18 @@
       margin-top: 50px;
       gap: 20px;
       font-family: $Inter;
-      overflow-x: auto; /* Добавлено для горизонтального скролла */
+      overflow-x: auto;
    }
 
    .test_doc {
-      width: 200px;
+      width: 250px;
       background-color: #f8f8f8;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
       height: 130px;
-      white-space: nowrap; /* Добавлено, чтобы текст не переносился */
-      overflow: auto; /* Добавлено для горизонтального скролла */
+      overflow: auto;
    }
 
    .doc_id {
@@ -97,18 +96,20 @@
       margin-bottom: 10px;
    }
 
-   .doc_link {
-      color: #007bff;
-      text-decoration: none;
-      transition: color 0.3s;
-      background: transparent;
-      border: none;
-      margin: 2px;
-      font-size: 15px;
-      cursor: pointer;
+   .footer {
+      .doc_link {
+         color: #007bff;
+         text-decoration: none;
+         transition: color 0.3s;
+         background: transparent;
+         border: none;
+         margin: 2px;
+         font-size: 15px;
+         cursor: pointer;
 
-      &:hover {
-         color: #0056b3;
+         &:hover {
+            color: #0056b3;
+         }
       }
    }
 }

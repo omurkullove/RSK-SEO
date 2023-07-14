@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import ModalWrapper from '@/components/admin/ModalWrapper';
-import styles from '@/assets/styles/admin/AllModal.module.scss';
-import { useMain } from '@/services/MainStore';
-import { useAdmin } from '@/services/adminStore';
-import info_icon from '@/assets/svg/Info_icon.svg';
-import { Popover, Alert, Select } from 'antd';
+import { Alert, Popover, Select } from 'antd';
 import { CustomModalLoading, selectModalStyles } from '@/utils/utils';
+import React, { useEffect, useState } from 'react';
+
+import ModalWrapper from '@/components/admin/ModalWrapper';
+import { alertComponents } from '@/utils/popoverHint';
+import info_icon from '@/assets/svg/Info_icon.svg';
+import styles from '@/assets/styles/admin/AllModal.module.scss';
+import { useAdmin } from '@/services/adminStore';
+import { useMain } from '@/services/MainStore';
 
 const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
    const isDarkMode = useMain((state) => state.isDarkMode);
@@ -18,6 +20,9 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
    const getServiceList = useAdmin((state) => state.getServiceList);
    const editService = useAdmin((state) => state.editService);
    const deleteService = useAdmin((state) => state.deleteService);
+
+   const adminIdentifier = useMain((state) => state.adminIdentifier);
+   const isSuperAdmin = useMain((state) => state.isSuperAdmin);
 
    const handleEdit = (name, value) => {
       let newValue;
@@ -58,6 +63,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
          data: service.id,
          name: 'id',
          type: 'number',
+         hintAlert: <Alert {...alertComponents.idHint} />,
       },
       {
          id: 2,
@@ -65,6 +71,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
          data: service.name,
          name: 'name',
          type: 'text',
+         hintAlert: <Alert {...alertComponents.stingAny} />,
       },
       {
          id: 3,
@@ -72,6 +79,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
          data: service.average_time,
          name: 'average_time',
          type: 'number',
+         hintAlert: <Alert {...alertComponents.numberAny} />,
       },
       {
          id: 4,
@@ -79,6 +87,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
          data: service.auto_transport,
          name: 'auto_transport',
          type: 'text',
+         hintAlert: <Alert {...alertComponents.booleanKey} />,
       },
       {
          id: 5,
@@ -86,6 +95,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
          data: service.service_to_auto_transport,
          name: 'service_to_auto_transport',
          type: 'number',
+         hintAlert: <Alert {...alertComponents.selectKeyWord} />,
       },
       {
          id: 6,
@@ -104,11 +114,13 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
               }))
             : null,
          name: 'documents',
+         hintAlert: <Alert {...alertComponents.selectKeyWord} />,
       },
    ];
 
    useEffect(() => {
       getDocuments();
+      adminIdentifier();
    }, []);
 
    return (
@@ -122,11 +134,14 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
          >
             <div className={styles.head}>
                <input
+                  readOnly={isSuperAdmin}
                   defaultValue={service.name}
                   type='text'
                   onChange={(e) => handleEdit('name', e.target.value)}
                />
-               <img src={info_icon} alt='info' style={{ width: '24px', cursor: 'pointer' }} />
+               <Popover trigger={'hover'} content={<Alert {...alertComponents.stingAny} />}>
+                  <img src={info_icon} alt='info' style={{ width: '24px', cursor: 'pointer' }} />
+               </Popover>
             </div>
 
             {isDocumentsLoading ? (
@@ -139,6 +154,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
 
                         {item.name === 'documents' ? (
                            <Select
+                              disabled={!isSuperAdmin}
                               mode='multiple'
                               onChange={(value) => handleEdit('documents', value)}
                               style={{ width: '185px', marginRight: '100px' }}
@@ -149,7 +165,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
                         ) : (
                            <input
                               type={item.type}
-                              readOnly={item.name === 'id' ? true : false}
+                              readOnly={item.name === 'id' || !isSuperAdmin ? true : false}
                               defaultValue={
                                  typeof item.data === 'undefined' || item.data === null
                                     ? '-'
@@ -158,21 +174,32 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
                               onChange={(e) => handleEdit(item.name, e.target.value)}
                            />
                         )}
-                        <img
-                           src={info_icon}
-                           alt='info'
-                           style={{ width: '24px', cursor: 'pointer' }}
-                        />
+                        <Popover trigger={'hover'} content={item.hintAlert}>
+                           <img
+                              src={info_icon}
+                              alt='info'
+                              style={{ width: '24px', cursor: 'pointer' }}
+                           />
+                        </Popover>
                      </div>
                   ))}
+
                   <div className={styles.footer}>
-                     <button onClick={hanldeDelete} type='button'>
-                        Удалить
-                     </button>
-                     <button onClick={() => setIsServiceModal(false)} type='button'>
-                        Отмена
-                     </button>
-                     <button type='submit'>Сохранить</button>
+                     {isSuperAdmin ? (
+                        <>
+                           <button onClick={hanldeDelete} type='button'>
+                              Удалить
+                           </button>
+                           <button onClick={() => setIsServiceModal(false)} type='button'>
+                              Отмена
+                           </button>
+                           <button type='submit'>Сохранить</button>
+                        </>
+                     ) : (
+                        <button type='button' onClick={() => setIsServiceModal(false)}>
+                           Закрыть
+                        </button>
+                     )}
                   </div>
                </form>
             )}

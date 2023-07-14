@@ -1,6 +1,7 @@
-import { axiosInstance } from '@/axios';
 import { API, ShowMessage } from '@/utils/utils';
+
 import axios from 'axios';
+import { axiosInstance } from '@/axios';
 import { create } from 'zustand';
 
 export const useMain = create((set, get) => ({
@@ -16,7 +17,7 @@ export const useMain = create((set, get) => ({
 
    login: async (body, navigate) => {
       try {
-         const res = await axios.post(`${API}/employee/login/`, body);
+         const res = await axiosInstance.post(`${API}/employee/login/`, body);
          localStorage.setItem('token', JSON.stringify(res.data));
          localStorage.setItem('email', JSON.stringify(body.email));
          set({ token: res.data });
@@ -41,7 +42,7 @@ export const useMain = create((set, get) => ({
       }
    },
 
-   getProfileInfo: async (email) => {
+   getProfileInfo: async () => {
       set({ getProfileInfoLoading: true });
       try {
          const res = await axiosInstance('/employee/retrieve/');
