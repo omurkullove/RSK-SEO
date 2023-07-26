@@ -52,7 +52,8 @@
    "navbar": {
       "queue": "Всего",
       "date": "Дата",
-      "window": "Окно"
+      "window": "Окно",
+      "searchTalon": "Поиск по номеру талона"
    },
    "card": {
       "title1": "Клиентов за день",
@@ -98,6 +99,193 @@
       "service": "Услуги",
       "clientType": "Тип клиента",
       "date": "Выберите дату",
-      "time": "Выберите время"
+      "time": "Выберите время",
+      "chooseQueue": "Выберите очередь",
+      "branch": "Филиал"
+   },
+   "admin": {
+      "cards": {
+         "EmployeeInfo": "Информация о сотрудниках",
+         "QueueInfo": "Информация об очередях",
+         "ServiceInfo": "Информация об услугах",
+         "ViewActions": "Просмотр действий",
+         "Stats": "Статистика",
+         "CreateDoc": "Создать документ",
+         "docTranslate": "Переводы для документов",
+         "createWindow": "Создать окно",
+         "reports": "Отчеты"
+      },
+      "table": {
+         "FullName": "ФИО",
+         "Email": "Почта",
+         "branch": "Филиал",
+         "workTime": "Время работы",
+         "password": "Пароль",
+         "window": "Окно",
+         "position": "Должность",
+         "shiftTime": "Перерыв",
+         "comment": "Комментарий",
+         "status": "Статус",
+         "talonMaxTransfer": "Ограничение переноса талона",
+         "talonAutoCall": "Авто вызов талона",
+         "isActive": "Активный",
+         "service": "Услуги",
+         "lastLoginTime": "Последнее время логина",
+         "allEmployees": "Все сотрудники"
+      },
+      "employeeModal": {
+         "username": "ФИО",
+         "email": "Почта",
+         "branch": "Филиал",
+         "workTime": "Время работы",
+         "password": "Пароль",
+         "window": "Окно",
+         "position": "Должность",
+         "shift": "Перерыв",
+         "comment": "Комментарий",
+         "status": "Статус",
+         "max_transport": "Ограничение переноса талона",
+         "auto_call": "Авто вызов талона",
+         "isActive": "Активный",
+         "service": "Услуги",
+         "last_login": "Последнее время логина",
+         "rating": "Рейтинг"
+      },
+      "queueModal": {
+         "id": "ID",
+         "status": "Статус",
+         "service": "Услуги",
+         "branch": "Филиал",
+         "description": "Описание",
+         "talon_count": "Всего талонов"
+      },
+      "serviceModal": {
+         "id": "ID",
+         "name": "Название",
+         "average_time": "Среднее время обслуживания",
+         "auto_transport": "Авто перенос талона",
+         "service_to_auto_transport": "Услуга для переноса талона",
+         "lang_name": "Перевод",
+         "documents": "Документы"
+      },
+      "documentMain": {
+         "name": "Название",
+         "file": "Файл",
+         "required": "Обязательно",
+         "lang_name": "Перевод",
+         "searchDocument": "Поиск но названию документа",
+         "chooseDocument": "Выберите документ"
+      },
+      "languageMain": {
+         "language": "Язык",
+         "translate": "Перевод",
+         "search": "Поиск но переводу"
+      },
+      "windowMain": {
+         "branch": "Филиал",
+         "windowNumber": "Номер окна",
+         "searchWindow": "Поиск по номеру окна"
+      },
+      "branchMain": {
+         "id": "ID",
+         "branch": "Филиал",
+         "city": "Город",
+         "address": "Адрес",
+         "service": "Услуги",
+         "work_time_start": "Начало рабочего дня",
+         "work_time_end": "Конец рабочего дня"
+      },
+      "actions": {
+         "actionSearch": "Поиск действий",
+         "allBranches": "Все филиалы",
+         "branch": "Филиал",
+         "employee": "Сотрудник"
+      },
+      "statsMain": {
+         "period": "Период",
+         "start": "Начало",
+         "end": "Конец",
+         "form": "Сформировать",
+         "table": "Таблица",
+         "chart": "График"
+      },
+      "titles": {
+         "branchs": "Филиалы",
+         "queues": "Очереди",
+         "services": "Услуги"
+      }
+   },
+   "branch": {
+      "bishkek": "Бишкек",
+      "osh": "Ош",
+      "jalalabad": "Джалал-Абад",
+      "karakol": "Каракол",
+      "tokmok": "Токмок",
+      "naryn": "Нарын",
+      "talas": "Талас",
+      "kara_balta": "Кара-Балта",
+      "batken": "Баткен",
+      "isfana": "Исфана"
+   },
+   "buttons": {
+      "createEmployee": "Создать сотрудника",
+      "createQueue": "Создать очередь",
+      "createService": "Создать услугу",
+      "createDocument": "Создать документ",
+      "createBranch": "Создать филиал",
+
+      "cancel": "Отмена",
+      "create": "Создать",
+      "save": "Сохранить",
+      "close": "Закрыть",
+      "delete": "Удалить",
+      "open": "Открыть",
+      "edit": "Изменить",
+      "transfer": "Перенести",
+      "cancelIt": "Отменить талон"
+   },
+   "status": {
+      "active": "Активный",
+      "noActive": "Не активный",
+      "completed": "Завершен",
+      "inProgress": "В процессе",
+      "expected": "Ожидается",
+      "cancelled": "Отменен"
+   },
+   "chooseLanguage": "Выберите язык",
+   "darkMode": "Темная тема",
+   "noData": "Нет данных",
+   "all": "Все",
+   "kg": "Кыргызский",
+   "ru": "Русккий",
+   "en": "Английский",
+
+   "searchUndefinedBlockfined": "По результатам поиска ничего  не найдено",
+   "nothingAtTheMoment": "На данный момент ничего нет",
+   "dataLoading": "Идет подсчет данных...",
+
+   "chart": {
+      "January": "Январь",
+      "February": "Февраль",
+      "March": "Март",
+      "April": "Апрель",
+      "May": "Май",
+      "June": "Июнь",
+      "July": "Июль",
+      "August": "Август",
+      "September": "Сентябрь",
+      "October": "Октябрь",
+      "November": "Ноябрь",
+      "December": "Декабрь",
+      "talon_count": "Всего талонов",
+      "talon_canceled": "Отмененные талоны",
+      "talon_completed": "Завершенные талоны",
+      "month": "Месяц",
+      "talons": "Талоны",
+      "employee": "Сотрудники",
+      "report": "Отчеты",
+      "saveAsPdf": "Сохранить в PDF",
+      "saveAsExel": "Сохранить в Exel",
+      "submitToDB": "Отправить в базу данных"
    }
 }

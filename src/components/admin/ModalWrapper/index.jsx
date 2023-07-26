@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
 
 const ModalWrapper = ({ children, isOpen, setIsOpen }) => {

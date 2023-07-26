@@ -1,12 +1,12 @@
-import React from 'react';
 import { Route, Routes } from 'react-router';
 
 import OperatorHome from './home';
+import React from 'react';
 
 const RootOpertor = () => {
    return (
       <Routes>
-         <Route path='/home' element={<OperatorHome />} />
+         <Route path='/home/' element={<OperatorHome />} />
       </Routes>
    );
 };

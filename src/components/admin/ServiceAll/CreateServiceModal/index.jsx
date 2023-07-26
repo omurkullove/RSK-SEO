@@ -1,29 +1,36 @@
-import { CustomModalLoading, selectModalStyles } from '@/utils/utils';
-import React, { useEffect, useState } from 'react';
+import { Checkbox, Select } from 'antd';
+import {
+   CustomModalLoading,
+   MainDocumentOptions,
+   MainLanguageOptions,
+   MainServiceOptions,
+   isDarkModeTrigger,
+   selectModalStyles,
+} from '@/utils/utils';
+import { useCreateServiceMutation, useGetServiceQuery } from '@/api/admin/service_api';
 
 import ModalWrapper from '@/components/admin/ModalWrapper';
-import { Select } from 'antd';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import { t } from 'i18next';
+import { useGetDocumentQuery } from '@/api/admin/document_api';
+import { useGetLanguageQuery } from '@/api/admin/language_api';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
 const CreateServiceModal = ({ isCreateServiceModal, setIsCreateServiceModal }) => {
-   const isDarkMode = useMain((state) => state.isDarkMode);
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+
    const [service, setService] = useState();
 
-   const getDocuments = useAdmin((state) => state.getDocuments);
-   const documents = useAdmin((state) => state.documents);
-   const isDocumentsLoading = useAdmin((state) => state.isDocumentsLoading);
-
-   const createService = useAdmin((state) => state.createService);
-   const getServiceList = useAdmin((state) => state.getServiceList);
+   const { data: documentList, isLoading: isDocumentListLoading } = useGetDocumentQuery();
+   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
+   const { data: languageList, isLoading: isLanguageListLoading } = useGetLanguageQuery();
+   const [createService] = useCreateServiceMutation();
 
    const handleEdit = (name, value) => {
       let newValue;
-      if (name === 'documents') {
+      if (name === 'documents' || name === 'lang_name') {
          newValue = [...value];
-      } else if (name === 'lang_name') {
-         newValue = [];
       } else {
          newValue = value;
       }
@@ -37,18 +44,14 @@ const CreateServiceModal = ({ isCreateServiceModal, setIsCreateServiceModal }) =
    const handleCreateService = async (e) => {
       e.preventDefault();
       await createService(service);
-      await getServiceList();
       setIsCreateServiceModal(false);
    };
 
-   const options = documents?.map((item) => ({
-      label: item?.name,
-      value: item?.id,
-   }));
+   const documentOptions = MainDocumentOptions(documentList, isDarkMode);
 
-   useEffect(() => {
-      getDocuments();
-   }, []);
+   const languageOption = MainLanguageOptions(languageList, isDarkMode);
+
+   const serviceOptions = MainServiceOptions(serviceList, isDarkMode);
 
    return (
       <ModalWrapper isOpen={isCreateServiceModal} setIsOpen={setIsCreateServiceModal}>
@@ -59,57 +62,73 @@ const CreateServiceModal = ({ isCreateServiceModal, setIsCreateServiceModal }) =
                backgroundColor: isDarkMode ? '#374B67' : 'white',
             }}
          >
-            <div className={styles.head}>
-               <p>Создать услугу</p>
+            <div className={styles.head} style={isDarkModeTrigger(1, true, isDarkMode)}>
+               <p style={isDarkModeTrigger(1, false, isDarkMode)}>{t('buttons.createService')}</p>
             </div>
             <form action='submit' onSubmit={handleCreateService}>
-               {isDocumentsLoading ? (
+               {isDocumentListLoading && isServiceListLoading && isLanguageListLoading ? (
                   <CustomModalLoading />
                ) : (
                   <>
                      <input
+                        style={isDarkModeTrigger(1, false, isDarkMode)}
                         onChange={(e) => handleEdit('name', e.target.value)}
                         required
                         type='string'
-                        placeholder='Название*'
+                        placeholder={t('admin.serviceModal.name')}
                      />
                      <input
+                        style={isDarkModeTrigger(1, false, isDarkMode)}
                         onChange={(e) => handleEdit('number', e.target.value)}
                         name='average_time'
                         type='number'
-                        placeholder='Среднее время обслуживания в минутах'
+                        placeholder={t('admin.serviceModal.average_time')}
                      />
-                     <input
-                        onChange={(e) => handleEdit('auto_transport', e.target.value)}
-                        type='text'
-                        placeholder='Авто перенос талона'
-                     />
-                     <input
-                        onChange={(e) => handleEdit('service_to_auto_transport', e.target.value)}
-                        type='number'
-                        placeholder='Услуга для переноса'
-                     />
-                     <input
-                        onChange={(e) => handleEdit('lang_name', e.target.value)}
-                        type='number'
-                        placeholder='Название для разных языков*'
+
+                     <p style={{ marginTop: '20px' }}>Авто перенос талона</p>
+                     <Checkbox
+                        style={isDarkModeTrigger(1, false, isDarkMode)}
+                        onChange={(e) => handleEdit('auto_transport', e.target.checked)}
+                        placeholder={t('admin.serviceModal.auto_transport')}
                      />
 
                      <Select
+                        dropdownStyle={isDarkModeTrigger(2, true, isDarkMode)}
+                        onChange={(value) => handleEdit('service_to_auto_transport', value)}
+                        style={{ ...selectModalStyles }}
+                        bordered={false}
+                        options={serviceOptions}
+                        placeholder={'Выбрать улсугу  для переноса'}
+                     />
+
+                     <Select
+                        dropdownStyle={isDarkModeTrigger(2, true, isDarkMode)}
+                        mode='multiple'
+                        onChange={(value) => handleEdit('lang_name', value)}
+                        style={{ ...selectModalStyles }}
+                        bordered={false}
+                        options={languageOption}
+                        placeholder={t('admin.serviceModal.lang_name')}
+                     />
+
+                     <Select
+                        dropdownStyle={isDarkModeTrigger(2, true, isDarkMode)}
                         mode='multiple'
                         onChange={(value) => handleEdit('documents', value)}
                         required
-                        placeholder='Документы*'
+                        placeholder={t('admin.serviceModal.documents')}
                         bordered={false}
-                        options={options}
+                        options={documentOptions}
                         style={selectModalStyles}
                      />
                   </>
                )}
 
                <div className={styles.footer}>
-                  <button onClick={() => setIsCreateServiceModal(false)}>Отмена</button>
-                  <button type='submit'>Создать</button>
+                  <button onClick={() => setIsCreateServiceModal(false)} type='button'>
+                     {t('buttons.cancel')}
+                  </button>
+                  <button type='submit'>{t('buttons.create')}</button>
                </div>
             </form>
          </div>

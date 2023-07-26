@@ -1,24 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 
 import CreateServiceModal from './CreateServiceModal';
 import { CustomLoading } from '@/utils/utils';
 import ServiceModal from './serviceModal';
+import { adminIdentifier } from '@/api/synchronous';
 import styles from './Service.module.scss';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import { t } from 'i18next';
+import { useGetServiceQuery } from '@/api/admin/service_api';
 
 const Service = () => {
-   const serviceList = useAdmin((state) => state.serviceList);
-   const isServiceListLoading = useAdmin((state) => state.isServiceListLoading);
+   const isSuperAdmin = useSelector((state) => state.toggleDarkMode.isSuperAdmin);
 
-   const getServiceList = useAdmin((state) => state.getServiceList);
-   const adminIdentifier = useMain((state) => state.adminIdentifier);
-   const isSuperAdmin = useMain((state) => state.isSuperAdmin);
+   const dispatch = useDispatch();
+
+   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
 
    const [isCreateServiceModal, setIsCreateServiceModal] = useState(false);
    const [isServiceModal, setIsServiceModal] = useState(false);
 
    const [choosedService, setChoosedService] = useState();
+
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
    const hanldeOpenServiceQueue = (item) => {
       setChoosedService(item);
@@ -26,32 +29,45 @@ const Service = () => {
    };
 
    useEffect(() => {
-      getServiceList();
-      adminIdentifier();
+      dispatch(adminIdentifier());
    }, []);
 
    return isServiceListLoading ? (
       <CustomLoading />
    ) : (
       <>
-         <div className={styles.serviceBlock}>
+         <div
+            className={styles.serviceBlock}
+            style={{
+               backgroundColor: isDarkMode ? '#001F31' : '',
+            }}
+         >
             <div className={styles.head}>
-               <p>Услуги</p>
+               <p style={{ color: isDarkMode ? 'white' : '' }}>{t('admin.titles.services')}</p>
             </div>
             <div className={styles.body}>
                {serviceList.length ? (
                   serviceList?.map((item) => (
-                     <div key={item.id} onClick={() => hanldeOpenServiceQueue(item)}>
+                     <div
+                        key={item.id}
+                        onClick={() => hanldeOpenServiceQueue(item)}
+                        style={{
+                           backgroundColor: isDarkMode ? '#374B67' : '',
+                           color: isDarkMode ? 'white' : '',
+                        }}
+                     >
                         {item?.name}
                      </div>
                   ))
                ) : (
-                  <p>На данный момент нет никакаких услуг...</p>
+                  <p>{t('nothingAtTheMoment')}</p>
                )}
             </div>
             {isSuperAdmin ? (
                <div className={styles.footer}>
-                  <button onClick={() => setIsCreateServiceModal(true)}>Создать Услугу</button>
+                  <button onClick={() => setIsCreateServiceModal(true)}>
+                     {t('buttons.createService')}
+                  </button>
                </div>
             ) : null}
          </div>
@@ -60,6 +76,7 @@ const Service = () => {
                isServiceModal={isServiceModal}
                setIsServiceModal={setIsServiceModal}
                service={choosedService}
+               item
             />
          )}
          {isCreateServiceModal && (

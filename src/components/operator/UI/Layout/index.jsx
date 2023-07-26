@@ -1,12 +1,9 @@
-import React from 'react';
-import styles from '@/assets/styles/operator/Layout.module.scss';
-import Sidebar from '../Sidebar';
 import { Layout } from 'antd';
-import { useOperator } from '@/services/operatorStore';
-import { useMain } from '@/services/MainStore';
+import Sidebar from '../Sidebar';
+import { useSelector } from 'react-redux';
 
 const MainLayout = ({ children, isSidebar, Navbar }) => {
-   const isDarkMode = useMain((state) => state.isDarkMode);
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
    return (
       <Layout hasSider>

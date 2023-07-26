@@ -1,85 +1,97 @@
-import React from 'react';
+import { MainServiceOptions, serviceIndetificator } from '@/utils/utils';
+
+import { Select } from 'antd';
+import moment from 'moment';
 import styles from '@/assets/styles/registrar/ModalForm.module.scss';
+import { usePrintTalonsMutation } from '@/api/registrar/registrar_api';
+import { useSelector } from 'react-redux';
 import { useState } from 'react';
-
-import { Select, DatePicker, TimePicker } from 'antd';
-import { useRegistrar } from '@/services/registrarStore';
 import { useTranslation } from 'react-i18next';
-import { useMain } from '@/services/MainStore';
 
-const handleChange = (value) => {
-   console.log(`selected ${value}`);
-};
+export const ModalForm = ({ active, setActive, branch, serviceList, refetch }) => {
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
-// Дата и время
-const onChange = (date, dateString) => {
-   console.log(date, dateString);
-};
-
-export const ModalForm = ({ active, setActive }) => {
-   const { printTalons } = useRegistrar();
-   const [type, setType] = useState('time');
-   const { Option } = Select;
-   const PickerWithType = ({ type, onChange }) => {
-      if (type === 'time') return <TimePicker onChange={onChange} />;
-      if (type === 'date') return <DatePicker onChange={onChange} />;
-      return <DatePicker picker={type} onChange={onChange} />;
-   };
-   const isDarkMode = useMain((state) => state.isDarkMode);
+   const [printTalon] = usePrintTalonsMutation();
 
    const { t } = useTranslation();
 
-   const [selectedValues, setSelectedValues] = useState({
-      service: 'Услуги',
-      clientType: 'Тип клиента',
-      selectedWindow: 'Окно',
-      date: null,
-      time: null,
-   });
+   const [talon, setTalon] = useState();
 
-   // Формируем HTML-разметку с выбранными данными
-   const handlePrintClick = () => {
-      const { service, clientType, selectedWindow, date, time } = selectedValues;
+   const handleEdit = (name, value) => {
+      setTalon((prev) => ({
+         ...prev,
+         [name]: value,
+      }));
+   };
+   const generatePrintContent = (service, clientType, date, branch) => {
+      return `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Чек</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+              }
+    
+              .check-container {
+                max-width: 400px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+              }
+    
+              .check-container h1 {
+                margin-bottom: 10px;
+              }
+    
+              .check-container p {
+                margin-bottom: 5px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="check-container">
+              <h1>Ваши выбранные данные:</h1>
+              <p>Услуга: ${service}</p>
+              <p>Тип клиента: ${clientType}</p>
+              <p>Филиал:${branch}</p>
+              <p>Назначенная дата: ${moment(date).format('DD:MM:YY HH:mm')}</p>
+            </div>
+            <script>
+            // Печатаем документ после его полной загрузки
+            window.onload = function() {
+              window.print();
+              window.onafterprint = function() {
+                window.close(); // Закрываем окно после печати
+              };
+            };
+          </script>
+          </body>
+        </html>
+      `;
+   };
 
-      // Создаем новое окно
+   const handlePrintClick = async () => {
       const printWindow = window.open('', '_blank');
+      const printContent = generatePrintContent(
+         serviceIndetificator(serviceList, talon?.service),
+         talon?.client_type,
+         talon?.appointment_date,
+         branch
+      );
 
-      // Формируем HTML-разметку с выбранными данными
-      const printContent = `
-       <html>
-         <head>
-           <title>Чек</title>
-           <style>
-             /* Стили для чека */
-             /* ... */
-           </style>
-         </head>
-         <body>
-           <h1>Ваши выбранные данные:</h1>
-           <p>Услуга: ${service}</p>
-           <p>Тип клиента: ${clientType}</p>
-           <p>Окно: ${selectedWindow}</p>
-           <p>Дата: ${date}</p>
-           <p>Время: ${time}</p>
-   
-           <script>
-             // Печатаем документ после его полной загрузки
-             window.onload = function() {
-               window.print();
-               window.onafterprint = function() {
-                 window.close(); // Закрываем окно после печати
-               };
-             };
-           </script>
-         </body>
-       </html>
-     `;
-
-      // Устанавливаем содержимое окна
       printWindow.document.open();
       printWindow.document.write(printContent);
       printWindow.document.close();
+
+      await printTalon(talon);
+      await refetch();
+
+      setActive(false);
    };
+
+   const serviceOptions = MainServiceOptions(serviceList, isDarkMode);
 
    // Верстка модального окна
    return (
@@ -100,48 +112,15 @@ export const ModalForm = ({ active, setActive }) => {
                dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
                className={`${styles.modal__selects} ${styles.customSelect}`}
                placeholder={t('modal.service')}
-               onChange={(value) => setSelectedValues({ ...selectedValues, service: value })}
-               options={[
-                  {
-                     value: 'Кредитование',
-                     label: t('table.body.service.CreditFinancing'),
-                  },
-                  {
-                     value: 'Обмен валют',
-                     label: t('table.body.service.CurrencyExchange'),
-                  },
-                  {
-                     value: 'Денежные переводы',
-                     label: t('table.body.service.MoneyTransfers'),
-                  },
-                  {
-                     value: 'Выпуск карты',
-                     label: t('table.body.service.CardIssuance'),
-                  },
-                  {
-                     value: 'Получить перевод',
-                     label: t('table.body.service.ReceiveTransfer'),
-                  },
-                  {
-                     value: 'Открыть счет',
-                     label: t('table.body.service.OpenAnAccount'),
-                  },
-                  {
-                     value: 'Операции с ценными бумагами',
-                     label: t('table.body.service.SecuritiesOperations'),
-                  },
-                  {
-                     value: 'Исламское финансирование',
-                     label: t('table.body.service.IslamicFinancing'),
-                  },
-               ]}
+               onChange={(value) => handleEdit('service', value)}
+               options={serviceOptions}
                size='large'
             />
             <Select
                dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
                className={`${styles.modal__selects} ${styles.customSelect}`}
                placeholder={t('modal.clientType')}
-               onChange={(value) => setSelectedValues({ ...selectedValues, clientType: value })}
+               onChange={(value) => handleEdit('client_type', value)}
                options={[
                   {
                      value: 'Юридическое лицо',
@@ -154,34 +133,10 @@ export const ModalForm = ({ active, setActive }) => {
                ]}
                size='large'
             />
-            <Select
-               className={`${styles.modal__selects} ${styles.customSelect}`}
-               placeholder={t('navbar.window')}
-               onChange={(value) => setSelectedValues({ ...selectedValues, selectedWindow: value })}
-               options={[1, 2, 3, 4, 5].map((item) => ({
-                  value: item,
-                  label: `${t('navbar.window')} ${item}`,
-               }))}
-               size='large'
-            />
-
-            <DatePicker
-               style={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
-               placeholder={t('modal.date')}
-               className={styles.modal__pickers}
-               onChange={(date, dateString) =>
-                  setSelectedValues({ ...selectedValues, date: dateString })
-               }
-               size='large'
-            />
-
-            <TimePicker
-               style={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
-               placeholder={t('modal.time')}
-               className={styles.modal__timePicker}
-               type={type}
-               onChange={(time) => setSelectedValues({ ...selectedValues, time })}
-               size='large'
+            <input
+               className={styles.dateInput}
+               type='datetime-local'
+               onChange={(e) => handleEdit('appointment_date', e.target.value)}
             />
 
             <button onClick={handlePrintClick} className={styles.modal__button}>

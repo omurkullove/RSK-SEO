@@ -1,28 +1,42 @@
 import { Alert, Popover, Select } from 'antd';
-import { CustomModalLoading, selectModalStyles } from '@/utils/utils';
-import React, { useEffect, useState } from 'react';
+import {
+   CustomModalLoading,
+   MainLanguageOptions,
+   getServiceName,
+   isDarkModeTrigger,
+} from '@/utils/utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import {
+   useGetServiceQuery,
+   useRemoveServiceMutation,
+   useUpdateServiceMutation,
+} from '@/api/admin/service_api';
 
 import ModalWrapper from '@/components/admin/ModalWrapper';
+import { adminIdentifier } from '@/api/synchronous';
 import { alertComponents } from '@/utils/popoverHint';
 import info_icon from '@/assets/svg/Info_icon.svg';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import { t } from 'i18next';
+import { useGetDocumentQuery } from '@/api/admin/document_api';
+import { useGetLanguageQuery } from '@/api/admin/language_api';
 
 const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
-   const isDarkMode = useMain((state) => state.isDarkMode);
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+
    const [newService, setNewService] = useState(service);
 
-   const getDocuments = useAdmin((state) => state.getDocuments);
-   const documents = useAdmin((state) => state.documents);
-   const isDocumentsLoading = useAdmin((state) => state.isDocumentsLoading);
+   const { data: languageList, isLoading: isLanguageListLoading } = useGetLanguageQuery();
+   const { data: documentList, isLoading: isDocumentListLoadind } = useGetDocumentQuery();
+   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
 
-   const getServiceList = useAdmin((state) => state.getServiceList);
-   const editService = useAdmin((state) => state.editService);
-   const deleteService = useAdmin((state) => state.deleteService);
+   const [deleteService] = useRemoveServiceMutation();
+   const [editService] = useUpdateServiceMutation();
 
-   const adminIdentifier = useMain((state) => state.adminIdentifier);
-   const isSuperAdmin = useMain((state) => state.isSuperAdmin);
+   const dispatch = useDispatch();
+
+   const isSuperAdmin = useSelector((state) => state.toggleDarkMode.isSuperAdmin);
 
    const handleEdit = (name, value) => {
       let newValue;
@@ -30,7 +44,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
       if (name === 'documents') {
          newValue = [...value];
       } else if (name === 'lang_name') {
-         newValue = [];
+         newValue = [...value];
       } else {
          newValue = value;
       }
@@ -43,15 +57,14 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
 
    const handleSave = async (e) => {
       e.preventDefault();
-      await editService(service.id, newService);
-      await getServiceList();
+
+      await editService(newService);
 
       setIsServiceModal(false);
    };
 
    const hanldeDelete = async () => {
       await deleteService(service.id);
-      await getServiceList();
 
       setIsServiceModal(false);
    };
@@ -60,7 +73,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
       {
          id: 1,
          title: 'ID',
-         data: service.id,
+         data: service?.id,
          name: 'id',
          type: 'number',
          hintAlert: <Alert {...alertComponents.idHint} />,
@@ -68,7 +81,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
       {
          id: 2,
          title: 'Название',
-         data: service.name,
+         data: service?.name ? getServiceName(service?.name) : '',
          name: 'name',
          type: 'text',
          hintAlert: <Alert {...alertComponents.stingAny} />,
@@ -76,7 +89,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
       {
          id: 3,
          title: 'Cреднее время обслуживания',
-         data: service.average_time,
+         data: service?.average_time,
          name: 'average_time',
          type: 'number',
          hintAlert: <Alert {...alertComponents.numberAny} />,
@@ -84,7 +97,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
       {
          id: 4,
          title: 'Авто перенос',
-         data: service.auto_transport,
+         data: service?.auto_transport,
          name: 'auto_transport',
          type: 'text',
          hintAlert: <Alert {...alertComponents.booleanKey} />,
@@ -92,36 +105,46 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
       {
          id: 5,
          title: 'Услуга для переноса',
-         data: service.service_to_auto_transport,
-         name: 'service_to_auto_transport',
+         data: service?.service_to_auto_transport,
+         name: 'service?_to_auto_transport',
          type: 'number',
          hintAlert: <Alert {...alertComponents.selectKeyWord} />,
       },
       {
          id: 6,
          title: 'Ин. язык',
-         data: service.lang_name,
+         data: service?.lang_name
+            ? languageList?.filter((item) => item.id === service?.lang_name)
+            : null,
          name: 'lang_name',
          type: 'number',
       },
       {
          id: 7,
          title: 'Документы',
-         data: documents.length
-            ? documents?.map((item) => ({
-                 label: item?.name,
-                 value: item?.id,
-              }))
-            : null,
+         data: service?.documents,
          name: 'documents',
          hintAlert: <Alert {...alertComponents.selectKeyWord} />,
       },
    ];
 
    useEffect(() => {
-      getDocuments();
-      adminIdentifier();
+      dispatch(adminIdentifier());
    }, []);
+
+   const languageOption = MainLanguageOptions(languageList, isDarkMode);
+
+   const serviceOptions = serviceList.map((item) => ({
+      label: <p style={isDarkModeTrigger(3, false, isDarkMode)}>{getServiceName(item.name)}</p>,
+      value: item.id,
+   }));
+
+   const documentOptions = documentList?.length
+      ? documentList?.map((item) => ({
+           label: <p style={isDarkModeTrigger(3, false, isDarkMode)}>{item?.name}</p>,
+           value: item?.id,
+        }))
+      : null;
 
    return (
       <ModalWrapper isOpen={isServiceModal} setIsOpen={setIsServiceModal}>
@@ -132,9 +155,10 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
                backgroundColor: isDarkMode ? '#374B67' : 'white',
             }}
          >
-            <div className={styles.head}>
+            <div className={styles.head} style={isDarkModeTrigger(1, true, isDarkMode)}>
                <input
-                  readOnly={isSuperAdmin}
+                  style={isDarkModeTrigger(1, false, isDarkMode)}
+                  readOnly
                   defaultValue={service.name}
                   type='text'
                   onChange={(e) => handleEdit('name', e.target.value)}
@@ -144,13 +168,15 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
                </Popover>
             </div>
 
-            {isDocumentsLoading ? (
+            {isDocumentListLoadind && isLanguageListLoading && isServiceListLoading ? (
                <CustomModalLoading />
             ) : (
                <form className={styles.body} onSubmit={handleSave} action='submit'>
                   {TBody.map((item) => (
                      <div className={styles.line} key={item.id}>
-                        <p>{item.title}:</p>
+                        <p style={isDarkModeTrigger(3, false, isDarkMode)}>
+                           {t(`admin.serviceModal.${item.name}`)}:
+                        </p>
 
                         {item.name === 'documents' ? (
                            <Select
@@ -158,9 +184,26 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
                               mode='multiple'
                               onChange={(value) => handleEdit('documents', value)}
                               style={{ width: '185px', marginRight: '100px' }}
-                              options={item.data}
+                              options={documentOptions}
                               value={newService.documents}
                               defaultValue={service.documents}
+                           />
+                        ) : item.name === 'lang_name' ? (
+                           <Select
+                              mode='multiple'
+                              disabled={!isSuperAdmin}
+                              onChange={(value) => handleEdit('lang_name', value)}
+                              style={{ width: '185px', marginRight: '100px' }}
+                              options={languageOption}
+                              value={newService.lang_name}
+                              defaultValue={service.lang_name}
+                           />
+                        ) : item.name === 'service_to_auto_transport' ? (
+                           <Select
+                              onChange={(value) => handleEdit('service_to_auto_transport', value)}
+                              style={{ width: '185px', marginRight: '100px' }}
+                              options={serviceOptions}
+                              defaultValue={service.service_to_auto_transport}
                            />
                         ) : (
                            <input
@@ -172,6 +215,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
                                     : item.data
                               }
                               onChange={(e) => handleEdit(item.name, e.target.value)}
+                              style={isDarkModeTrigger(2, false, isDarkMode)}
                            />
                         )}
                         <Popover trigger={'hover'} content={item.hintAlert}>
@@ -188,16 +232,16 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
                      {isSuperAdmin ? (
                         <>
                            <button onClick={hanldeDelete} type='button'>
-                              Удалить
+                              {t('buttons.delete')}
                            </button>
                            <button onClick={() => setIsServiceModal(false)} type='button'>
-                              Отмена
+                              {t('buttons.cancel')}
                            </button>
-                           <button type='submit'>Сохранить</button>
+                           <button type='submit'>{t('buttons.save')}</button>
                         </>
                      ) : (
                         <button type='button' onClick={() => setIsServiceModal(false)}>
-                           Закрыть
+                           {t('buttons.close')}
                         </button>
                      )}
                   </div>

@@ -28,7 +28,7 @@ export const alertComponents = {
    dataKeyText: {
       type: 'info',
       message,
-      description: 'Дата и время: ММ.ДД ЧЧ:ММ',
+      description: 'Дата и время: ДД.ММ ЧЧ:мм',
       showIcon: true,
    },
    statusKeyWord: {

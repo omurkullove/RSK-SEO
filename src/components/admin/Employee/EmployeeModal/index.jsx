@@ -1,35 +1,52 @@
-import { Alert, DatePicker, Popover, Select, TimePicker } from 'antd';
+import { Alert, Popover, Select } from 'antd';
 import {
-   CustomModalLoading,
+   MainBranchOptions,
+   MainServiceOptions,
    branchIndeficator,
+   getServiceName,
+   isDarkModeTrigger,
    returnUnderstandableDate,
-   selectModalStyles,
    serviceIndetificator,
 } from '@/utils/utils';
-import React, { useEffect, useState } from 'react';
+import {
+   useDeleteEmployeeMutation,
+   useEditEmployeeMutation,
+   useLazyGetEmployeeListQuery,
+} from '@/api/admin/employee_api';
 
 import ModalWrapper from '@/components/admin/ModalWrapper';
 import { alertComponents } from '@/utils/popoverHint';
 import info_icon from '@/assets/svg/Info_icon.svg';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import { t } from 'i18next';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
-const EmployeeModal = ({ setIsModal, isModal, employee }) => {
-   const isDarkMode = useMain((state) => state.isDarkMode);
+const EmployeeModal = ({
+   setIsModal,
+   isModal,
+   employee,
+   windowList,
+   branchList,
+   serviceList,
+   refetch,
+}) => {
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
-   const [newEmployee, setNewEmployee] = useState(employee);
+   const [newEmployee, setNewEmployee] = useState({
+      ...employee,
+      last_login: returnUnderstandableDate(employee.last_login, false),
+   });
 
-   const isServiceListLoading = useAdmin((state) => state.isServiceListLoading);
-   const serviceList = useAdmin((state) => state.serviceList);
-   const getServiceList = useAdmin((state) => state.getServiceList);
+   const [deleteEmployee] = useDeleteEmployeeMutation();
+   const [editEmployee] = useEditEmployeeMutation();
+   const [getEmployeeList] = useLazyGetEmployeeListQuery();
 
-   const deleteEmployee = useAdmin((state) => state.deleteEmployee);
-   const editEmployee = useAdmin((state) => state.editEmployee);
-   const getEmployeeList = useAdmin((state) => state.getEmployeeList);
-   const getBranchList = useAdmin((state) => state.getBranchList);
-   const branchList = useAdmin((state) => state.branchList);
-   const isBranchListLoading = useAdmin((state) => state.isBranchListLoading);
+   const [isFileChanged, setIsFileChanged] = useState(false);
+
+   const [branchWindows, setBranchWindows] = useState(
+      windowList?.filter((item) => item.branch === employee.branch)
+   );
 
    const TBody = [
       {
@@ -45,7 +62,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          hintAlert: <Alert {...alertComponents.numberAny} />,
          id: 2,
          title: 'Окно*',
-         data: employee.window.length ? employee.window : undefined,
+         data: employee.window?.length ? employee.window : undefined,
          name: 'window',
          required: true,
       },
@@ -61,7 +78,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          hintAlert: <Alert {...alertComponents.dateAny} />,
          id: 4,
          title: 'Смена',
-         data: employee.shift.length ? employee.shift : undefined,
+         data: employee.shift?.length ? employee.shift : undefined,
          name: 'shift',
          required: false,
       },
@@ -69,7 +86,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          hintAlert: <Alert {...alertComponents.stingAny} />,
          id: 5,
          title: 'Комментарий',
-         data: employee.comment.length ? employee.comment : undefined,
+         data: employee.comment?.length ? employee.comment : undefined,
          name: 'comment',
          required: false,
       },
@@ -77,7 +94,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          hintAlert: <Alert {...alertComponents.dataKeyText} />,
          id: 6,
          title: 'Последнее время логина',
-         data: employee.last_login ? returnUnderstandableDate(employee.last_login) : undefined,
+         data: newEmployee.last_login,
          name: 'last_login',
          required: true,
       },
@@ -103,7 +120,7 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          title: 'Очереди, которые обслуживает данный сотрудник*',
          data: serviceList?.length
             ? serviceList?.map((item) => ({
-                 label: item?.description,
+                 label: getServiceName(item?.name),
                  value: item?.id,
               }))
             : undefined,
@@ -119,9 +136,9 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
          required: false,
       },
       {
-         hintAlert: <Alert {...alertComponents.numberAny} />,
+         hintAlert: <Alert {...alertComponents.booleanKey} />,
          id: 11,
-         title: 'Рейтинг сотрудника',
+         title: 'Предусмотрен ли автоматический вызов клиента',
          data: employee.rating,
          name: 'rating',
          required: false,
@@ -129,7 +146,13 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
    ];
 
    const handleEdit = (name, value) => {
-      if (name === 'service') {
+      if (name === 'image') {
+         setNewEmployee((prev) => ({
+            ...prev,
+            [name]: value,
+         }));
+         setIsFileChanged(true);
+      } else if (name === 'service') {
          setNewEmployee((prev) => ({
             ...prev,
             [name]: [...value],
@@ -142,41 +165,54 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
       }
    };
 
-   useEffect(() => {
-      getServiceList();
-      getBranchList();
-   }, []);
-
    const handleSave = async (e) => {
       e.preventDefault();
-      const isosDate = new Date(newEmployee.last_login);
-      console.log(isosDate);
+      const isosDate = returnUnderstandableDate(newEmployee.last_login, true);
 
-      await editEmployee(employee.id, {
-         ...newEmployee,
-         last_login: isosDate.toISOString(),
-      });
-      await getEmployeeList();
+      const editedEmployee = { ...newEmployee, last_login: isosDate };
 
+      await editEmployee(editedEmployee);
+      await refetch();
       setIsModal(false);
    };
 
-   const serviceOptions = serviceList?.map((item) => ({
-      label: item?.name,
-      value: item?.id,
-   }));
+   const serviceOptions = MainServiceOptions(serviceList, isDarkMode);
 
-   const branchOptions = branchList?.map((item) => ({
-      label: `${item?.city}, ${item?.address}`,
-      value: item?.id,
+   const branchOptions = MainBranchOptions(branchList, isDarkMode);
+
+   const windowOptions = branchWindows?.map((item) => ({
+      label: <p style={isDarkModeTrigger(2, false, isDarkMode)}>{item.number}</p>,
+      value: item.id,
    }));
 
    const handleDelete = async () => {
       await deleteEmployee(employee.id);
-      await getEmployeeList();
+      await refetch();
 
       setIsModal(false);
    };
+
+   const fileList = newEmployee?.image
+      ? typeof newEmployee?.image === 'string'
+         ? [
+              {
+                 uid: '-1',
+                 name: 'image',
+                 status: 'done',
+                 url: newEmployee?.image,
+                 thumbUrl: newEmployee?.image,
+                 hideRemoveIcon: true,
+              },
+           ]
+         : [
+              {
+                 ...newEmployee?.image,
+                 thumbUrl: URL.createObjectURL(newEmployee?.image),
+                 name: newEmployee?.image?.name,
+                 hideRemoveIcon: true,
+              },
+           ]
+      : [];
 
    return (
       <ModalWrapper isOpen={isModal} setIsOpen={setIsModal}>
@@ -187,9 +223,12 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
                backgroundColor: isDarkMode ? '#374B67' : 'white',
             }}
          >
-            <div className={styles.head}>
-               <p>Сотрудник:</p>
+            <div className={styles.head} style={isDarkModeTrigger(3, true, isDarkMode)}>
+               <p style={isDarkModeTrigger(3, false, isDarkMode)}>
+                  {t('admin.employeeModal.username')}
+               </p>
                <input
+                  style={{ backgroundColor: 'transparent', color: isDarkMode ? 'lightgray' : '' }}
                   required={true}
                   defaultValue={newEmployee.username}
                   onChange={(e) => handleEdit('username', e.target.value)}
@@ -210,60 +249,84 @@ const EmployeeModal = ({ setIsModal, isModal, employee }) => {
                   <img src={info_icon} alt='edit' style={{ width: '24px', cursor: 'pointer' }} />
                </Popover>
             </div>
-            {isServiceListLoading && isBranchListLoading ? (
-               <CustomModalLoading />
-            ) : (
-               <form className={styles.body} onSubmit={handleSave}>
-                  {TBody.map((item) => (
-                     <div className={styles.line} key={item.id}>
-                        <p>{item.title}:</p>
-                        {item.name === 'service' ? (
-                           <Select
-                              mode='multiple'
-                              onChange={(value) => handleEdit('service', value)}
-                              options={serviceOptions}
-                              style={{ width: '255px', marginRight: '40px' }}
-                              defaultValue={serviceIndetificator(serviceList, employee.service)}
-                              value={newEmployee.service}
-                           />
-                        ) : item.name === 'branch' ? (
-                           <Select
-                              onChange={(value) => handleEdit('branch', value)}
-                              options={branchOptions}
-                              style={{ width: '255px', marginRight: '40px' }}
-                              defaultValue={branchIndeficator(branchList, employee.branch)}
-                              value={newEmployee.branch}
-                           />
-                        ) : (
-                           <input
-                              required={item.required}
-                              defaultValue={typeof item.data === 'undefined' ? '-' : item.data}
-                              name={item.name}
-                              onChange={(e) => handleEdit(item.name, e.target.value)}
-                              placeholder={item.name === 'last_login' ? 'MM.DD HH:MM' : item.title}
-                           />
-                        )}
 
-                        <Popover content={item.hintAlert} trigger={'hover'}>
-                           <img
-                              src={info_icon}
-                              alt='edit'
-                              style={{ width: '24px', cursor: 'pointer' }}
-                           />
-                        </Popover>
-                     </div>
-                  ))}
-                  <div className={styles.footer}>
-                     <button onClick={handleDelete} type='button'>
-                        Удалить
-                     </button>
-                     <button onClick={() => setIsModal(false)} type='button'>
-                        Отмена
-                     </button>
-                     <button type='submit'>Сохранить</button>
+            <form className={styles.body} onSubmit={handleSave} action='submit'>
+               {TBody.map((item) => (
+                  <div className={styles.line} key={item.id}>
+                     <p style={isDarkModeTrigger(3, false, isDarkMode)}>
+                        {t(`admin.employeeModal.${item.name}`)}:
+                     </p>
+                     {item.name === 'service' ? (
+                        <Select
+                           dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                           mode='multiple'
+                           onChange={(value) => handleEdit('service', value)}
+                           options={serviceOptions}
+                           value={newEmployee.service}
+                           style={{ width: '255px', marginRight: '40px' }}
+                           defaultValue={serviceIndetificator(serviceList, employee.service)}
+                        />
+                     ) : item.name === 'branch' ? (
+                        <Select
+                           dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                           onChange={(value) => handleEdit('branch', value)}
+                           options={branchOptions}
+                           style={{ width: '255px', marginRight: '40px' }}
+                           defaultValue={branchIndeficator(branchList, employee.branch)}
+                           value={newEmployee.branch}
+                        />
+                     ) : item.name === 'window' ? (
+                        <Select
+                           dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                           onChange={(value) => handleEdit('window', value)}
+                           options={windowOptions}
+                           style={{ width: '255px', marginRight: '40px' }}
+                           defaultValue={windowList?.find((window) => window.id === item.window)}
+                           value={newEmployee.window}
+                        />
+                     ) : item.name === 'rating' ? (
+                        <input
+                           defaultValue={typeof item.data === 'undefined' ? '-' : item.data}
+                           name={item.name}
+                           onChange={(e) => handleEdit(item.name, e.target.value)}
+                           readOnly
+                           style={{ color: isDarkMode ? 'white' : '' }}
+                        />
+                     ) : (
+                        <input
+                           required={item.required}
+                           defaultValue={typeof item.data === 'undefined' ? '-' : item.data}
+                           name={item.name}
+                           onChange={(e) => handleEdit(item.name, e.target.value)}
+                           placeholder={
+                              item.name === 'last_login'
+                                 ? 'DD.MM HH:MM'
+                                 : t(`admin.employeeModal.${item.name}`)
+                           }
+                           style={{ color: isDarkMode ? 'white' : '' }}
+                        />
+                     )}
+
+                     <Popover content={item.hintAlert} trigger={'hover'}>
+                        <img
+                           src={info_icon}
+                           alt='edit'
+                           style={{ width: '24px', cursor: 'pointer' }}
+                        />
+                     </Popover>
                   </div>
-               </form>
-            )}
+               ))}
+
+               <div className={styles.footer}>
+                  <button onClick={handleDelete} type='button'>
+                     {t('buttons.delete')}
+                  </button>
+                  <button onClick={() => setIsModal(false)} type='button'>
+                     {t('buttons.cancel')}
+                  </button>
+                  <button type='submit'>{t('buttons.save')}</button>
+               </div>
+            </form>
          </div>
       </ModalWrapper>
    );

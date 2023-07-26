@@ -13,6 +13,7 @@ const MainRouter = () => {
          <Route path='/operator/*' element={<RootOpertor />} />
          <Route path='/registrar/*' element={<RootRegistrar />} />
          <Route path='/admin/*' element={<RootAdmin />} />
+         <Route path='*' element={<p>404 not found</p>} />
       </Routes>
    );
 };

@@ -1,11 +1,18 @@
 import { Popover, Spin, Table } from 'antd';
-import React, { useEffect } from 'react';
 import {
+   branchIndeficator,
    canceledClientsCounter,
+   clientTypeTranslate,
    clientsCounter,
+   getServiceName,
    returnUnderstandableDate,
    timeLimitSeconds,
 } from '@/utils/utils';
+import {
+   useGetBranchListQuery,
+   useGetTalonQuery,
+   useLazyDeleteTalonQuery,
+} from '@/api/registrar/registrar_api';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import MainLayout from '@/components/operator/UI/Layout';
@@ -21,33 +28,39 @@ import darkModeArrowRed from '@/assets/svg/darkModeArrowRed.svg';
 import darkModeDots from '@/assets/svg/darkModeDots.svg';
 import dots from '@/assets/svg/dots.svg';
 import styles from '@/assets/styles/registrar/Main.module.scss';
-import { useMain } from '@/services/MainStore';
+import { useEffect } from 'react';
+import { useGetProfileInfoQuery } from '@/api/general/auth_api';
+import { useGetServiceQuery } from '@/api/admin/service_api';
 import { useNavigate } from 'react-router';
-import { useRegistrar } from '@/services/registrarStore';
+import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const RegistrarHome = () => {
    const { t } = useTranslation();
 
-   const employee = useMain((state) => state.employee);
-   const getProfileInfo = useMain((state) => state.getProfileInfo);
-   const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);
-   const clients_per_day = useRegistrar((state) => state.clients_per_day);
-   const getTalons = useRegistrar((state) => state.getTalons);
-   const talons = useRegistrar((state) => state.talons);
-   const getTalonsLoading = useRegistrar((state) => state.getTalonsLoading);
-   const deleteTalon = useRegistrar((state) => state.deleteTalon);
+   const { data: employee, isLoading: getProfileInfoLoading } = useGetProfileInfoQuery();
+   const { data: talons, isLoading: getTalonsLoading, refetch } = useGetTalonQuery();
 
-   const isDarkMode = useMain((state) => state.isDarkMode);
+   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
+   const { data: branchList, isLoading: isBranchListLoading } = useGetBranchListQuery();
+
+   const [deleteTalon] = useLazyDeleteTalonQuery();
+
+   const [clients_per_day, setClients_per_day] = useState(talons?.clients_per_day);
+
+   useEffect(() => {
+      setClients_per_day(talons?.clients_per_day);
+   }, [talons]);
+
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
    const [modalActive, setModalActive] = useState(false);
    const [searchValue, setSearchValue] = useState('');
 
    const tableContent = (talon) => (
       <div className={styles.tableContent}>
-         {/* <div onClick={() => handleTransferClient(talon)}>Изменить</div> */}
-         <div onClick={() => handleDeletetalon(talon)}>Отменить</div>
+         <div onClick={() => handleDeletetalon(talon)}>{t('buttons.cancelIt')}</div>
       </div>
    );
 
@@ -70,7 +83,7 @@ const RegistrarHome = () => {
                return null;
             }
          },
-         filters: [...new Set(talons?.map((item) => item?.token[0]))].map((type) => ({
+         filters: [...new Set(talons?.talons?.map((item) => item?.token[0]))]?.map((type) => ({
             text: type,
             value: type,
          })),
@@ -115,30 +128,13 @@ const RegistrarHome = () => {
             </p>
          ),
          dataIndex: 'client_type',
-         render: (value) => {
-            switch (value) {
-               case 'Физ.лицо':
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {t('table.body.type.naturalPerson')}
-                     </p>
-                  );
-               case 'Юр.лицо':
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {t('table.body.type.legalЕntity')}
-                     </p>
-                  );
-               default:
-                  return (
-                     <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
-                        {value}
-                     </p>
-                  );
-            }
-         },
-         filters: [...new Set(talons?.map((item) => item?.client_type))].map((type) => ({
-            text: type,
+         render: (value) => (
+            <p style={{ color: isDarkMode && 'white' }} className={styles.columnData}>
+               {clientTypeTranslate(value)}
+            </p>
+         ),
+         filters: [...new Set(talons?.talons?.map((item) => item?.client_type))]?.map((type) => ({
+            text: clientTypeTranslate(type),
             value: type,
          })),
          onFilter: (value, record) => record.client_type === value,
@@ -150,10 +146,10 @@ const RegistrarHome = () => {
             </p>
          ),
          dataIndex: 'service',
-         render: (value) => <p className={styles.columnData}>{value}</p>,
+         render: (value) => <p className={styles.columnData}>{getServiceName(value)}</p>,
          filters: employee?.service?.length
             ? employee?.service?.map((item) => ({
-                 text: item?.name,
+                 text: getServiceName(item?.name),
                  value: item?.name,
               }))
             : null,
@@ -186,7 +182,7 @@ const RegistrarHome = () => {
                         {t('table.body.status.expected')}
                      </p>
                   );
-               case 'complited':
+               case 'completed':
                   return (
                      <p
                         className={styles.columnDataStatus}
@@ -217,19 +213,19 @@ const RegistrarHome = () => {
          },
          filters: [
             {
-               text: 'В процессе',
+               text: t('status.inProgress'),
                value: 'in service',
             },
             {
-               text: 'Завершен',
+               text: t('status.completed'),
                value: 'completed',
             },
             {
-               text: 'Отменен',
+               text: t('status.cancelled'),
                value: 'canceled',
             },
             {
-               text: 'В ожидании',
+               text: t('status.expected'),
                value: 'waiting',
             },
          ],
@@ -320,15 +316,15 @@ const RegistrarHome = () => {
    const handleDeletetalon = async (talon) => {
       try {
          await deleteTalon(talon.token);
-         await getTalons();
+         await refetch();
       } catch (error) {
          console.log(error);
       }
    };
 
-   const filteredTalons = talons?.filter((talon) => talon.token.includes(searchValue));
+   const filteredTalons = talons?.talons?.filter((talon) => talon?.token.includes(searchValue));
 
-   filteredTalons.sort((a, b) => {
+   filteredTalons?.sort((a, b) => {
       const indexA = a.token.indexOf(searchValue);
       const indexB = b.token.indexOf(searchValue);
 
@@ -344,15 +340,16 @@ const RegistrarHome = () => {
    });
 
    useEffect(() => {
-      getTalons();
-      getProfileInfo(JSON.parse(localStorage.getItem('email')));
-
       if (!JSON.parse(localStorage.getItem('token'))) {
          navigate('/');
       }
    }, []);
 
-   return getTalonsLoading && getProfileInfoLoading ? (
+   return getTalonsLoading &&
+      getProfileInfoLoading &&
+      isBranchListLoading &&
+      isServiceListLoading ? (
+      // isServiceListLoading &&
       <div
          style={{
             height: '100vh',
@@ -364,7 +361,7 @@ const RegistrarHome = () => {
          }}
       >
          <Spin indicator={antIcon} size='50' />
-         <h4>Идет подсчет данных....</h4>
+         <h4>{t('dataLoading')}</h4>
       </div>
    ) : (
       <MainLayout
@@ -436,7 +433,13 @@ const RegistrarHome = () => {
                   <button className={styles.newTalon} onClick={() => setModalActive(true)}>
                      {t('newTalon.button1')}
                   </button>
-                  <ModalForm active={modalActive} setActive={setModalActive} />
+                  <ModalForm
+                     active={modalActive}
+                     setActive={setModalActive}
+                     branch={branchIndeficator(branchList, employee?.branch)}
+                     serviceList={serviceList}
+                     refetch={refetch}
+                  />
                </div>
             </div>
 
@@ -446,7 +449,7 @@ const RegistrarHome = () => {
                }}
                loading={getTalonsLoading}
                className={isDarkMode ? 'dark_mode' : 'default_mode'}
-               dataSource={filteredTalons.map((item, index) => ({
+               dataSource={filteredTalons?.map((item, index) => ({
                   ...item,
                   key: index,
                }))}

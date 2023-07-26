@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const axiosInstance = axios.create({
-   baseURL: 'https://rskseo.pythonanywhere.com',
+   baseURL: 'http://0.0.0.0:8000/',
 });
 
 axiosInstance.interceptors.request.use(

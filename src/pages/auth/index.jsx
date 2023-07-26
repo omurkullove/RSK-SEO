@@ -1,19 +1,16 @@
+import { Button, Form, Input } from 'antd';
 import React, { useEffect, useState } from 'react';
-import styles from '@/assets/styles/main/Auth.module.scss';
-import logo from '@/assets/svg/bigLogo.svg';
-import { useNavigate } from 'react-router-dom';
 
-import { Alert, Button, Form, Input } from 'antd';
 import { Link } from 'react-router-dom';
-import { useOperator } from '@/services/operatorStore';
-import { useRegistrar } from '@/services/registrarStore';
-
-import kg from '@/assets/svg/kg.svg';
-import en from '@/assets/svg/en.svg';
-import ru from '@/assets/svg/ru.svg';
-import { useTranslation } from 'react-i18next';
-import { useMain } from '@/services/MainStore';
 import { ShowMessage } from '@/utils/utils';
+import en from '@/assets/svg/en.svg';
+import kg from '@/assets/svg/kg.svg';
+import logo from '@/assets/svg/bigLogo.svg';
+import ru from '@/assets/svg/ru.svg';
+import styles from '@/assets/styles/main/Auth.module.scss';
+import { useLoginEmployeeMutation } from '@/api/general/auth_api';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const AuthPage = () => {
    const navigate = useNavigate();
@@ -25,17 +22,38 @@ const AuthPage = () => {
       setLang(language);
    };
 
+   const [loginUser, { error, isSuccess }] = useLoginEmployeeMutation();
+
+   const positionNavigator = (token) => {
+      localStorage.setItem('token', JSON.stringify(token) || '{}');
+      switch (token?.position) {
+         case 'super_admin':
+            navigate('/admin/home');
+            break;
+         case 'admin':
+            navigate('/admin/home');
+            break;
+         case 'operator':
+            navigate('/operator/home');
+            break;
+         case 'registrator':
+            navigate('/registrar/home');
+            break;
+
+         default:
+            break;
+      }
+   };
+
+   const handleLogin = async (values) => {
+      await loginUser(values).then((res) => {
+         positionNavigator(res.data);
+      });
+   };
+
    useEffect(() => {
       localStorage.removeItem('token');
-      localStorage.removeItem('email');
    }, []);
-
-   const login = useMain((state) => state.login);
-
-   const hanldeLogin = async (values) => {
-      await login(values, navigate);
-      console.log(values);
-   };
 
    return (
       <div className={styles.main}>
@@ -67,7 +85,7 @@ const AuthPage = () => {
                   key={lang}
                   className={styles.form}
                   name='basic'
-                  onFinish={hanldeLogin}
+                  onFinish={handleLogin}
                   autoComplete='off'
                >
                   <Form.Item

@@ -1,35 +1,51 @@
-import { Checkbox, Select } from 'antd';
-import { CustomModalLoading, selectModalStyles } from '@/utils/utils';
-import React, { useEffect, useState } from 'react';
+import { Button, Checkbox, Select, Upload } from 'antd';
+import {
+   MainBranchOptions,
+   getServiceName,
+   isDarkModeTrigger,
+   selectModalStyles,
+} from '@/utils/utils';
+import { useCreateEmployeeMutation, useLazyGetEmployeeListQuery } from '@/api/admin/employee_api';
 
 import ModalWrapper from '../../ModalWrapper';
+import { UploadOutlined } from '@ant-design/icons';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import { t } from 'i18next';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
-const CreateEmployeeModal = ({ isCreateEmpModal, setIsCreateEmpModal }) => {
+const CreateEmployeeModal = ({
+   isCreateEmpModal,
+   setIsCreateEmpModal,
+   windowList,
+   serviceList,
+   branchList,
+}) => {
    const [employee, setEmployee] = useState();
 
-   const isDarkMode = useMain((state) => state.isDarkMode);
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
-   const isBranchListLoading = useAdmin((state) => state.isBranchListLoading);
-   const branchList = useAdmin((state) => state.branchList);
-   const getBranchList = useAdmin((state) => state.getBranchList);
-   const isServiceListLoading = useAdmin((state) => state.isServiceListLoading);
-   const serviceList = useAdmin((state) => state.serviceList);
-   const getServiceList = useAdmin((state) => state.getServiceList);
-   const createEmployee = useAdmin((state) => state.createEmployee);
-   const getEmployeeList = useAdmin((state) => state.getEmployeeList);
+   const [pp, setpp] = useState();
 
    const handleEdit = (name, value) => {
+      const service = name === 'service' ? [...value] : value;
+
+      if (name === 'image') {
+         setpp(value);
+      }
+
       setEmployee((prev) => ({
          ...prev,
-         [name]: value,
+         [name]: service,
       }));
    };
 
+   const [createEmployee] = useCreateEmployeeMutation();
+   const [getEmployeeList] = useLazyGetEmployeeListQuery();
+
    const handleSubmit = async (e) => {
       e.preventDefault();
+
       await createEmployee(employee);
       await getEmployeeList();
 
@@ -37,19 +53,26 @@ const CreateEmployeeModal = ({ isCreateEmpModal, setIsCreateEmpModal }) => {
    };
 
    const serviceOptions = serviceList?.map((item) => ({
-      label: item?.name,
+      label: <p className={isDarkMode ? 'dark_modeOption' : ''}>{getServiceName(item?.name)}</p>,
       value: item?.id,
    }));
 
-   const branchOptions = branchList?.map((item) => ({
-      label: `${item?.city}, ${item?.address}`,
-      value: item?.id,
+   const branchOptions = MainBranchOptions(branchList, isDarkMode);
+
+   const windowOptions = windowList?.map((item) => ({
+      label: <p className={isDarkMode ? 'dark_modeOption' : ''}>{item.number}</p>,
+      value: item.id,
    }));
 
-   useEffect(() => {
-      getBranchList();
-      getServiceList();
-   }, []);
+   const fileList = pp
+      ? [
+           {
+              ...pp,
+              thumbUrl: URL.createObjectURL(pp),
+              name: pp?.name,
+           },
+        ]
+      : [];
 
    return (
       <ModalWrapper isOpen={isCreateEmpModal} setIsOpen={setIsCreateEmpModal}>
@@ -60,168 +83,224 @@ const CreateEmployeeModal = ({ isCreateEmpModal, setIsCreateEmpModal }) => {
                backgroundColor: isDarkMode ? '#374B67' : 'white',
             }}
          >
-            <div className={styles.head}>
-               <p>Создать сотрудника</p>
+            <div
+               className={styles.head}
+               style={{
+                  backgroundColor: isDarkMode ? '#374B67' : '',
+               }}
+            >
+               <p
+                  style={{
+                     color: isDarkMode ? 'white' : '',
+                  }}
+               >
+                  Создать сотрудника
+               </p>
             </div>
             <form action='submit' onSubmit={handleSubmit}>
-               {isBranchListLoading && isServiceListLoading ? (
-                  <CustomModalLoading />
-               ) : (
-                  <>
-                     <label htmlFor='email'>Email:</label>
-                     <input
-                        onChange={(e) => handleEdit('email', e.target.value)}
-                        name='email'
-                        type='email'
-                        id='email'
-                        placeholder='Эл. Почта'
-                        maxLength={255}
-                        autoComplete='current-email'
-                        minLength={1}
-                        required
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='email'>
+                  {t('admin.employeeModal.email')}
+               </label>
+               <input
+                  onChange={(e) => handleEdit('email', e.target.value)}
+                  name='email'
+                  type='email'
+                  id='email'
+                  placeholder={t('admin.employeeModal.email')}
+                  maxLength={255}
+                  autoComplete='current-email'
+                  minLength={1}
+                  required
+               />
 
-                     <label htmlFor='password'>Пароль:</label>
-                     <input
-                        onChange={(e) => handleEdit('password', e.target.value)}
-                        name='password'
-                        type='password'
-                        id='password'
-                        placeholder='Пароль'
-                        maxLength={128}
-                        minLength={1}
-                        autoComplete='current-password'
-                        required
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='password'>
+                  {t('admin.employeeModal.password')}
+               </label>
+               <input
+                  onChange={(e) => handleEdit('password', e.target.value)}
+                  name='password'
+                  type='password'
+                  id='password'
+                  placeholder={t('admin.employeeModal.password')}
+                  maxLength={128}
+                  minLength={1}
+                  autoComplete='current-password'
+                  required
+               />
 
-                     <label htmlFor='username'>ФИО:</label>
-                     <input
-                        onChange={(e) => handleEdit('username', e.target.value)}
-                        name='username'
-                        type='text'
-                        id='username'
-                        placeholder='ФИО'
-                        maxLength={255}
-                        minLength={1}
-                        required
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='username'>
+                  {t('admin.employeeModal.username')}
+               </label>
+               <input
+                  onChange={(e) => handleEdit('username', e.target.value)}
+                  name='username'
+                  type='text'
+                  id='username'
+                  placeholder={t('admin.employeeModal.username')}
+                  maxLength={255}
+                  minLength={1}
+                  required
+               />
 
-                     <label htmlFor='window'>Окно:</label>
-                     <input
-                        onChange={(e) => handleEdit('window', e.target.value)}
-                        name='window'
-                        type='text'
-                        id='window'
-                        placeholder='Окно'
-                        maxLength={50}
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='window'>
+                  {t('admin.employeeModal.window')}
+               </label>
+               <Select
+                  onChange={(value) => handleEdit('window', value)}
+                  options={windowOptions}
+                  bordered={false}
+                  dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                  style={{ ...selectModalStyles, marginTop: 0 }}
+                  placeholder={t('admin.employeeModal.window')}
+               />
 
-                     <label htmlFor='position'>Position:</label>
-                     <input
-                        onChange={(e) => handleEdit('position', e.target.value)}
-                        name='position'
-                        type='text'
-                        id='position'
-                        placeholder='Position'
-                        required
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='position'>
+                  {t('admin.employeeModal.position')}
+               </label>
+               <input
+                  onChange={(e) => handleEdit('position', e.target.value)}
+                  name='position'
+                  type='text'
+                  id='position'
+                  placeholder={t('admin.employeeModal.position')}
+                  required
+               />
 
-                     <label htmlFor='shift'>Перерыв:</label>
-                     <input
-                        onChange={(e) => handleEdit('shift', e.target.value)}
-                        name='shift'
-                        type='text'
-                        id='shift'
-                        placeholder='Перерыв'
-                        maxLength={100}
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='shift'>
+                  {t('admin.employeeModal.shift')}
+               </label>
+               <input
+                  onChange={(e) => handleEdit('shift', e.target.value)}
+                  name='shift'
+                  type='text'
+                  id='shift'
+                  placeholder={t('admin.employeeModal.shift')}
+                  maxLength={100}
+               />
 
-                     <label htmlFor='comment'>Комментарий:</label>
-                     <input
-                        onChange={(e) => handleEdit('comment', e.target.value)}
-                        name='comment'
-                        type='text'
-                        id='comment'
-                        placeholder='Комментарий'
-                        maxLength={100}
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='comment'>
+                  {t('admin.employeeModal.comment')}
+               </label>
+               <input
+                  onChange={(e) => handleEdit('comment', e.target.value)}
+                  name='comment'
+                  type='text'
+                  id='comment'
+                  placeholder={t('admin.employeeModal.comment')}
+                  maxLength={100}
+               />
 
-                     <label htmlFor='status'>Статус:</label>
-                     <input
-                        onChange={(e) => handleEdit('status', e.target.value)}
-                        name='status'
-                        type='text'
-                        id='status'
-                        placeholder='Статус'
-                        maxLength={255}
-                        minLength={1}
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='status'>
+                  {t('admin.employeeModal.status')}
+               </label>
+               <input
+                  onChange={(e) => handleEdit('status', e.target.value)}
+                  name='status'
+                  type='text'
+                  id='status'
+                  placeholder={t('admin.employeeModal.status')}
+                  maxLength={255}
+                  minLength={1}
+               />
 
-                     <label htmlFor='max_transport'>Ограничение переноса талонов:</label>
-                     <input
-                        onChange={(e) => handleEdit('max_transport', parseInt(e.target.value))}
-                        name='max_transport'
-                        type='number'
-                        id='max_transport'
-                        placeholder='Ограничение переноса талонов'
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='max_transport'>
+                  {t('admin.employeeModal.max_transport')}
+               </label>
+               <input
+                  onChange={(e) => handleEdit('max_transport', parseInt(e.target.value))}
+                  name='max_transport'
+                  type='number'
+                  id='max_transport'
+                  placeholder={t('admin.employeeModal.max_transport')}
+               />
 
-                     <label htmlFor='auto_call'>Авто вызов талона:</label>
-                     <Checkbox
-                        onChange={(e) => handleEdit('auto_call', e.target.checked)}
-                        defaultChecked={false}
-                        name='auto_call'
-                        type='checkbox'
-                        id='auto_call'
-                        placeholder='Авто вызов талона'
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='auto_call'>
+                  {t('admin.employeeModal.auto_call')}
+               </label>
+               <Checkbox
+                  onChange={(e) => handleEdit('auto_call', e.target.checked)}
+                  defaultChecked={false}
+                  name='auto_call'
+                  type='checkbox'
+                  id='auto_call'
+                  placeholder={t('admin.employeeModal.auto_call')}
+               />
 
-                     <label htmlFor='is_active'>Is active:</label>
-                     <Checkbox
-                        onChange={(e) => handleEdit('is_active', e.target.checked)}
-                        defaultChecked={false}
-                        name='is_active'
-                        type='checkbox'
-                        id='is_active'
-                        placeholder='Is active'
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='is_active'>
+                  {t('admin.employeeModal.isActive')}
+               </label>
+               <Checkbox
+                  onChange={(e) => handleEdit('is_active', e.target.checked)}
+                  defaultChecked={false}
+                  name='is_active'
+                  type='checkbox'
+                  id='is_active'
+                  placeholder={t('admin.employeeModal.isActive')}
+               />
 
-                     <label htmlFor='branch'>Филиал:</label>
-                     <Select
-                        onChange={(value) => handleEdit('branch', parseInt(value))}
-                        name='branch'
-                        id='branch'
-                        placeholder='Филиал'
-                        options={branchOptions}
-                        style={(selectModalStyles, { marginTop: 0 })}
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='branch'>
+                  {t('admin.employeeModal.branch')}
+               </label>
+               <Select
+                  onChange={(value) => handleEdit('branch', parseInt(value))}
+                  name='branch'
+                  id='branch'
+                  placeholder={t('admin.employeeModal.branch')}
+                  options={branchOptions}
+                  dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                  style={(selectModalStyles, { marginTop: 0 })}
+               />
 
-                     <label htmlFor='service'>Услуги:</label>
-                     <Select
-                        mode='multiple'
-                        onChange={(value) => handleEdit('service', [...value])}
-                        name='service'
-                        id='service'
-                        placeholder='Услуги'
-                        options={serviceOptions}
-                        value={employee?.service}
-                        style={(selectModalStyles, { marginTop: 0 })}
-                     />
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='service'>
+                  {t('admin.employeeModal.service')}
+               </label>
+               <Select
+                  mode='multiple'
+                  onChange={(value) => handleEdit('service', value)}
+                  name='service'
+                  id='service'
+                  placeholder={t('admin.employeeModal.service')}
+                  options={serviceOptions}
+                  // value={employee?.service}
+                  dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                  style={(selectModalStyles, { marginTop: 0 })}
+               />
 
-                     <label htmlFor='last_login'>Последний вход:</label>
-                     <input
-                        onChange={(e) => handleEdit('last_login', e.target.value)}
-                        name='last_login'
-                        type='datetime-local'
-                        id='last_login'
-                        placeholder='Последний вход'
-                     />
-                  </>
-               )}
+               <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='last_login'>
+                  {t('admin.employeeModal.last_login')}
+               </label>
+               <input
+                  style={{ color: 'lightgray' }}
+                  onChange={(e) => handleEdit('last_login', e.target.value)}
+                  name='last_login'
+                  type='datetime-local'
+                  id='last_login'
+                  placeholder={t('admin.employeeModal.last_login')}
+               />
+               <center style={{ display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='image'>
+                     Загрузите фото
+                  </label>
+                  <Upload
+                     fileList={fileList}
+                     onChange={(info) => handleEdit('image', info.fileList[0].originFileObj)}
+                     customRequest={() => {}}
+                     id='image'
+                     listType='picture'
+                     maxCount={1}
+                  >
+                     <Button
+                        icon={<UploadOutlined />}
+                        style={isDarkModeTrigger(2, true, isDarkMode)}
+                     >
+                        Upload
+                     </Button>
+                  </Upload>
+               </center>
 
                <div className={styles.footer}>
-                  <button onClick={() => setIsCreateEmpModal(false)}>Отмена</button>
-                  <button type='submit'>Создать</button>
+                  <button onClick={() => setIsCreateEmpModal(false)}>{t('buttons.cancel')}</button>
+                  <button type='submit'>{t('buttons.create')}</button>
                </div>
             </form>
          </div>

@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import styles from './Queue.module.scss';
-import { CustomLoading, serviceIndetificator } from '@/utils/utils';
-import QueueModal from './QueueModal';
+import { CustomLoading, getServiceName } from '@/utils/utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+
 import CreateQueueModal from './createQueueModal';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import QueueModal from './QueueModal';
+import { adminIdentifier } from '@/api/synchronous';
+import styles from './Queue.module.scss';
+import { t } from 'i18next';
+import { useGetQueueQuery } from '@/api/admin/queue_api';
+import { useGetServiceQuery } from '@/api/admin/service_api';
 
 const Queue = () => {
-   const queueList = useAdmin((state) => state.queueList);
-   const isQueueListLoading = useAdmin((state) => state.isQueueListLoading);
-   const getQueueList = useAdmin((state) => state.getQueueList);
+   const isSuperAdmin = useSelector((state) => state.toggleDarkMode.isSuperAdmin);
+   const dispatch = useDispatch();
 
-   const adminIdentifier = useMain((state) => state.adminIdentifier);
-   const isSuperAdmin = useMain((state) => state.isSuperAdmin);
-   const getServiceList = useAdmin((state) => state.getServiceList);
-   const serviceList = useAdmin((state) => state.serviceList);
+   const { data: queueList, isLoading: isQueueListLoading } = useGetQueueQuery();
+   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
 
    const [isQueModal, setIsQueModal] = useState(false);
    const [isCreateQueModal, setIsCreateQueModal] = useState(false);
 
    const [choosedQueue, setChoosedQueue] = useState();
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
    const handleOpenQueueModal = (item) => {
       setChoosedQueue(item);
@@ -27,33 +29,45 @@ const Queue = () => {
    };
 
    useEffect(() => {
-      getQueueList();
-      adminIdentifier();
-      getServiceList();
+      dispatch(adminIdentifier());
    }, []);
 
-   return isQueueListLoading && getServiceList ? (
+   return isQueueListLoading && isServiceListLoading ? (
       <CustomLoading />
    ) : (
       <>
-         <div className={styles.queueBlock}>
+         <div
+            className={styles.queueBlock}
+            style={{ backgroundColor: isDarkMode ? '#001F31' : '' }}
+         >
             <div className={styles.head}>
-               <p>Очереди</p>
+               <p style={{ color: isDarkMode ? 'white' : '' }}>{t('admin.titles.queues')}</p>
             </div>
             <div className={styles.body}>
-               {queueList.length ? (
+               {queueList?.length ? (
                   queueList?.map((item) => (
-                     <div key={item.id} onClick={() => handleOpenQueueModal(item)}>
-                        {serviceList.find((service) => service.id === item.service)?.name}
+                     <div
+                        key={item.id}
+                        onClick={() => handleOpenQueueModal(item)}
+                        style={{
+                           backgroundColor: isDarkMode ? '#374B67' : '',
+                           color: isDarkMode ? 'white' : '',
+                        }}
+                     >
+                        {getServiceName(
+                           serviceList?.find((service) => service.id === item.service)?.name
+                        )}
                      </div>
                   ))
                ) : (
-                  <p>На данный момент нет никаких очередей</p>
+                  <p>{t('nothingAtTheMoment')}</p>
                )}
             </div>
             {isSuperAdmin ? (
                <div className={styles.footer}>
-                  <button onClick={() => setIsCreateQueModal(true)}>Создать очередь</button>
+                  <button onClick={() => setIsCreateQueModal(true)}>
+                     {t('buttons.createQueue')}
+                  </button>
                </div>
             ) : null}
          </div>
@@ -62,7 +76,6 @@ const Queue = () => {
                isQueModal={isQueModal}
                setIsQueModal={setIsQueModal}
                queue={choosedQueue}
-               serviceList={serviceList}
             />
          )}
          {isCreateQueModal && (

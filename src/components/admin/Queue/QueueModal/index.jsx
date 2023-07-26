@@ -1,24 +1,36 @@
 import { Alert, Popover, Select } from 'antd';
-import { CustomModalLoading, branchIndeficator, serviceIndetificator } from '@/utils/utils';
-import React, { useEffect, useState } from 'react';
+import {
+   CustomModalLoading,
+   MainBranchOptions,
+   MainServiceOptions,
+   branchIndeficator,
+   isDarkModeTrigger,
+   serviceIndetificator,
+} from '@/utils/utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useRemoveQueueMutation, useUpdateQueueMutation } from '@/api/admin/queue_api';
 
 import ModalWrapper from '@/components/admin/ModalWrapper';
+import { adminIdentifier } from '@/api/synchronous';
 import { alertComponents } from '@/utils/popoverHint';
 import info_icon from '@/assets/svg/Info_icon.svg';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import { t } from 'i18next';
+import { useGetBranchQuery } from '@/api/admin/branch_api';
+import { useGetServiceQuery } from '@/api/admin/service_api';
 
-const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
-   const isDarkMode = useMain((state) => state.isDarkMode);
+const QueueModal = ({ isQueModal, setIsQueModal, queue }) => {
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
-   const editQueue = useAdmin((state) => state.editQueue);
-   const adminIdentifier = useMain((state) => state.adminIdentifier);
-   const isSuperAdmin = useMain((state) => state.isSuperAdmin);
+   const dispatch = useDispatch();
+   const isSuperAdmin = useSelector((state) => state.toggleDarkMode.isSuperAdmin);
 
-   const getBranchList = useAdmin((state) => state.getBranchList);
-   const branchList = useAdmin((state) => state.branchList);
-   const isBranchListLoading = useAdmin((state) => state.isBranchListLoading);
+   const { data: branchList, isLoading: isBranchListLoading } = useGetBranchQuery();
+   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
+
+   const [deleteQueue] = useRemoveQueueMutation();
+   const [editQueue] = useUpdateQueueMutation();
 
    const [newQueue, setNewQueue] = useState(queue);
 
@@ -67,52 +79,43 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
       }));
    };
 
-   const deleteQueue = useAdmin((state) => state.deleteQueue);
-   const getQueueList = useAdmin((state) => state.getQueueList);
-
    const handleSave = async (e) => {
       e.preventDefault();
-      await editQueue(queue.id, newQueue);
-      await getQueueList();
+
+      await editQueue(newQueue);
 
       setIsQueModal(false);
    };
+
    const handleDelete = async (e, id) => {
       e.preventDefault();
+
       await deleteQueue(id);
-      await getQueueList();
 
       setIsQueModal(false);
    };
 
    useEffect(() => {
-      adminIdentifier();
-      getBranchList();
-      console.log(isBranchListLoading);
+      dispatch(adminIdentifier());
    }, []);
 
-   const serviceOptions = serviceList?.map((item) => ({
-      label: item?.name,
-      value: item?.id,
-   }));
+   const serviceOptions = MainServiceOptions(serviceList, isDarkMode);
 
-   const branchOptions = branchList?.map((item) => ({
-      label: `${item?.city}, ${item?.address}`,
-      value: item?.id,
-   }));
+   const branchOptions = MainBranchOptions(branchList, isDarkMode);
+
+   console.log(branchList);
 
    return (
       <ModalWrapper isOpen={isQueModal} setIsOpen={setIsQueModal}>
          <div
             className={styles.queueMain}
             onClick={(e) => e.stopPropagation()}
-            style={{
-               backgroundColor: isDarkMode ? '#374B67' : 'white',
-            }}
+            style={isDarkModeTrigger(2, true, isDarkMode)}
          >
-            <div className={styles.head}>
+            <div className={styles.head} style={isDarkModeTrigger(1, true, isDarkMode)}>
                <input
-                  readOnly={!isSuperAdmin}
+                  style={isDarkModeTrigger(3, false, isDarkMode)}
+                  readOnly={true}
                   defaultValue={queue.description}
                   onChange={(e) => handleEdit(e)}
                   name='service'
@@ -121,15 +124,18 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
                   <img src={info_icon} alt='info' style={{ width: '24px', cursor: 'pointer' }} />
                </Popover>
             </div>
-            {isBranchListLoading ? (
+            {isBranchListLoading && isServiceListLoading ? (
                <CustomModalLoading />
             ) : (
                <form className={styles.body} onSubmit={handleSave} action='submit'>
                   {TBody.map((item) => (
                      <div className={styles.line} key={item.id}>
-                        <p>{item.title}:</p>
+                        <p style={isDarkModeTrigger(3, false, isDarkMode)}>
+                           {t(`admin.queueModal.${item.name}`)}:
+                        </p>
                         {item.name === 'service' ? (
                            <Select
+                              dropdownStyle={isDarkModeTrigger(2, true, isDarkMode)}
                               value={newQueue.service}
                               onChange={(value) => handleEdit('service', value)}
                               disabled={!isSuperAdmin}
@@ -139,6 +145,7 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
                            />
                         ) : item.name === 'branch' ? (
                            <Select
+                              dropdownStyle={isDarkModeTrigger(2, true, isDarkMode)}
                               value={newQueue.branch}
                               onChange={(value) => handleEdit('branch', value)}
                               disabled={!isSuperAdmin}
@@ -148,6 +155,7 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
                            />
                         ) : (
                            <input
+                              style={isDarkModeTrigger(1, false, isDarkMode)}
                               readOnly={item.name === 'id' || !isSuperAdmin ? true : false}
                               name={item.name}
                               defaultValue={typeof item.data === 'undefined' ? '-' : item.data}
@@ -167,16 +175,16 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue, serviceList }) => {
                      {isSuperAdmin ? (
                         <>
                            <button onClick={(e) => handleDelete(e, newQueue.id)} type='button'>
-                              Удалить
+                              {t('buttons.delete')}
                            </button>
                            <button onClick={() => setIsQueModal(false)} type='button'>
-                              Отмена
+                              {t('buttons.cancel')}
                            </button>
-                           <button type='submit'>Сохранить</button>
+                           <button type='submit'>{t('buttons.save')}</button>
                         </>
                      ) : (
                         <button onClick={() => setIsQueModal(false)} type='button'>
-                           Закрыть
+                           {t('buttons.close')}
                         </button>
                      )}
                   </div>

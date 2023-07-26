@@ -1,43 +1,40 @@
-import {
-   CaretDownOutlined,
-   DownOutlined,
-   HomeOutlined,
-   SettingOutlined,
-   UserOutlined,
-} from '@ant-design/icons';
-import { Image, Input, Menu, Popover } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { DownOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { branchIndeficator, getServiceName } from '@/utils/utils';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { Menu } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { Switch } from 'antd';
-import { branchIndeficator } from '@/utils/utils';
+import defaultUserIcon from '@/assets/png/defaultUserIcon.png';
 import en from '@/assets/svg/en.svg';
 import kg from '@/assets/svg/kg.svg';
 import ru from '@/assets/svg/ru.svg';
 import styles from '@/assets/styles/operator/Sidebar.module.scss';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import { toggleDarkMode } from '@/api/synchronous';
+import { useGetBranchListQuery } from '@/api/registrar/registrar_api';
+import { useGetProfileInfoQuery } from '@/api/general/auth_api';
 import { useNavigate } from 'react-router';
-import { useOperator } from '@/services/operatorStore';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const Sidebar = () => {
    const navigate = useNavigate();
 
-   const employee = useMain((state) => state.employee);
+   const { data: employee, isLoading } = useGetProfileInfoQuery();
 
    const [collapsed, setCollapsed] = useState(true);
 
    const { t, i18n } = useTranslation();
 
-   const toggleDarkMode = useMain((state) => state.toggleDarkMode);
-   const isDarkMode = useMain((state) => state.isDarkMode);
+   const dispatch = useDispatch();
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
-   const getBranchList = useAdmin((state) => state.getBranchList);
-   const branchList = useAdmin((state) => state.branchList);
+   const { data: branchList, isLoading: isBranchListLoading } = useGetBranchListQuery();
 
    const onChange = (checked) => {
-      toggleDarkMode(checked);
+      dispatch(toggleDarkMode(checked));
+
+      console.log(isDarkMode);
    };
 
    const [lang, setLang] = useState('ru');
@@ -53,6 +50,21 @@ const Sidebar = () => {
          key: 1,
          icon: <UserOutlined style={{ fontSize: '20px', color: 'white' }} />,
          children: [
+            {
+               key: 12,
+               label: (
+                  <div className={styles.childrenImgBlock}>
+                     <img
+                        src={
+                           employee?.image
+                              ? `http://0.0.0.0:8000/${employee?.image}`
+                              : defaultUserIcon
+                        }
+                     />
+                  </div>
+               ),
+               type: 'group',
+            },
             {
                key: 2,
                label: (
@@ -83,7 +95,11 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.status')}
-                        <div>{employee?.status === 'active' ? 'Активный' : 'Не активный'}</div>
+                        <div>
+                           {employee?.status === 'active'
+                              ? t('status.active')
+                              : t('status.noActive')}
+                        </div>
                      </label>
                   </div>
                ),
@@ -104,9 +120,11 @@ const Sidebar = () => {
                            }}
                         >
                            {employee?.service?.length ? (
-                              employee?.service?.map((item) => <p key={item?.id}>- {item?.name}</p>)
+                              employee?.service?.map((item, index) => (
+                                 <p key={index}>- {getServiceName(item?.name)}</p>
+                              ))
                            ) : (
-                              <p>Нет данных</p>
+                              <p>{t('noData')}</p>
                            )}
                         </div>
                      </label>
@@ -120,7 +138,7 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.window')}
-                        <div>{employee?.window ? employee?.window : 'Нет данных'}</div>
+                        <div>{employee?.window ? employee?.window : t('noData')}</div>
                      </label>
                   </div>
                ),
@@ -132,7 +150,7 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.shiftTime')}
-                        <div>{employee?.shift ? employee?.shift : 'Нет данных'}</div>
+                        <div>{employee?.shift ? employee?.shift : t('noData')}</div>
                      </label>
                   </div>
                ),
@@ -144,7 +162,7 @@ const Sidebar = () => {
                   <div className={styles.childrenBlock}>
                      <label>
                         {t('sidebar.branch')}
-                        <div>{branchIndeficator(branchList, employee.branch)}</div>
+                        <div>{branchIndeficator(branchList, employee?.branch)}</div>
                      </label>
                   </div>
                ),
@@ -162,13 +180,13 @@ const Sidebar = () => {
                type: 'group',
                label: (
                   <label className={styles.langlable}>
-                     Выберите язык
+                     {t('chooseLanguage')}
                      <div
                         onClick={() => handleChangeLanguage('kg')}
                         style={{ backgroundColor: lang === 'kg' ? '#136E37' : '' }}
                      >
                         <img src={kg} />
-                        <p>Кыргызча</p>
+                        <p>{t('kg')}</p>
                      </div>
                   </label>
                ),
@@ -183,7 +201,7 @@ const Sidebar = () => {
                      onClick={() => handleChangeLanguage('ru')}
                   >
                      <img src={ru} alt='ru' />
-                     <p>Русский</p>
+                     <p>{t('ru')}</p>
                   </div>
                ),
             },
@@ -197,7 +215,7 @@ const Sidebar = () => {
                      onClick={() => handleChangeLanguage('en')}
                   >
                      <img src={en} alt='en' />
-                     <p>English</p>
+                     <p>{t('en')}</p>
                   </div>
                ),
             },
@@ -206,7 +224,7 @@ const Sidebar = () => {
                type: 'group',
                label: (
                   <div className={styles.switchBlock}>
-                     Ночная тема
+                     {t('darkMode')}
                      <Switch onChange={onChange} checked={isDarkMode} />
                   </div>
                ),
@@ -214,10 +232,6 @@ const Sidebar = () => {
          ],
       },
    ];
-
-   useEffect(() => {
-      getBranchList();
-   }, []);
 
    return (
       <Sider

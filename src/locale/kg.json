@@ -52,7 +52,8 @@
    "navbar": {
       "queue": "Бардыгы",
       "date": "Дата",
-      "window": "Терезе"
+      "window": "Терезе",
+      "searchTalon": "Карданын номери боюнча издөө"
    },
    "card": {
       "title1": "Күндүгү клиенттер",
@@ -99,6 +100,191 @@
       "service": "Кызмат",
       "clientType": "Кардар түрү",
       "date": "Күндү тандаңыз",
-      "time": "Убакытты тандаңыз"
+      "time": "Убакытты тандаңыз",
+      "chooseQueue": "Кезекти тандаңыз",
+      "branch": "Филиал"
+   },
+   "admin": {
+      "cards": {
+         "EmployeeInfo": "Кызматкер жөнүндө маалымат",
+         "QueueInfo": "Кезек маалымат",
+         "ServiceInfo": "Кызмат маалымат",
+         "ViewActions": "Иш-аракет көрүү",
+         "Stats": "Статистика",
+         "CreateDoc": "Документ түзүү",
+         "docTranslate": "Документтин котормолор",
+         "createWindow": "Терезе түзүү",
+         "reports": "Отчеттор"
+      },
+      "table": {
+         "FullName": "ФИО",
+         "Email": "Электрондук почта",
+         "branch": "Филиал",
+         "workTime": "Иш убактысы",
+         "password": "Пароль",
+         "window": "Терезе",
+         "position": "Кызматы",
+         "shiftTime": "Тыныгуу убактысы",
+         "comment": "Комментрарии",
+         "status": "Статус",
+         "talonMaxTransfer": "Кардалык которуулардын максималдуу саны",
+         "talonAutoCall": "Автоматтык кардырны чакыруу ",
+         "isActive": "Активдүү",
+         "service": "Кызмат",
+         "lastLoginTime": "Акыркы кирүү убактысы",
+         "allEmployees": "Бардык кызматкерлер"
+      },
+      "employeeModal": {
+         "username": "ФИО",
+         "email": "Электрондук почта",
+         "branch": "Филиал",
+         "workTime": "Иш убактысы",
+         "password": "Пароль",
+         "window": "Терезе",
+         "position": "Кызматы",
+         "shift": "Тыныгуу убактысы",
+         "comment": "Комментрарии",
+         "status": "Статус",
+         "max_transport": "Кардалык которуулардын максималдуу саны",
+         "auto_call": "Автоматтык кардырны чакыруу ",
+         "isActive": "Активдүү",
+         "service": "Кызмат",
+         "last_login": "Акыркы кирүү убактысы",
+         "rating": "Рейтинг"
+      },
+      "queueModal": {
+         "id": "ID",
+         "status": "Статус",
+         "branch": "Филиал",
+         "service": "Кызмат",
+         "description": "Баяндоо",
+         "talon_count": "Бардык кардарлар"
+      },
+      "serviceModal": {
+         "id": "ID",
+         "name": "Аты",
+         "average_time": "Орточо тейлөө убактысы",
+         "auto_transport": "Автоматтык которуу",
+         "service_to_auto_transport": "Которуу кызматы",
+         "lang_name": "Котормо",
+         "documents": "Документтер"
+      },
+      "documentMain": {
+         "name": "Документтин аты",
+         "file": "Файл",
+         "required": "Cөзсүз",
+         "lang_name": "Котормо",
+         "searchDocument": "Документтин аталышы боюнча издөө",
+         "chooseDocument": "Документи тандаңыз"
+      },
+      "languageMain": {
+         "language": "Тил",
+         "translate": "Котормо",
+         "search": "Котормо издөө"
+      },
+      "windowMain": {
+         "branch": "Филиал",
+         "windowNumber": "Терезенин номери",
+         "searchWindow": "Терезе номери боюнча издөө"
+      },
+      "branchMain": {
+         "id": "ID",
+         "branch": "Филиал",
+         "city": "Шаар",
+         "address": "Дареги",
+         "service": "Кызматтар",
+         "work_time_start": "Жумуш күнүнүн башталышы",
+         "work_time_end": "Жумуш күнүнүн аягы"
+      },
+      "actions": {
+         "actionSearch": "Аракет издөө",
+         "allBranches": "Баары филиалдар",
+         "branch": "Филиал",
+         "employee": "Кызматкер"
+      },
+      "statsMain": {
+         "period": "Мезгил",
+         "start": "Баштоо",
+         "end": "Аягы",
+         "form": "Статистика алуу",
+         "table": "Таблица",
+         "chart": "График"
+      },
+      "titles": {
+         "branchs": "Филиалдар",
+         "queues": "Кезектер",
+         "services": "Кызматтар"
+      }
+   },
+   "branch": {
+      "bishkek": "Бишкек",
+      "osh": "Ош",
+      "jalalabad": "Жалал-Абад",
+      "karakol": "Каракол",
+      "tokmok": "Токмок",
+      "naryn": "Нарын",
+      "talas": "Талас",
+      "kara_balta": "Кара-Балта",
+      "batken": "Баткен",
+      "isfana": "Исфана"
+   },
+   "buttons": {
+      "createEmployee": "Кызматкер түзүү",
+      "createQueue": "Кезек түзүү",
+      "createService": "Кызмат түзүү",
+      "createDocument": "Документ түзүү",
+      "createBranch": "Филиал түзүү",
+      "cancel": "Жокко чыгаруу",
+      "create": "Түзүү",
+      "save": "Сактоо",
+      "close": "Жабуу",
+      "delete": "Жок кылуу",
+      "open": "Ачуу",
+      "edit": "Өзгөртүү",
+      "transfer": "Которуу",
+      "cancelIt": "Карданы Жабуу"
+   },
+   "status": {
+      "active": "Активдүү",
+      "noActive": "Активдүү эмес",
+      "completed": "Аякталды",
+      "inProgress": "Жүргүзүлүүдө",
+      "expected": "Күтүлүүдө",
+      "cancelled": "Жокко чыгарылды"
+   },
+   "chooseLanguage": "Тилди тандаңыз",
+   "darkMode": "Түнкү темасы",
+   "noData": "Маалымат жок",
+   "all": "Бардык",
+   "kg": "Кыргызча",
+   "ru": "Орусча",
+   "en": "Англисче",
+   "searchUndefinedBlockfined": "Издөө натыйжалары эч нерсе табылган жок",
+   "nothingAtTheMoment": "Ушул учурда эч нерсе жок",
+   "dataLoading": "Маалыматтар эсептелип жатат...",
+
+   "chart": {
+      "January": "Январь",
+      "February": "Февраль",
+      "March": "Март",
+      "April": "Апрель",
+      "May": "Май",
+      "June": "Июнь",
+      "July": "Июль",
+      "August": "Август",
+      "September": "Сентябрь",
+      "October": "Октябрь",
+      "November": "Ноябрь",
+      "December": "Декабрь",
+      "talon_count": "Бардык кардарлар",
+      "talon_canceled": "Жокко чыгарылган кардалар ",
+      "talon_completed": "Толтурулган кардалар",
+      "month": "Ай",
+      "talons": "Кардалар",
+      "employee": "Кызматкерлер",
+      "report": "Отчеттор",
+      "saveAsPdf": "PDFке сактоо",
+      "saveAsExel": "Exelге сактоо",
+      "submitToDB": "Маалымат серверге жөнөтүү"
    }
 }

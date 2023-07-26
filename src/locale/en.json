@@ -52,7 +52,8 @@
    "navbar": {
       "queue": "Total",
       "date": "Date",
-      "window": "Window"
+      "window": "Window",
+      "searchTalon": "Search by talon id"
    },
    "card": {
       "title1": "Clients per Day",
@@ -98,6 +99,193 @@
       "service": "Services",
       "clientType": "Client Type",
       "date": "Select Date",
-      "time": "Select Time"
+      "time": "Select Time",
+      "chooseQueue": "Choose queue",
+      "branch": "Branch"
+   },
+   "admin": {
+      "cards": {
+         "EmployeeInfo": "Employee Information",
+         "QueueInfo": "Queue Information",
+         "ServiceInfo": "Service Information",
+         "ViewActions": "View Actions",
+         "Stats": "Statistics",
+         "CreateDoc": "Create Document",
+         "docTranslate": "Document translates",
+         "createWindow": "Create window",
+         "reports": "Reports"
+      },
+      "table": {
+         "FullName": "Full Name",
+         "Email": "Email",
+         "branch": "Branch",
+         "workTime": "Working Hours",
+         "password": "Password",
+         "window": "Window",
+         "position": "Position",
+         "shiftTime": "Shift Time",
+         "comment": "Comment",
+         "status": "Status",
+         "talonMaxTransfer": "Talon Max Transfer",
+         "talonAutoCall": "Talon Auto Call",
+         "isActive": "Active",
+         "service": "Service",
+         "lastLoginTime": "Last Login Time",
+         "allEmployees": "All employees"
+      },
+      "employeeModal": {
+         "username": "Full Name",
+         "email": "Email",
+         "branch": "Branch",
+         "workTime": "Working Hours",
+         "password": "Password",
+         "window": "Window",
+         "position": "Position",
+         "shift": "Shift Time",
+         "comment": "Comment",
+         "status": "Status",
+         "max_transport": "Talon Max Transfer",
+         "auto_call": "Talon Auto Call",
+         "isActive": "Active",
+         "service": "Service",
+         "last_login": "Last Login Time",
+         "rating": "Rating"
+      },
+      "queueModal": {
+         "id": "ID",
+         "status": "Status",
+         "branch": "Branch",
+         "service": "Service",
+         "description": "Description",
+         "talon_count": "Total talons"
+      },
+      "serviceModal": {
+         "id": "ID",
+         "name": "Name",
+         "average_time": "Average service time",
+         "auto_transport": "Auto talon transfer",
+         "service_to_auto_transport": "Service for talon transfer",
+         "lang_name": "Translate",
+         "documents": "Documents"
+      },
+      "documentMain": {
+         "name": "Name",
+         "file": "File",
+         "required": "Required",
+         "lang_name": "Translate",
+         "searchDocument": "Search by document name",
+         "chooseDocument": "Choose document"
+      },
+      "languageMain": {
+         "language": "Language",
+         "translate": "Translation",
+         "search": "Search for Translation"
+      },
+      "windowMain": {
+         "branch": "Branch",
+         "windowNumber": "Window number",
+         "searchWindow": "Search by window number"
+      },
+      "branchMain": {
+         "id": "ID",
+         "branch": "Branch",
+         "city": "City",
+         "address": "Address",
+         "service": "Services",
+         "work_time_start": "Work day start",
+         "work_time_end": "Work day end"
+      },
+      "actions": {
+         "actionSearch": "Serch actions",
+         "allBranches": "All branches",
+         "branch": "Branch",
+         "employee": "Employee"
+      },
+      "statsMain": {
+         "period": "Period",
+         "start": "Start",
+         "end": "End",
+         "form": "Get stats",
+         "table": "Table",
+         "chart": "Chart"
+      },
+      "titles": {
+         "branchs": "Branches",
+         "queues": "Queues",
+         "services": "Services"
+      }
+   },
+   "branch": {
+      "bishkek": "Bishkek",
+      "osh": "Osh",
+      "jalalabad": "Jalal-Abad",
+      "karakol": "Karakol",
+      "tokmok": "Tokmok",
+      "naryn": "Naryn",
+      "talas": "Talas",
+      "kara_balta": "Kara-Balta",
+      "batken": "Batken",
+      "isfana": "Isfana"
+   },
+   "buttons": {
+      "createEmployee": "Create employee",
+      "createQueue": "Create queue",
+      "createService": "Create service",
+      "createDocument": "Create document",
+      "createBranch": "Create branch",
+
+      "cancel": "Cancel",
+      "create": "Create",
+      "save": "Save",
+      "close": "Close",
+      "delete": "Delete",
+      "open": "Open",
+      "edit": "Edit",
+      "transfer": "Transfer",
+      "cancelIt": "Close talon"
+   },
+   "status": {
+      "active": "Active",
+      "noActive": "No active",
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "expected": "Expected",
+      "cancelled": "Cancelled"
+   },
+   "chooseLanguage": "Choose language",
+   "darkMode": "Dark mode",
+   "noData": "No data",
+   "all": "All",
+   "kg": "Kyrgyz",
+   "ru": "Russian",
+   "en": "English",
+
+   "searchUndefinedBlockfined": "Nothing was found in the search results",
+   "nothingAtTheMoment": "At the moment there is nothing",
+   "dataLoading": "Data is being counted....",
+
+   "chart": {
+      "January": "January",
+      "February": "February",
+      "March": "March",
+      "April": "April",
+      "May": "May",
+      "June": "June",
+      "July": "July",
+      "August": "August",
+      "September": "September",
+      "October": "October",
+      "November": "November",
+      "December": "December",
+      "talon_count": "Total talons",
+      "talon_canceled": "Cancelled talons",
+      "talon_completed": "Completed talons",
+      "month": "Month",
+      "talons": "Talons",
+      "employee": "Employee",
+      "report": "Reports",
+      "saveAsPdf": "Save as PDF",
+      "saveAsExel": "Save as Exel",
+      "submitToDB": "Submit to data base"
    }
 }

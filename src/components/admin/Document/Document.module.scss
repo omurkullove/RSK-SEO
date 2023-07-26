@@ -23,6 +23,7 @@
 
          width: 100%;
          gap: 100px;
+         position: relative;
 
          p {
             width: 10%;
@@ -33,12 +34,17 @@
          input {
             padding: 5px;
             outline: none !important;
-            border: 1px solid black;
+            border: 1px solid lightgray;
             border-radius: 5px;
             -webkit-border-radius: 5px;
             -moz-border-radius: 5px;
             -ms-border-radius: 5px;
             -o-border-radius: 5px;
+            background: transparent;
+
+            &::placeholder {
+               color: lightgray;
+            }
          }
       }
 
@@ -60,6 +66,18 @@
             padding: 10px;
             font-weight: 600;
             cursor: pointer;
+         }
+      }
+   }
+   .center {
+      input {
+         background-color: white;
+         outline: none;
+         padding: 5px;
+         width: 265px;
+
+         &::placeholder {
+            color: lightgray;
          }
       }
    }
@@ -109,6 +127,7 @@
 
          &:hover {
             color: #0056b3;
+            text-decoration: underline;
          }
       }
    }

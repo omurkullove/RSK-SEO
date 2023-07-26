@@ -18,6 +18,7 @@
    transition: 0.5s;
 
    &__content {
+      padding-top: 20px;
       border-radius: 12px;
       background-color: #fff;
       height: 510px;
@@ -30,16 +31,14 @@
 
    &__label {
       font-size: 24px;
-      font-family: sans-serif;
+      font-family: $Inter;
       font-weight: 500;
       padding-left: 30%;
-      position: relative;
       top: 20px;
    }
 
    &__selects {
       width: 70%;
-      position: relative;
       top: 50px;
       left: 15%;
       bottom: 20px;
@@ -69,12 +68,29 @@
       box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
       color: #fff;
       font-size: 18px;
-      font-family: sans-serif;
+      font-family: $Inter;
       font-weight: 600;
       cursor: pointer;
       border: none;
       position: relative;
       top: 30px;
       left: 110px;
+   }
+
+   .dateInput {
+      background: transparent;
+      width: 70%;
+      display: block;
+      margin-top: 60px;
+      margin-bottom: 20px;
+      margin-left: 60px;
+      padding: 5px 0;
+      border: 2 solid;
+      border-radius: 5px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      -o-border-radius: 5px;
+      outline: none;
    }
 }

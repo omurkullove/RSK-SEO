@@ -1,32 +1,33 @@
-import { CustomLoading, ShowMessage } from '@/utils/utils';
-import React, { useEffect, useState } from 'react';
-
 import { Select } from 'antd';
+import { getServiceName } from '@/utils/utils';
 import styles from '@/assets/styles/operator/Modal.module.scss';
-import { useMain } from '@/services/MainStore';
-import { useOperator } from '@/services/operatorStore';
+import { useLazyTransferTalonQueueQuery } from '@/api/operator/operator_api';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const Modal = ({ isModal, setIsModal, talon, queueBranch, serviceList }) => {
-   const isDarkMode = useMain((state) => state.isDarkMode);
-   const transferTalonToAnotherQueue = useOperator((state) => state.transferTalonToAnotherQueue);
-   const getTalonsLoading = useOperator((state) => state.getTalonsLoading);
-   const getTalons = useOperator((state) => state.getTalons);
+const Modal = ({ isModal, setIsModal, talon, queueBranch, serviceList, refetch }) => {
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+
    const { t } = useTranslation();
-   const [branch, setBranch] = useState();
+   const [queue, setQueue] = useState();
+
+   const [transferTalonToAnotherQueue] = useLazyTransferTalonQueueQuery();
 
    const handleTransferToAnotherQueue = async () => {
-      console.log(talon, branch);
-      await transferTalonToAnotherQueue(talon.token, branch);
-      await getTalons();
-      if (!getTalonsLoading) {
-         ShowMessage('success', 'Талон успешно перенесен!');
-      }
+      const body = {
+         talonId: talon?.token,
+         queueId: queue,
+      };
+
+      await transferTalonToAnotherQueue(body);
+      await refetch();
+
       setIsModal(false);
    };
 
    const options = queueBranch?.queues?.map((item) => ({
-      label: serviceList?.find((service) => service?.id === item.service)?.name,
+      label: getServiceName(serviceList?.find((service) => service?.id === item.service)?.name),
       value: item?.id,
    }));
 
@@ -42,19 +43,21 @@ const Modal = ({ isModal, setIsModal, talon, queueBranch, serviceList }) => {
                backgroundColor: isDarkMode ? '#374B67' : 'white',
             }}
          >
-            <p>Выберите очередь</p>
+            <p>{t('modal.chooseQueue')}</p>
             <Select
                style={{ width: '100%' }}
                dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
                className={''}
-               onSelect={(value) => setBranch(value)}
-               placeholder={'Выбрать очередь'}
+               placeholder={t('modal.chooseQueue')}
                options={options}
+               onChange={(value) => setQueue(value)}
                size='large'
             />
             <div className={styles.buttonBlock}>
-               <button onClick={() => setIsModal(false)}>Отмена</button>
-               <button onClick={() => handleTransferToAnotherQueue()}>Перенести</button>
+               <button onClick={() => setIsModal(false)}>{t('buttons.cancel')}</button>
+               <button onClick={() => handleTransferToAnotherQueue()}>
+                  {t('buttons.transfer')}
+               </button>
             </div>
          </div>
       </div>

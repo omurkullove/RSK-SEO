@@ -1,0 +1,109 @@
+@import '../../../assets/styles/variables.scss';
+
+.actionsContainer {
+   display: flex;
+   justify-content: space-between;
+   font-family: $Inter;
+}
+
+.column {
+   width: 48%;
+}
+
+.actionCard {
+   border-radius: 4px;
+   padding: 10px;
+   margin-bottom: 50px;
+   -webkit-box-shadow: 4px 4px 12px -3px rgba(34, 60, 80, 0.29);
+   -moz-box-shadow: 4px 4px 12px -3px rgba(34, 60, 80, 0.29);
+   box-shadow: 4px 4px 12px -3px rgba(34, 60, 80, 0.29);
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   color: #1e4a89;
+
+   &:last-child {
+      margin-bottom: 0;
+   }
+}
+
+.timestamp {
+   font-size: 14px;
+}
+
+.content {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   width: 50%;
+}
+
+.actionType {
+   font-size: 16px;
+   font-weight: bold;
+   margin-bottom: 5px;
+}
+
+.branch,
+.employee {
+   font-size: 14px;
+}
+
+.deleteButton {
+   background-color: transparent;
+   border: none;
+   cursor: pointer;
+   font-size: 20px;
+   color: rgba(255, 255, 255, 0.7);
+}
+
+.searchBar {
+   border: 2px solid #1e4a89;
+   border-radius: 4px;
+   padding: 10px;
+   display: flex;
+   align-items: center;
+}
+
+.searchInput {
+   flex: 1;
+   background-color: transparent;
+   border: none;
+   outline: none;
+   font-size: 16px;
+}
+
+.searchButton {
+   background-color: transparent;
+   border: none;
+   cursor: pointer;
+   font-size: 20px;
+   color: rgba(255, 255, 255, 0.7);
+   margin-left: 10px;
+}
+// styles.module.scss
+
+.filterBlock {
+   display: flex;
+   justify-content: flex-start;
+   align-items: center;
+   margin-top: 50px;
+   flex-wrap: wrap;
+   gap: 10px;
+
+   button {
+      padding: 10px 20px;
+      margin: 0 5px;
+      font-size: 16px;
+      background-color: #1e4a89;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+         background-color: #2862b4;
+      }
+   }
+}

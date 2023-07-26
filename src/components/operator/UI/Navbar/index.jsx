@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import stlyes from '@/assets/styles/operator/Navbar.module.scss';
-import { Avatar } from 'antd';
-import { useTranslation } from 'react-i18next';
-import navLogo from '@/assets/svg/navLogo.svg';
-import darkModeLogo from '@/assets/svg/darkModeLogo.svg';
+import { useEffect, useState } from 'react';
 
-import { useOperator } from '@/services/operatorStore';
+import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import { useMain } from '@/services/MainStore';
+import darkModeLogo from '@/assets/svg/darkModeLogo.svg';
+import navLogo from '@/assets/svg/navLogo.svg';
+import stlyes from '@/assets/styles/operator/Navbar.module.scss';
+import { useGetTalonQuery } from '@/api/operator/operator_api';
+import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = ({ employee }) => {
-   const talons = useOperator((state) => state.talons);
+   const { data: talons, isLoading: isTalonsLoading } = useGetTalonQuery();
 
-   const isDarkMode = useMain((state) => state.isDarkMode);
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
    const { t, i18n } = useTranslation();
    const [date, setDate] = useState('');
@@ -31,6 +31,7 @@ const Navbar = ({ employee }) => {
             <div className={stlyes.block1}>
                <img src={isDarkMode ? darkModeLogo : navLogo} alt='logo' />
             </div>
+
             <div className={stlyes.avatarBlock}>
                <Avatar size={45} icon={<UserOutlined />} />
                <div className={stlyes.avatarChildBlock}>
@@ -43,7 +44,7 @@ const Navbar = ({ employee }) => {
          </div>
          <div className={stlyes.footer}>
             <p style={{ color: isDarkMode && 'white' }}>
-               {t('navbar.queue')}: {talons ? talons.length : 'Нет данных'}
+               {t('navbar.queue')}: {talons ? talons.length : t('noData')}
             </p>
             <p style={{ color: isDarkMode && 'white' }}>
                {t('navbar.date')}: {date}

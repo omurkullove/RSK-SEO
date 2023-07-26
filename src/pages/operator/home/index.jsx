@@ -1,22 +1,31 @@
 // UI
-import { Popover, Select, Spin, Statistic, Table } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import { Popover, Spin, Statistic, Table } from 'antd';
 // Utils
 import {
    ShowMessage,
    canceledClientsCounter,
+   clientTypeTranslate,
    clientsCounter,
    formatTime,
-   isEmpty,
+   getServiceName,
    returnUnderstandableDate,
    timeLimitSeconds,
 } from '@/utils/utils';
+import { useEffect, useRef, useState } from 'react';
+import {
+   useGetTalonQuery,
+   useLazyGetBranchQueueQuery,
+   useLazyRemoveTalonQuery,
+   useLazyServiceEndQuery,
+   useLazyServiceStartQuery,
+   useLazyTransferTalonToEndQuery,
+   useLazyTransferTalonToStartQuery,
+} from '@/api/operator/operator_api';
 
 import { LoadingOutlined } from '@ant-design/icons';
 // Components & modules
 import MainLayout from '@/components/operator/UI/Layout';
 import Modal from '@/components/operator/Modal/Modal';
-import { ModalForm } from '@/components/registrar/ModalWindow/ModalForm';
 import Navbar from '@/components/operator/UI/Navbar';
 import alert from '@/assets/svg/1_6Alert.svg';
 import arrowGreen from '@/assets/svg/arrowGreen.svg';
@@ -25,41 +34,36 @@ import darkModeAlert from '@/assets/svg/darkModeAlert.svg';
 import darkModeArrowGreen from '@/assets/svg/darkModeArrowGreen.svg';
 import darkModeArrowRed from '@/assets/svg/darkModeArrowRed.svg';
 import darkModeDots from '@/assets/svg/darkModeDots.svg';
-import deleteSvg from '@/assets/svg/delete.svg';
 import dots from '@/assets/svg/dots.svg';
-import edit from '@/assets/svg/edit.svg';
 import styles from '@/assets/styles/operator/Home.module.scss';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import { useGetProfileInfoQuery } from '@/api/general/auth_api';
+import { useGetServiceQuery } from '@/api/admin/service_api';
 import { useNavigate } from 'react-router';
-import { useOperator } from '@/services/operatorStore';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
-   // Store states & functions
-   const transferTalonToEnd = useOperator((state) => state.transferTalonToEnd);
-   const transferTalonToStart = useOperator((state) => state.transferTalonToStart);
-   const serviceEnd = useOperator((state) => state.serviceEnd);
-   const serviceStart = useOperator((state) => state.serviceStart);
-   const getTalons = useOperator((state) => state.getTalons);
-   const deleteTalon = useOperator((state) => state.deleteTalon);
-   const talons = useOperator((state) => state.talons);
-   const getTalonsLoading = useOperator((state) => state.getTalonsLoading);
-   const currentTalon = useOperator((state) => state.currentTalon);
-   const clients_per_day = useOperator((state) => state.clients_per_day);
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+   const { data, isLoading: getTalonsLoading, refetch } = useGetTalonQuery();
+   const [transferTalonToEnd] = useLazyTransferTalonToEndQuery();
+   const [transferTalonToStart] = useLazyTransferTalonToStartQuery();
+   const [serviceEnd] = useLazyServiceEndQuery();
+   const [serviceStart] = useLazyServiceStartQuery();
+   const [deleteTalon] = useLazyRemoveTalonQuery();
 
-   const isDarkMode = useMain((state) => state.isDarkMode);
+   const [getBranchQueues, { data: queueBranch }] = useLazyGetBranchQueueQuery();
+   const { data: employee, isLoading: getProfileInfoLoading } = useGetProfileInfoQuery();
+   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
 
-   const employee = useMain((state) => state.employee);
-   const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);
-   const getProfileInfo = useMain((state) => state.getProfileInfo);
+   const [talons, setTalons] = useState(data?.talons);
+   const [clients_per_day, SetClients_per_day] = useState(data?.talons);
+   const [currentTalon, setCurrentTalon] = useState(data?.talons[0]);
 
-   const getBranchQueues = useOperator((state) => state.getBranchQueues);
-   const queueBranch = useOperator((state) => state.queueBranch);
-
-   const isServiceListLoading = useAdmin((state) => state.isServiceListLoading);
-   const serviceList = useAdmin((state) => state.serviceList);
-   const getServiceList = useAdmin((state) => state.getServiceList);
+   useEffect(() => {
+      setTalons(data?.talons);
+      SetClients_per_day(data?.clients_per_day);
+      setCurrentTalon(data?.talons[0]);
+   }, [data]);
 
    // Vanilla states
    const [isRunning, setIsRunning] = useState(false);
@@ -95,7 +99,7 @@ const HomePage = () => {
                </p>
             </div>
          ),
-         filters: [...new Set(talons?.map((item) => item?.token[0]))].map((type) => ({
+         filters: [...new Set(talons?.map((item) => item?.token[0]))]?.map((type) => ({
             text: type,
             value: type,
          })),
@@ -139,33 +143,14 @@ const HomePage = () => {
             </p>
          ),
          dataIndex: 'client_type',
-         render: (value) => {
-            switch (value) {
-               case 'Физ. лицо':
-                  return (
-                     <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
-                        {t('table.body.type.naturalPerson')}
-                     </p>
-                  );
+         render: (value) => (
+            <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
+               {clientTypeTranslate(value)}
+            </p>
+         ),
 
-               case 'Юр. лицо':
-                  return (
-                     <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
-                        {t('table.body.type.legalЕntity')}
-                     </p>
-                  );
-
-               default:
-                  return (
-                     <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
-                        {value}
-                     </p>
-                  );
-            }
-         },
-
-         filters: [...new Set(talons?.map((item) => item?.client_type))].map((type) => ({
-            text: type,
+         filters: [...new Set(talons?.map((item) => item?.client_type))]?.map((type) => ({
+            text: clientTypeTranslate(type),
             value: type,
          })),
          onFilter: (value, record) => record.client_type === value,
@@ -179,12 +164,12 @@ const HomePage = () => {
          dataIndex: 'service',
          render: (value) => (
             <p className={styles.columnData} style={{ color: isDarkMode && 'white' }}>
-               {value}
+               {getServiceName(value)}
             </p>
          ),
          filters: employee?.service?.length
             ? employee?.service?.map((item) => ({
-                 text: item?.name,
+                 text: getServiceName(item?.name),
                  value: item?.name,
               }))
             : null,
@@ -312,7 +297,7 @@ const HomePage = () => {
    const handleDeletetalon = async (talon) => {
       try {
          await deleteTalon(talon.token);
-         await getTalons(JSON.parse(localStorage.getItem('token')) || {});
+         await refetch();
       } catch (error) {
          console.log(error);
       }
@@ -320,12 +305,12 @@ const HomePage = () => {
 
    const handleTransferToEnd = async (talon) => {
       await transferTalonToEnd(talon.token);
-      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
+      await refetch();
    };
 
    const handleTransferToStart = async (talon) => {
       await transferTalonToStart(talon.token);
-      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
+      await refetch();
    };
 
    const hanldeOpenModal = (talon) => {
@@ -337,7 +322,7 @@ const HomePage = () => {
    // Service operation
    const handleStart = async (token) => {
       await serviceStart(token);
-      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
+      await refetch();
 
       startStopwatch();
       setIsStart(true);
@@ -345,7 +330,8 @@ const HomePage = () => {
 
    const handleEnd = async (token) => {
       await serviceEnd(token);
-      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
+      await refetch();
+
       stopStopwatch();
       setIsStart(false);
    };
@@ -368,7 +354,6 @@ const HomePage = () => {
 
    const stopStopwatch = async () => {
       ShowMessage('success', 'Обслуживание  завершилось');
-      await getTalons(JSON.parse(localStorage.getItem('token')) || {});
       setIsRunning(false);
       setSeconds(0);
    };
@@ -376,10 +361,6 @@ const HomePage = () => {
    // Effects
    // Fetch data
    useEffect(() => {
-      getTalons(JSON.parse(localStorage.getItem('token')) || {});
-      getProfileInfo(JSON.parse(localStorage.getItem('email')));
-      getServiceList();
-
       if (!JSON.parse(localStorage.getItem('token'))) {
          navigate('/');
       }
@@ -419,10 +400,15 @@ const HomePage = () => {
          }}
       >
          <Spin indicator={antIcon} size='50' />
-         <h4>Идет подсчет данных....</h4>
+         <h4>{t('dataLoading')}</h4>
       </div>
    ) : (
-      <MainLayout isSidebar={true} Navbar={<Navbar employee={employee} />}>
+      <MainLayout
+         isSidebar={true}
+         Navbar={
+            <Navbar employee={{ ...employee, image: `http://0.0.0.0:8000/${employee?.image}` }} />
+         }
+      >
          <div className={styles.main}>
             <div className={styles.mainCardBlock}>
                <div className={styles.cardBlock}>
@@ -493,16 +479,16 @@ const HomePage = () => {
                               {returnUnderstandableDate(currentTalon?.appointment_date)}
                            </li>
                            <li style={{ color: isDarkMode && '#FFF' }}>
-                              {currentTalon?.client_type}
+                              {clientTypeTranslate(currentTalon?.client_type)}
                            </li>
-                           <li style={{ color: isDarkMode && '#FFF' }}>{currentTalon?.service}</li>
+                           <li style={{ color: isDarkMode && '#FFF' }}>
+                              {getServiceName(currentTalon?.service)}
+                           </li>
                         </ul>
                      </>
                   ) : (
                      <center>
-                        <p style={{ color: isDarkMode && '#DFDFDF' }}>
-                           На данный момент никого нет
-                        </p>
+                        <p style={{ color: isDarkMode && '#DFDFDF' }}>{t('nothingAtTheMoment')}</p>
                      </center>
                   )}
 
@@ -545,6 +531,7 @@ const HomePage = () => {
                   talon={modalTalon}
                   queueBranch={queueBranch}
                   serviceList={serviceList}
+                  refetch={refetch}
                />
             </div>
 
@@ -555,7 +542,7 @@ const HomePage = () => {
                }}
                className={isDarkMode ? 'dark_mode' : 'default_mode'}
                loading={getTalonsLoading}
-               dataSource={talons.map((item, index) => ({
+               dataSource={talons?.map((item, index) => ({
                   ...item,
                   key: index,
                }))}

@@ -1,41 +1,51 @@
-import { CustomLoading, antIcon, branchIndeficator, returnEmployee } from '@/utils/utils';
-import React, { useEffect, useState } from 'react';
-import { Spin, Table } from 'antd';
+import { CustomLoading, branchIndeficator, cityTransalte, returnEmployee } from '@/utils/utils';
 
 import CreateEmployeeModal from '../CreateEmployeeModal';
 import EmployeeModal from '../EmployeeModal';
+import { Table } from 'antd';
 import styles from '../Employee.module.scss';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import { t } from 'i18next';
+import { useGetBranchQuery } from '@/api/admin/branch_api';
+import { useGetEmployeeListQuery } from '@/api/admin/employee_api';
+import { useGetServiceQuery } from '@/api/admin/service_api';
+import { useGetWindowQuery } from '@/api/admin/window_api';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
 const EmployeeTable = () => {
-   const isDarkMode = useMain((state) => state.isDarkMode);
-   const isEmployeeListLoading = useAdmin((state) => state.isEmployeeListLoading);
-   const employeeList = useAdmin((state) => state.employeeList);
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
    const [employee, setEmployee] = useState();
    const [isModal, setIsModal] = useState(false);
    const [isCreateEmpModal, setIsCreateEmpModal] = useState(false);
-
-   const getBranchList = useAdmin((state) => state.getBranchList);
-   const branchList = useAdmin((state) => state.branchList);
-   const isBranchListLoading = useAdmin((state) => state.isBranchListLoading);
 
    const choosePerson = (email) => {
       setEmployee(returnEmployee(email, employeeList));
       setIsModal(true);
    };
 
-   useEffect(() => {
-      getBranchList();
-   }, []);
+   const { data: branchList, isLoading: isBranchListLoading } = useGetBranchQuery();
+   const {
+      data: employeeList,
+      isLoading: isEmployeeListLoading,
+      refetch,
+   } = useGetEmployeeListQuery();
+   const { data: windowList, isLoading: isWindowListLoading } = useGetWindowQuery();
+   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
 
    const columns = [
       {
          dataIndex: 'username',
-         title: <p className={styles.tableTitle}>ФИО</p>,
+         title: (
+            <p className={`${styles.tableTitle} ${isDarkMode ? styles.darkModeText : ''}`}>
+               {t('admin.table.FullName')}
+            </p>
+         ),
          render: (value) => (
-            <p className={styles.tableData} style={{ textAlign: 'start' }}>
+            <p
+               className={`${styles.tableData} ${isDarkMode ? styles.darkModeText : ''}`}
+               style={{ textAlign: 'start' }}
+            >
                {value}
             </p>
          ),
@@ -45,10 +55,16 @@ const EmployeeTable = () => {
       },
       {
          dataIndex: 'email',
-         title: <p className={styles.tableTitle}>Почта</p>,
+         title: (
+            <p className={`${styles.tableTitle} ${isDarkMode ? styles.darkModeText : ''}`}>
+               {t('admin.table.Email')}
+            </p>
+         ),
          render: (value) => (
             <p
-               className={`${styles.tableData} ${styles.email} `}
+               className={`${`${styles.tableData} ${isDarkMode ? styles.darkModeText : ''}`} ${
+                  styles.email
+               } `}
                onClick={() => choosePerson(value)}
             >
                {value}
@@ -57,12 +73,18 @@ const EmployeeTable = () => {
       },
       {
          dataIndex: 'branch',
-         title: <p className={styles.tableTitle}>Филиал</p>,
+         title: (
+            <p className={`${styles.tableTitle} ${isDarkMode ? styles.darkModeText : ''}`}>
+               {t('admin.table.branch')}
+            </p>
+         ),
          render: (value) => (
-            <p className={styles.tableData}>{branchIndeficator(branchList, value)}</p>
+            <p className={`${styles.tableData} ${isDarkMode ? styles.darkModeText : ''}`}>
+               {branchIndeficator(branchList, value)}
+            </p>
          ),
          filters: branchList?.map((item) => ({
-            text: `${item.city}, ${item.address}`,
+            text: `${cityTransalte(item?.city)}, ${item.address}`,
             value: item.id,
          })),
 
@@ -70,19 +92,30 @@ const EmployeeTable = () => {
       },
       {
          dataIndex: 'shift',
-         title: <p className={styles.tableTitle}>Время работы</p>,
-         render: (value) => <p className={styles.tableData}>{value}</p>,
+         title: (
+            <p className={`${styles.tableTitle} ${isDarkMode ? styles.darkModeText : ''}`}>
+               {t('admin.table.workTime')}
+            </p>
+         ),
+         render: (value) => (
+            <p className={`${styles.tableData} ${isDarkMode ? styles.darkModeText : ''}`}>
+               {value}
+            </p>
+         ),
       },
    ];
 
-   return isEmployeeListLoading && isBranchListLoading ? (
+   return isBranchListLoading &&
+      isEmployeeListLoading &&
+      isWindowListLoading &&
+      isServiceListLoading ? (
       <CustomLoading />
    ) : (
       <div className={styles.tableBlock}>
          <Table
             className={isDarkMode ? 'dark_mode' : 'default_mode'}
             loading={isEmployeeListLoading}
-            dataSource={employeeList.map((item, index) => ({
+            dataSource={employeeList?.map((item, index) => ({
                ...item,
                key: index,
             }))}
@@ -97,22 +130,33 @@ const EmployeeTable = () => {
                      fontWeight: '600',
                   }}
                >
-                  {/* {t('table.titles.allTalons')} */}
-                  Все сотрудники
+                  {t('admin.table.allEmployees')}
                </p>
             )}
          />
          {isModal && (
-            <EmployeeModal employee={employee} setIsModal={setIsModal} isModal={isModal} />
+            <EmployeeModal
+               employee={employee}
+               setIsModal={setIsModal}
+               isModal={isModal}
+               windowList={windowList}
+               branchList={branchList}
+               serviceList={serviceList}
+               refetch={refetch}
+            />
          )}
          {isCreateEmpModal && (
             <CreateEmployeeModal
                setIsCreateEmpModal={setIsCreateEmpModal}
                isCreateEmpModal={isCreateEmpModal}
+               windowList={windowList}
+               branchList={branchList}
+               serviceList={serviceList}
+               refetch={refetch}
             />
          )}
          <div className={styles.buttonBlock}>
-            <button onClick={() => setIsCreateEmpModal(true)}>Создать сотрудника</button>
+            <button onClick={() => setIsCreateEmpModal(true)}>{t('buttons.createEmployee')}</button>
          </div>
       </div>
    );

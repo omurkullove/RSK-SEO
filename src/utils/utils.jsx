@@ -1,9 +1,12 @@
 import { Spin, message } from 'antd';
 
 import { LoadingOutlined } from '@ant-design/icons';
+import moment from 'moment';
 import { t } from 'i18next';
 
 export const API = 'https://rskseo.pythonanywhere.com';
+
+export const baseUrl = 'http://0.0.0.0:8000';
 
 export const antIcon = <LoadingOutlined style={{ fontSize: 54 }} spin />;
 
@@ -21,7 +24,7 @@ export const CustomLoading = () => {
          }}
       >
          <Spin indicator={antIcon} size='50' />
-         <h4>Идет подсчет данных....</h4>
+         <h4>{t('dataLoading')}</h4>
       </div>
    );
 };
@@ -65,19 +68,16 @@ export function calculateTimeDifference(startTime, endTime) {
    return minutes;
 }
 
-export function returnUnderstandableDate(date, reverse) {
-   const inputDate = new Date(date);
-
-   const options = {
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-   };
-
-   const formattedDate = inputDate.toLocaleDateString('ru-RU', options).replace(/,/g, '');
-
-   return formattedDate;
+export function returnUnderstandableDate(dateString, reverse) {
+   if (!reverse) {
+      const date = moment(dateString);
+      const formattedDate = date.format('DD.MM HH:mm');
+      return formattedDate;
+   } else {
+      const date = moment(dateString, 'DD.MM HH:mm');
+      const isoString = date.toISOString();
+      return isoString;
+   }
 }
 
 export const formatTime = (time) => {
@@ -121,29 +121,6 @@ export const returnEmployee = (email, list) => {
    console.log('Данные были переданы не корректно');
 };
 
-// export const serviceIndetificator = (service) => {
-//    switch (service) {
-//       case 1:
-//          return t('table.body.service.CreditFinancing');
-//       case 2:
-//          return t('table.body.service.CurrencyExchange');
-//       case 3:
-//          return t('table.body.service.MoneyTransfers');
-//       case 4:
-//          return t('table.body.service.CardIssuance');
-//       case 5:
-//          return t('table.body.service.ReceiveTransfer');
-//       case 6:
-//          return t('table.body.service.OpenAnAccount');
-//       case 7:
-//          return t('table.body.service.SecuritiesOperations');
-//       case 8:
-//          return t('table.body.service.IslamicFinancing');
-//       default:
-//          return 'Сервис не определен';
-//    }
-// };
-
 export const selectModalStyles = {
    width: '100%',
    marginTop: 25,
@@ -154,6 +131,28 @@ export const selectModalStyles = {
    borderRadius: '7px',
    outline: 'none',
    padding: '2px',
+};
+export const getServiceName = (service) => {
+   switch (service) {
+      case 'Кредитование':
+         return t('table.body.service.CreditFinancing');
+      case 'Обмен валют':
+         return t('table.body.service.CurrencyExchange');
+      case 'Денежные переводы':
+         return t('table.body.service.MoneyTransfers');
+      case 'Выпуск карты':
+         return t('table.body.service.CardIssuance');
+      case 'Получить перевод':
+         return t('table.body.service.ReceiveTransfer');
+      case 'Открыть счет':
+         return t('table.body.service.OpenAnAccount');
+      case 'Операции с ценными бумагами':
+         return t('table.body.service.SecuritiesOperations');
+      case 'Исламское финансирование':
+         return t('table.body.service.IslamicFinancing');
+      default:
+         return service;
+   }
 };
 
 export const serviceIndetificator = (service, serviseIdArray) => {
@@ -171,8 +170,182 @@ export const serviceIndetificator = (service, serviseIdArray) => {
 export const branchIndeficator = (branchList, itemBranch) => {
    if (itemBranch) {
       const branch = branchList?.find((item) => item.id === itemBranch);
-      return `${branch?.city}, ${branch?.address}`;
+      return `${cityTransalte(branch?.city)}, ${branch?.address}`;
    } else {
       return 'Филиал не обнаружен';
    }
+};
+
+export const employeeIdetificator = (employeeList, id) => {
+   const employee = employeeList?.find((item) => item.id === id);
+   return employee?.username;
+};
+
+export const cityTransalte = (city) => {
+   switch (city) {
+      case 'Бишкек':
+         return t('branch.bishkek');
+      case 'Ош':
+         return t('branch.osh');
+      case 'Джалал-Абад':
+         return t('branch.jalalabad');
+      case 'Каракол':
+         return t('branch.karakol');
+      case 'Токмок':
+         return t('branch.tokmok');
+      case 'Нарын':
+         return t('branch.naryn');
+      case 'Талас':
+         return t('branch.talas');
+      case 'Кара-Балта':
+         return t('branch.kara_balta');
+      case 'Баткен':
+         return t('branch.batken');
+      case 'Исфана':
+         return t('branch.isfana');
+      default:
+         return city;
+   }
+};
+
+export const clientTypeTranslate = (type) => {
+   switch (type) {
+      case 'Физическое лицо':
+         return t('table.body.type.naturalPerson');
+      case 'Юридическое лицо':
+         return t('table.body.type.legalЕntity');
+      default:
+         return type;
+   }
+};
+
+export const isDarkModeTrigger = (colorNum, isBackground, isDarkMode) => {
+   if (isDarkMode) {
+      if (isBackground) {
+         switch (colorNum) {
+            case 3:
+               return {
+                  //Супер темный
+                  backgroundColor: '#001F31',
+               };
+
+            case 2:
+               return {
+                  // Темный полупрозрачный
+                  backgroundColor: '#374B67',
+               };
+
+            case 1:
+               return {
+                  // темный
+                  backgroundColor: '#002A42',
+               };
+            default:
+               break;
+         }
+      } else {
+         switch (colorNum) {
+            case 1:
+               return {
+                  color: 'white',
+               };
+            case 2:
+               return {
+                  color: 'lightgray',
+               };
+
+            case 3:
+               return {
+                  color: '#92BFFF',
+               };
+
+            default:
+               break;
+         }
+      }
+   } else {
+      return {};
+   }
+};
+
+export const monthTranslate = (month) => {
+   switch (month) {
+      case 'January':
+         return t('chart.January');
+      case 'February':
+         return t('chart.February');
+      case 'March':
+         return t('chart.March');
+      case 'April':
+         return t('chart.April');
+      case 'May':
+         return t('chart.May');
+      case 'June':
+         return t('chart.June');
+      case 'July':
+         return t('chart.July');
+      case 'August':
+         return t('chart.August');
+      case 'September':
+         return t('chart.September');
+      case 'October':
+         return t('chart.October');
+      case 'November':
+         return t('chart.November');
+      case 'December':
+         return t('chart.December');
+      default:
+         return month;
+   }
+};
+
+export const MainServiceOptions = (serviceList, isDarkMode) => {
+   if (!serviceList?.length) {
+      return null;
+   }
+   const filteredService = serviceList?.map((item) => ({
+      label: <p style={isDarkModeTrigger(3, false, isDarkMode)}>{getServiceName(item?.name)}</p>,
+      value: item?.id,
+   }));
+
+   return filteredService;
+};
+
+export const MainBranchOptions = (branchList, isDarkMode) => {
+   if (!branchList?.length) {
+      return null;
+   }
+   const filtredBranchs = branchList?.map((item) => ({
+      label: (
+         <p style={isDarkModeTrigger(3, false, isDarkMode)}>{`${cityTransalte(item?.city)}, ${
+            item?.address
+         }`}</p>
+      ),
+      value: item?.id,
+   }));
+
+   return filtredBranchs;
+};
+export const MainLanguageOptions = (languageList, isDarkMode) => {
+   if (!languageList?.length) {
+      return null;
+   }
+
+   const filtredLanguages = languageList?.map((item) => ({
+      label: <p style={isDarkModeTrigger(3, false, isDarkMode)}>{item?.text}</p>,
+      value: item?.id,
+   }));
+
+   return filtredLanguages;
+};
+export const MainDocumentOptions = (documentList, isDarkMode) => {
+   if (!documentList?.length) {
+      return null;
+   }
+   const filteredDocuments = documentList?.map((item) => ({
+      label: <p style={isDarkModeTrigger(3, false, isDarkMode)}>{item?.name}</p>,
+      value: item?.id,
+   }));
+
+   return filteredDocuments;
 };

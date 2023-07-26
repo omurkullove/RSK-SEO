@@ -1,24 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import styles from '@/assets/styles/admin/AllModal.module.scss';
-import { useMain } from '@/services/MainStore';
-import { useAdmin } from '@/services/adminStore';
-import { Select } from 'antd';
-import { CustomModalLoading, selectModalStyles } from '@/utils/utils';
+import {
+   CustomModalLoading,
+   MainBranchOptions,
+   MainServiceOptions,
+   isDarkModeTrigger,
+   selectModalStyles,
+} from '@/utils/utils';
+
 import ModalWrapper from '@/components/admin/ModalWrapper';
+import { Select } from 'antd';
+import styles from '@/assets/styles/admin/AllModal.module.scss';
+import { t } from 'i18next';
+import { useCreateQueueMutation } from '@/api/admin/queue_api';
+import { useGetBranchQuery } from '@/api/admin/branch_api';
+import { useGetServiceQuery } from '@/api/admin/service_api';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
 const CreateQueueModal = ({ isCreateQueModal, setIsCreateQueModal }) => {
-   const isDarkMode = useMain((state) => state.isDarkMode);
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+
    const [queue, setQueue] = useState();
 
-   const isBranchListLoading = useAdmin((state) => state.isBranchListLoading);
-   const branchList = useAdmin((state) => state.branchList);
-   const getBranchList = useAdmin((state) => state.getBranchList);
-   const isServiceListLoading = useAdmin((state) => state.isServiceListLoading);
-   const serviceList = useAdmin((state) => state.serviceList);
-   const getServiceList = useAdmin((state) => state.getServiceList);
+   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
+   const { data: branchList, isLoading: isBrancLihstLoading } = useGetBranchQuery();
 
-   const createQueue = useAdmin((state) => state.createQueue);
-   const getQueueList = useAdmin((state) => state.getQueueList);
+   const [createQueue] = useCreateQueueMutation();
 
    const handleEdit = (name, value) => {
       setQueue((prev) => ({
@@ -30,72 +36,66 @@ const CreateQueueModal = ({ isCreateQueModal, setIsCreateQueModal }) => {
    const handleCreateQueue = async (e) => {
       e.preventDefault();
       await createQueue(queue);
-      await getQueueList();
       setIsCreateQueModal(false);
    };
 
-   const serviceOptions = serviceList?.map((item) => ({
-      label: item?.name,
-      value: item?.id,
-   }));
+   const serviceOptions = MainServiceOptions(serviceList, isDarkMode);
 
-   const branchOptions = branchList?.map((item) => ({
-      label: `${item?.city}, ${item?.address}`,
-      value: item?.id,
-   }));
-
-   useEffect(() => {
-      getBranchList();
-      getServiceList();
-   }, []);
+   const branchOptions = MainBranchOptions(branchList, isDarkMode);
 
    return (
       <ModalWrapper isOpen={isCreateQueModal} setIsOpen={setIsCreateQueModal}>
          <div
             className={styles.createQueueMain}
             onClick={(e) => e.stopPropagation()}
-            style={{
-               backgroundColor: isDarkMode ? '#374B67' : 'white',
-            }}
+            style={isDarkModeTrigger(2, true, isDarkMode)}
          >
-            {isBranchListLoading && isServiceListLoading ? (
+            {isBrancLihstLoading && isServiceListLoading ? (
                <CustomModalLoading />
             ) : (
                <>
-                  <div className={styles.head}>
-                     <p>Создать очередь</p>
+                  <div className={styles.head} style={isDarkModeTrigger(1, true, isDarkMode)}>
+                     <p style={isDarkModeTrigger(1, false, isDarkMode)}>
+                        {t('buttons.createQueue')}
+                     </p>
                   </div>
                   <form action='submit' onSubmit={handleCreateQueue}>
                      <input
+                        style={{ background: 'transparent', color: isDarkMode ? 'white' : '' }}
                         onChange={(e) => handleEdit('description', e.target.value)}
                         type='string'
-                        placeholder='Описание'
+                        placeholder={t('admin.queueModal.description')}
                      />
                      <input
+                        style={{ background: 'transparent', color: isDarkMode ? 'white' : '' }}
                         onChange={(e) => handleEdit('talon_count', e.target.value)}
                         type='number'
-                        placeholder='Кол-во талонов'
+                        placeholder={t('admin.queueModal.talon_count')}
                      />
                      <Select
+                        dropdownStyle={isDarkModeTrigger(2, true, isDarkMode)}
                         onChange={(value) => handleEdit('service', value)}
                         required
-                        placeholder='Услуга'
+                        placeholder={t('admin.queueModal.service')}
                         options={serviceOptions}
                         bordered={false}
                         style={selectModalStyles}
                      />
                      <Select
+                        dropdownStyle={isDarkModeTrigger(2, true, isDarkMode)}
                         onChange={(value) => handleEdit('branch', value)}
                         required
-                        placeholder='Филиал'
+                        placeholder={t('admin.queueModal.branch')}
                         bordered={false}
                         options={branchOptions}
                         style={selectModalStyles}
                      />
 
                      <div className={styles.footer}>
-                        <button onClick={() => setIsCreateQueModal(false)}>Отмена</button>
-                        <button type='submit'>Создать</button>
+                        <button onClick={() => setIsCreateQueModal(false)} type='button'>
+                           {t('buttons.cancel')}
+                        </button>
+                        <button type='submit'>{t('buttons.create')}</button>
                      </div>
                   </form>
                </>

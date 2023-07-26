@@ -1,34 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import { CustomLoading, ShowMessage } from '@/utils/utils';
+import { Suspense, lazy, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import Document from '@/components/admin/Document';
-import EmployeeTable from '@/components/admin/Employee/EmployeeTable';
 import { LoadingOutlined } from '@ant-design/icons';
 import MainLayout from '@/components/operator/UI/Layout';
 import Navbar from '@/components/admin/Navbar';
-import Queue from '@/components/admin/Queue';
-import Service from '@/components/admin/ServiceAll';
-import { ShowMessage } from '@/utils/utils';
 import { Spin } from 'antd';
+import { adminIdentifier } from '@/api/synchronous';
 import styles from '@/assets/styles/admin/Home.module.scss';
-import { useAdmin } from '@/services/adminStore';
-import { useMain } from '@/services/MainStore';
+import { useGetProfileInfoQuery } from '@/api/general/auth_api';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
+const EmployeeTable = lazy(() => import('@/components/admin/Employee/EmployeeTable'));
+const Queue = lazy(() => import('@/components/admin/Queue'));
+const Service = lazy(() => import('@/components/admin/ServiceAll'));
+const Actions = lazy(() => import('@/components/admin/Actions'));
+const Stats = lazy(() => import('@/components/admin/Stats'));
+const Document = lazy(() => import('@/components/admin/Document'));
+const LanguagesMain = lazy(() => import('@/components/admin/languagesMain'));
+const Window = lazy(() => import('@/components/admin/Window'));
+const Branch = lazy(() => import('@/components/admin/Branch'));
+const Reports = lazy(() => import('@/components/admin/Reports'));
+const Television = lazy(() => import('@/components/admin/Television'));
+
 const HomePage = () => {
-   // store
-   const employee = useMain((state) => state.employee);
-   const getProfileInfoLoading = useMain((state) => state.getProfileInfoLoading);
-   const getProfileInfo = useMain((state) => state.getProfileInfo);
+   const dispatch = useDispatch();
 
-   const getEmployeeList = useAdmin((state) => state.getEmployeeList);
-   const isEmployeeListLoading = useAdmin((state) => state.isEmployeeListLoading);
+   const isSuperAdmin = useSelector((state) => state.toggleDarkMode.isSuperAdmin);
 
-   const adminIdentifier = useMain((state) => state.adminIdentifier);
-   const isSuperAdmin = useMain((state) => state.isSuperAdmin);
-
-   const getTalonStats = useAdmin((state) => state.getTalonStats);
-   const talonsStats = useAdmin((state) => state.talonsStats);
+   const { data: employee, isLoading: isLoadingProfile } = useGetProfileInfoQuery();
 
    // Vanila states
    const [currentCard, setCurrentCard] = useState(1);
@@ -38,42 +39,69 @@ const HomePage = () => {
    const { t } = useTranslation();
    const antIcon = <LoadingOutlined style={{ fontSize: 54 }} spin />;
 
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+
    // list arrays
    const CARD_ITEMS = [
       {
          id: 1,
-         title: 'Информация о сотрудниках',
+         title: t('admin.cards.EmployeeInfo'),
          isSuperAdminView: true,
       },
       {
+         title: t('admin.cards.QueueInfo'),
          id: 2,
-         title: 'Информация об очередях',
          isSuperAdminView: true,
       },
       {
+         title: t('admin.cards.ServiceInfo'),
          id: 3,
-         title: 'Информация об услугах',
          isSuperAdminView: true,
       },
       {
+         title: t('admin.cards.ViewActions'),
          id: 4,
-         title: 'Просмотр действий',
-         isSuperAdminView: isSuperAdmin,
+         isSuperAdminView: !isSuperAdmin,
       },
       {
+         title: t('admin.cards.Stats'),
          id: 5,
-         title: 'Статистика',
+         isSuperAdminView: !isSuperAdmin,
+      },
+      {
+         title: t('admin.cards.CreateDoc'),
+         id: 6,
          isSuperAdminView: isSuperAdmin,
       },
       {
-         id: 6,
-         title: 'Создать документ',
+         title: t('admin.cards.docTranslate'),
+         id: 7,
+         isSuperAdminView: isSuperAdmin,
+      },
+      {
+         title: t('admin.cards.createWindow'),
+         id: 8,
+         isSuperAdminView: isSuperAdmin,
+      },
+      {
+         title: t('buttons.createBranch'),
+         id: 9,
+         isSuperAdminView: isSuperAdmin,
+      },
+      {
+         title: t('admin.cards.reports'),
+         id: 10,
+         isSuperAdminView: isSuperAdmin,
+      },
+      {
+         title: 'Настроить телевизор',
+         id: 11,
          isSuperAdminView: isSuperAdmin,
       },
    ];
 
    useEffect(() => {
-      if (employee && JSON.parse(localStorage.getItem('token'))) {
+      if (JSON.parse(localStorage.getItem('token'))) {
          ShowMessage('success', 'Вы успешно зашли на аккаунт');
       } else {
          navigate('/');
@@ -81,12 +109,10 @@ const HomePage = () => {
    }, []);
 
    useEffect(() => {
-      getProfileInfo(JSON.parse(localStorage.getItem('email')));
-      getEmployeeList();
-      adminIdentifier();
+      dispatch(adminIdentifier());
    }, []);
 
-   return getProfileInfoLoading && isEmployeeListLoading ? (
+   return isLoadingProfile ? (
       <div
          style={{
             height: '100vh',
@@ -98,7 +124,7 @@ const HomePage = () => {
          }}
       >
          <Spin indicator={antIcon} size='50' />
-         <h4>Идет подсчет данных....</h4>
+         <h4>{t('dataLoading')}</h4>
       </div>
    ) : (
       <MainLayout isSidebar={true} Navbar={<Navbar employee={employee} />}>
@@ -107,8 +133,16 @@ const HomePage = () => {
                {CARD_ITEMS.map((item) => (
                   <div
                      style={{
-                        backgroundColor: currentCard === item.id ? '#EEFAFF' : '',
+                        backgroundColor:
+                           isDarkMode && currentCard === item.id
+                              ? '#456792'
+                              : isDarkMode && currentCard !== item.id
+                              ? '#374B67'
+                              : !isDarkMode && currentCard === item.id
+                              ? '#EEFAFF'
+                              : 'white',
                         display: !item?.isSuperAdminView && 'none',
+                        color: isDarkMode ? 'white' : '',
                      }}
                      className={styles.card}
                      key={item.id}
@@ -120,10 +154,21 @@ const HomePage = () => {
             </div>
 
             <div className={styles.contentBlock}>
-               {currentCard === 1 && <EmployeeTable />}
-               {currentCard === 2 && <Queue />}
-               {currentCard === 3 && <Service />}
-               {currentCard === 6 && <Document />}
+               <Suspense fallback={<CustomLoading />}>
+                  {currentCard === 1 && <EmployeeTable />}
+                  {currentCard === 2 && <Queue />}
+                  {currentCard === 3 && <Service />}
+                  {currentCard === 4 && <Actions />}
+                  {currentCard === 5 && <Stats />}
+                  {currentCard === 6 && <Document />}
+                  {currentCard === 7 && <LanguagesMain />}
+                  {currentCard === 8 && <Window />}
+                  {currentCard === 9 && <Branch />}
+                  {currentCard === 10 && <Reports />}
+                  {currentCard === 11 && <Television />}
+                  {currentCard === 12 && <EmployeeTable />}
+                  {currentCard === 13 && <Queue />}
+               </Suspense>
             </div>
          </div>
       </MainLayout>
