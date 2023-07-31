@@ -4,6 +4,7 @@ import {
    MainLanguageOptions,
    getServiceName,
    isDarkModeTrigger,
+   transalteIdentifier,
 } from '@/utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -16,6 +17,7 @@ import {
 import ModalWrapper from '@/components/admin/ModalWrapper';
 import { adminIdentifier } from '@/api/synchronous';
 import { alertComponents } from '@/utils/popoverHint';
+import i18n from '@/i18next';
 import info_icon from '@/assets/svg/Info_icon.svg';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
 import { t } from 'i18next';
@@ -69,6 +71,8 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
       setIsServiceModal(false);
    };
 
+   const { data: translates, isLoading: isTransaltesLoading } = useGetLanguageQuery();
+
    const TBody = [
       {
          id: 1,
@@ -81,7 +85,9 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
       {
          id: 2,
          title: 'Название',
-         data: service?.name ? getServiceName(service?.name) : '',
+         data: service?.name
+            ? transalteIdentifier(translates, service?.lang_name, i18n.language)
+            : '',
          name: 'name',
          type: 'text',
          hintAlert: <Alert {...alertComponents.stingAny} />,
@@ -106,7 +112,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
          id: 5,
          title: 'Услуга для переноса',
          data: service?.service_to_auto_transport,
-         name: 'service?_to_auto_transport',
+         name: 'service_to_auto_transport',
          type: 'number',
          hintAlert: <Alert {...alertComponents.selectKeyWord} />,
       },
@@ -168,7 +174,10 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
                </Popover>
             </div>
 
-            {isDocumentListLoadind && isLanguageListLoading && isServiceListLoading ? (
+            {isDocumentListLoadind &&
+            isLanguageListLoading &&
+            isServiceListLoading &&
+            isTransaltesLoading ? (
                <CustomModalLoading />
             ) : (
                <form className={styles.body} onSubmit={handleSave} action='submit'>

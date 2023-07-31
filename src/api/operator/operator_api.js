@@ -27,21 +27,21 @@ export const operator_api = createApi({
 
       transferTalonToEnd: builder.query({
          query: (id) => ({
-            url: `/talon/end/${id}`,
+            url: `/talon/end/${id}/`,
          }),
          providesTags: ['talon'],
       }),
 
       transferTalonToStart: builder.query({
          query: (id) => ({
-            url: `/talon/start/${id}`,
+            url: `/talon/start/${id}/`,
          }),
          providesTags: ['talon'],
       }),
 
       transferTalonQueue: builder.query({
          query: (body) => ({
-            url: `/talon/transfer/${body.talonId}/${body.queueId}`,
+            url: `/talon/transfer/${body.talonId}/${body.queueId}/`,
          }),
          providesTags: ['talon'],
       }),
@@ -69,7 +69,7 @@ export const operator_api = createApi({
 
       getBranchQueue: builder.query({
          query: (id) => ({
-            url: `/branch/queue/${id}`,
+            url: `/branch/queue/${id}/`,
          }),
          providesTags: ['talon'],
       }),

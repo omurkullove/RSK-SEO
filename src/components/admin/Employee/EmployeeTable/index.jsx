@@ -1,8 +1,16 @@
-import { CustomLoading, branchIndeficator, cityTransalte, returnEmployee } from '@/utils/utils';
+import {
+   CustomLoading,
+   ShowMessage,
+   branchIndeficator,
+   cityTransalte,
+   handleRequestResult,
+   returnEmployee,
+} from '@/utils/utils';
+import React, { useEffect, useState } from 'react';
+import { Table, message } from 'antd';
 
 import CreateEmployeeModal from '../CreateEmployeeModal';
 import EmployeeModal from '../EmployeeModal';
-import { Table } from 'antd';
 import styles from '../Employee.module.scss';
 import { t } from 'i18next';
 import { useGetBranchQuery } from '@/api/admin/branch_api';
@@ -10,7 +18,6 @@ import { useGetEmployeeListQuery } from '@/api/admin/employee_api';
 import { useGetServiceQuery } from '@/api/admin/service_api';
 import { useGetWindowQuery } from '@/api/admin/window_api';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
 
 const EmployeeTable = () => {
    const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
@@ -104,6 +111,12 @@ const EmployeeTable = () => {
          ),
       },
    ];
+
+   useEffect(() => {
+      refetch();
+   }, []);
+
+
 
    return isBranchListLoading &&
       isEmployeeListLoading &&

@@ -1,8 +1,10 @@
 import { DownOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { branchIndeficator, getServiceName } from '@/utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
+import { useGetProfileInfoQuery, useLazyShiftEmployeeQuery } from '@/api/general/auth_api';
 
 import { Menu } from 'antd';
+import ShiftModal from '../ShiftModal';
 import Sider from 'antd/es/layout/Sider';
 import { Switch } from 'antd';
 import defaultUserIcon from '@/assets/png/defaultUserIcon.png';
@@ -12,7 +14,6 @@ import ru from '@/assets/svg/ru.svg';
 import styles from '@/assets/styles/operator/Sidebar.module.scss';
 import { toggleDarkMode } from '@/api/synchronous';
 import { useGetBranchListQuery } from '@/api/registrar/registrar_api';
-import { useGetProfileInfoQuery } from '@/api/general/auth_api';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 const Sidebar = () => {
    const navigate = useNavigate();
 
-   const { data: employee, isLoading } = useGetProfileInfoQuery();
+   const { data: employee, isLoading, refetch } = useGetProfileInfoQuery();
 
    const [collapsed, setCollapsed] = useState(true);
 
@@ -28,19 +29,26 @@ const Sidebar = () => {
 
    const dispatch = useDispatch();
    const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+   const [shifEmployee] = useLazyShiftEmployeeQuery();
 
    const { data: branchList, isLoading: isBranchListLoading } = useGetBranchListQuery();
 
    const onChange = (checked) => {
       dispatch(toggleDarkMode(checked));
-
-      console.log(isDarkMode);
    };
 
    const [lang, setLang] = useState('ru');
    const handleChangeLanguage = (language) => {
       i18n.changeLanguage(language);
       setLang(language);
+   };
+
+   const [isModal, setIsModal] = useState(false);
+
+   const gotToShift = async () => {
+      setIsModal(true);
+      await shifEmployee();
+      await refetch();
    };
 
    const ITEMS = [
@@ -222,6 +230,16 @@ const Sidebar = () => {
             {
                key: 13,
                type: 'group',
+               label:
+                  employee?.position === 'operator' || employee?.position === 'registrator' ? (
+                     <div className={styles.shift}>
+                        <button onClick={() => gotToShift()}>{t('shiftOn')}</button>
+                     </div>
+                  ) : null,
+            },
+            {
+               key: 14,
+               type: 'group',
                label: (
                   <div className={styles.switchBlock}>
                      {t('darkMode')}
@@ -250,6 +268,9 @@ const Sidebar = () => {
             zIndex: 999,
          }}
       >
+         {isModal ? (
+            <ShiftModal isModal={isModal} setIsModal={setIsModal} refetch={refetch} />
+         ) : null}
          <Menu
             triggerSubMenuAction=''
             className='custom-menu'

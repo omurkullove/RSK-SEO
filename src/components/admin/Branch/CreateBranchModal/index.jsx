@@ -98,7 +98,9 @@ const CreateBranchModal = ({ isCreateModal, setIsCreateModal, serviceList, langu
                      mode='multiple'
                      onChange={(value) => handleEdit('lang_name', value)}
                      options={languageOptions}
-                     style={{ width: '185px', marginRight: '100px' }}
+                     style={{ ...selectModalStyles }}
+                     bordered={false}
+                     placeholder={t('admin.branchMain.lang_name')}
                   />
 
                   <label
@@ -106,11 +108,15 @@ const CreateBranchModal = ({ isCreateModal, setIsCreateModal, serviceList, langu
                         marginTop: 25,
                         fontWeight: 'bold',
                         color: isDarkMode ? 'white' : '#1e4a89',
+                        width: '100%',
                      }}
                   >
                      {t('admin.branchMain.work_time_start')}
                      <input
-                        style={{ ...isDarkModeTrigger(1, false, isDarkMode), marginTop: 0 }}
+                        style={{
+                           ...isDarkModeTrigger(1, false, isDarkMode),
+                           marginTop: 0,
+                        }}
                         type='time'
                         onChange={(e) => handleEdit('work_time_start', e.target.value)}
                      />
@@ -120,6 +126,7 @@ const CreateBranchModal = ({ isCreateModal, setIsCreateModal, serviceList, langu
                         marginTop: 25,
                         fontWeight: 'bold',
                         color: isDarkMode ? 'white' : '#1e4a89',
+                        width: '100%',
                      }}
                   >
                      {t('admin.branchMain.work_time_end')}

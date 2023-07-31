@@ -6,6 +6,7 @@ import {
    getServiceName,
    isDarkModeTrigger,
    returnUnderstandableDate,
+   selectModalStyles,
    serviceIndetificator,
 } from '@/utils/utils';
 import {
@@ -13,6 +14,7 @@ import {
    useEditEmployeeMutation,
    useLazyGetEmployeeListQuery,
 } from '@/api/admin/employee_api';
+import { useEffect, useState } from 'react';
 
 import ModalWrapper from '@/components/admin/ModalWrapper';
 import { alertComponents } from '@/utils/popoverHint';
@@ -20,7 +22,6 @@ import info_icon from '@/assets/svg/Info_icon.svg';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
 import { t } from 'i18next';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
 
 const EmployeeModal = ({
    setIsModal,
@@ -31,18 +32,18 @@ const EmployeeModal = ({
    serviceList,
    refetch,
 }) => {
-   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+   // api
+   const [deleteEmployee] = useDeleteEmployeeMutation();
+   const [editEmployee] = useEditEmployeeMutation();
 
+   // states
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
    const [newEmployee, setNewEmployee] = useState({
       ...employee,
       last_login: returnUnderstandableDate(employee.last_login, false),
    });
 
-   const [deleteEmployee] = useDeleteEmployeeMutation();
-   const [editEmployee] = useEditEmployeeMutation();
-   const [getEmployeeList] = useLazyGetEmployeeListQuery();
-
-   const [isFileChanged, setIsFileChanged] = useState(false);
+   // other
 
    const [branchWindows, setBranchWindows] = useState(
       windowList?.filter((item) => item.branch === employee.branch)
@@ -145,14 +146,31 @@ const EmployeeModal = ({
       },
    ];
 
+   const positionOptions = [
+      {
+         label: t('positions.super_admin'),
+         value: 'super_admin',
+         key: 1,
+      },
+      {
+         label: t('positions.admin'),
+         value: 'admin',
+         key: 2,
+      },
+      {
+         label: t('positions.registrator'),
+         value: 'registrator',
+         key: 3,
+      },
+      {
+         label: t('positions.operator'),
+         value: 'operator',
+         key: 4,
+      },
+   ];
+
    const handleEdit = (name, value) => {
-      if (name === 'image') {
-         setNewEmployee((prev) => ({
-            ...prev,
-            [name]: value,
-         }));
-         setIsFileChanged(true);
-      } else if (name === 'service') {
+      if (name === 'service') {
          setNewEmployee((prev) => ({
             ...prev,
             [name]: [...value],
@@ -180,10 +198,23 @@ const EmployeeModal = ({
 
    const branchOptions = MainBranchOptions(branchList, isDarkMode);
 
-   const windowOptions = branchWindows?.map((item) => ({
+   const windowOptions = windowList?.map((item) => ({
       label: <p style={isDarkModeTrigger(2, false, isDarkMode)}>{item.number}</p>,
-      value: item.id,
+      value: item?.id,
    }));
+
+   const statusOptions = [
+      {
+         label: t('status.active'),
+         value: 'active',
+         key: 1,
+      },
+      {
+         label: t('status.noActive'),
+         value: 'no active',
+         key: 2,
+      },
+   ];
 
    const handleDelete = async () => {
       await deleteEmployee(employee.id);
@@ -191,28 +222,6 @@ const EmployeeModal = ({
 
       setIsModal(false);
    };
-
-   const fileList = newEmployee?.image
-      ? typeof newEmployee?.image === 'string'
-         ? [
-              {
-                 uid: '-1',
-                 name: 'image',
-                 status: 'done',
-                 url: newEmployee?.image,
-                 thumbUrl: newEmployee?.image,
-                 hideRemoveIcon: true,
-              },
-           ]
-         : [
-              {
-                 ...newEmployee?.image,
-                 thumbUrl: URL.createObjectURL(newEmployee?.image),
-                 name: newEmployee?.image?.name,
-                 hideRemoveIcon: true,
-              },
-           ]
-      : [];
 
    return (
       <ModalWrapper isOpen={isModal} setIsOpen={setIsModal}>
@@ -278,9 +287,9 @@ const EmployeeModal = ({
                      ) : item.name === 'window' ? (
                         <Select
                            dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                           style={{ width: '255px', marginRight: '40px' }}
                            onChange={(value) => handleEdit('window', value)}
                            options={windowOptions}
-                           style={{ width: '255px', marginRight: '40px' }}
                            defaultValue={windowList?.find((window) => window.id === item.window)}
                            value={newEmployee.window}
                         />
@@ -291,6 +300,22 @@ const EmployeeModal = ({
                            onChange={(e) => handleEdit(item.name, e.target.value)}
                            readOnly
                            style={{ color: isDarkMode ? 'white' : '' }}
+                        />
+                     ) : item.name === 'position' ? (
+                        <Select
+                           options={positionOptions}
+                           defaultValue={employee.position}
+                           dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                           style={{ width: '255px', marginRight: '40px' }}
+                           onChange={(value) => handleEdit('position', value)}
+                        />
+                     ) : item.name === 'status' ? (
+                        <Select
+                           options={statusOptions}
+                           defaultValue={employee.status}
+                           dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                           style={{ width: '255px', marginRight: '40px' }}
+                           onChange={(value) => handleEdit('status', value)}
                         />
                      ) : (
                         <input

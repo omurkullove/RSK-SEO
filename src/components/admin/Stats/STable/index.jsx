@@ -1,5 +1,6 @@
+import { isDarkModeTrigger, monthTranslate } from '@/utils/utils';
+
 import { Table } from 'antd';
-import { monthTranslate } from '@/utils/utils';
 import styles from '../Stats.module.scss';
 import { t } from 'i18next';
 import { useRef } from 'react';
@@ -53,11 +54,17 @@ const STable = ({ stats, isStatsLoading }) => {
 
    const column = [
       {
-         title: <p className={styles.columnTitle}>{t('chart.month')}</p>,
+         title: (
+            <p className={styles.columnTitle} style={isDarkModeTrigger(3, false, isDarkMode)}>
+               {t('chart.month')}
+            </p>
+         ),
          dataIndex: 'month',
          render: (value, talon) => (
             <div>
-               <p className={styles.columnData}>{monthTranslate(value)}</p>
+               <p className={styles.columnData} style={isDarkModeTrigger(1, false, isDarkMode)}>
+                  {monthTranslate(value)}
+               </p>
             </div>
          ),
          filters: tableFilterMonth,
@@ -65,33 +72,51 @@ const STable = ({ stats, isStatsLoading }) => {
          onFilter: (value, record) => record.month === value,
       },
       {
-         title: <p className={styles.columnTitle}>{t('chart.talon_canceled')}</p>,
+         title: (
+            <p className={styles.columnTitle} style={isDarkModeTrigger(3, false, isDarkMode)}>
+               {t('chart.talon_canceled')}
+            </p>
+         ),
          dataIndex: 'talon_canceled',
          render: (value, talon) => (
             <div>
-               <p className={styles.columnData}>{value}</p>
+               <p className={styles.columnData} style={isDarkModeTrigger(1, false, isDarkMode)}>
+                  {value}
+               </p>
             </div>
          ),
          sorter: (a, b) => a.talon_canceled - b.talon_canceled,
       },
 
       {
-         title: <p className={styles.columnTitle}>{t('chart.talon_completed')}</p>,
+         title: (
+            <p className={styles.columnTitle} style={isDarkModeTrigger(3, false, isDarkMode)}>
+               {t('chart.talon_completed')}
+            </p>
+         ),
          dataIndex: 'talon_completed',
          render: (value, talon) => (
             <div>
-               <p className={styles.columnData}>{value}</p>
+               <p className={styles.columnData} style={isDarkModeTrigger(1, false, isDarkMode)}>
+                  {value}
+               </p>
             </div>
          ),
          sorter: (a, b) => a.talon_completed - b.talon_completed,
       },
 
       {
-         title: <p className={styles.columnTitle}>{t('chart.talon_count')}</p>,
+         title: (
+            <p className={styles.columnTitle} style={isDarkModeTrigger(3, false, isDarkMode)}>
+               {t('chart.talon_count')}
+            </p>
+         ),
          dataIndex: 'talon_count',
          render: (value, talon) => (
             <div>
-               <p className={styles.columnData}>{value}</p>
+               <p className={styles.columnData} style={isDarkModeTrigger(1, false, isDarkMode)}>
+                  {value}
+               </p>
             </div>
          ),
          sorter: (a, b) => a.talon_count - b.talon_count,

@@ -1,4 +1,4 @@
-import { CustomLoading, getServiceName } from '@/utils/utils';
+import { CustomLoading, ShowMessage, getServiceName } from '@/utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
@@ -7,6 +7,7 @@ import QueueModal from './QueueModal';
 import { adminIdentifier } from '@/api/synchronous';
 import styles from './Queue.module.scss';
 import { t } from 'i18next';
+import { useGetLanguageQuery } from '@/api/admin/language_api';
 import { useGetQueueQuery } from '@/api/admin/queue_api';
 import { useGetServiceQuery } from '@/api/admin/service_api';
 
@@ -14,14 +15,23 @@ const Queue = () => {
    const isSuperAdmin = useSelector((state) => state.toggleDarkMode.isSuperAdmin);
    const dispatch = useDispatch();
 
-   const { data: queueList, isLoading: isQueueListLoading } = useGetQueueQuery();
-   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
+   const {
+      data: queueList,
+      isLoading: isQueueListLoading,
+      isSuccess: isQueueSuccess,
+   } = useGetQueueQuery();
+   const {
+      data: serviceList,
+      isLoading: isServiceListLoading,
+      isSuccess: isServiceSuccess,
+   } = useGetServiceQuery();
 
    const [isQueModal, setIsQueModal] = useState(false);
    const [isCreateQueModal, setIsCreateQueModal] = useState(false);
 
    const [choosedQueue, setChoosedQueue] = useState();
    const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+   const { data: translates, isLoading: isTransaltesLoading } = useGetLanguageQuery();
 
    const handleOpenQueueModal = (item) => {
       setChoosedQueue(item);
@@ -30,9 +40,13 @@ const Queue = () => {
 
    useEffect(() => {
       dispatch(adminIdentifier());
+      if (isServiceSuccess && isQueueSuccess) {
+         ShowMessage('success', 'Данные успешно загрузились!');
+         return;
+      }
    }, []);
 
-   return isQueueListLoading && isServiceListLoading ? (
+   return isQueueListLoading || isServiceListLoading || isTransaltesLoading ? (
       <CustomLoading />
    ) : (
       <>
@@ -56,11 +70,12 @@ const Queue = () => {
                      >
                         {getServiceName(
                            serviceList?.find((service) => service.id === item.service)?.name
-                        )}
+                        )}{' '}
+                        №{item.id}
                      </div>
                   ))
                ) : (
-                  <p>{t('nothingAtTheMoment')}</p>
+                  <h1>{t('nothingAtTheMoment')}</h1>
                )}
             </div>
             {isSuperAdmin ? (

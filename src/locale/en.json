@@ -53,7 +53,8 @@
       "queue": "Total",
       "date": "Date",
       "window": "Window",
-      "searchTalon": "Search by talon id"
+      "searchTalon": "Search by talon id",
+      "admin": "Administrator"
    },
    "card": {
       "title1": "Clients per Day",
@@ -113,7 +114,10 @@
          "CreateDoc": "Create Document",
          "docTranslate": "Document translates",
          "createWindow": "Create window",
-         "reports": "Reports"
+         "reports": "Reports",
+         "db": "Database",
+         "ad": "Configure advertisement",
+         "calendar": "Calendar of non-working days"
       },
       "table": {
          "FullName": "Full Name",
@@ -193,13 +197,24 @@
          "address": "Address",
          "service": "Services",
          "work_time_start": "Work day start",
-         "work_time_end": "Work day end"
+         "work_time_end": "Work day end",
+         "lang_name": "Translate"
+      },
+      "reports": {
+         "branch": "Branch",
+         "registered_at": "Registration time",
+         "employee": "Employee",
+         "reports_search": "Search by report",
+         "reports": "Reposrts",
+         "all": "All"
       },
       "actions": {
          "actionSearch": "Serch actions",
          "allBranches": "All branches",
          "branch": "Branch",
-         "employee": "Employee"
+         "employee": "Employee",
+         "newFirst": "New first",
+         "oldFirst": "Old first"
       },
       "statsMain": {
          "period": "Period",
@@ -213,6 +228,23 @@
          "branchs": "Branches",
          "queues": "Queues",
          "services": "Services"
+      },
+      "db": {
+         "db": "Database",
+         "copyToDb": "Database copy",
+         "restoreDb": "Database recovery"
+      },
+      "tv": {
+         "settings": "Advertisement settings",
+         "ad": "Advertisement",
+         "runnigLine": "Running line",
+         "ad_title": "Title",
+         "text": "Text"
+      },
+      "calendar": {
+         "calendar": "Calendar",
+         "addMode": "Add mode",
+         "deleteMode": "Delete mode"
       }
    },
    "branch": {
@@ -242,7 +274,8 @@
       "open": "Open",
       "edit": "Edit",
       "transfer": "Transfer",
-      "cancelIt": "Close talon"
+      "cancelIt": "Close talon",
+      "restore": "Restore"
    },
    "status": {
       "active": "Active",
@@ -285,7 +318,27 @@
       "employee": "Employee",
       "report": "Reports",
       "saveAsPdf": "Save as PDF",
-      "saveAsExel": "Save as Exel",
+      "saveAsExel": "Save as Excel",
       "submitToDB": "Submit to data base"
-   }
+   },
+   "idHint": "This field cannot be changed.",
+   "stingAny": "String, any value.",
+   "positionKeyWords": "Keyword value: operator, registrator, admin",
+   "dateAny": "Time, any value.",
+   "dataKeyText": "Date and time: DD.MM HH:mm",
+   "statusKeyWord": "Keyword value: active, inactive",
+   "selectKeyWord": "Option selection: any of the available",
+   "booleanKey": "Boolean value: true, false",
+   "numberAny": "Number, any value",
+
+   "positions": {
+      "admin": "Admin",
+      "operator": "Operator",
+      "registrator": "Registrator",
+      "super_admin": "Super admin"
+   },
+
+   "backup": "Backup copy",
+   "shiftOn": "Take a break",
+   "shiftOff": "Comeback"
 }

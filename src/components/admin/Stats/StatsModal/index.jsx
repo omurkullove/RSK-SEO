@@ -4,6 +4,7 @@ import { ShowMessage, isDarkModeTrigger } from '@/utils/utils';
 import ModalWrapper from '../../ModalWrapper';
 import { UploadOutlined } from '@ant-design/icons';
 import styles from '../Stats.module.scss';
+import { t } from 'i18next';
 import { useCreateReportMutation } from '@/api/admin/report_api';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
@@ -36,7 +37,7 @@ const StatsModal = ({ isModal, setIsModal }) => {
 
       await postStats(formData);
 
-      console.log(pdfFile, excelFile);
+      setIsModal(false);
    };
 
    const pdfFileList = pdfFile
@@ -61,9 +62,13 @@ const StatsModal = ({ isModal, setIsModal }) => {
 
    return (
       <ModalWrapper isOpen={isModal} setIsOpen={setIsModal}>
-         <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+         <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+            style={isDarkModeTrigger(1, true, isDarkMode)}
+         >
             <div className={styles.fileBlock}>
-               <p>PDF</p>
+               <p style={isDarkModeTrigger(1, false, isDarkMode)}>PDF</p>
                <Upload
                   fileList={pdfFileList}
                   onRemove={() => handleEdit('pdf', null)}
@@ -80,7 +85,7 @@ const StatsModal = ({ isModal, setIsModal }) => {
             </div>
 
             <div className={styles.fileBlock}>
-               <p>Excel</p>
+               <p style={isDarkModeTrigger(1, false, isDarkMode)}>Excel</p>
                <Upload
                   fileList={excelFileList}
                   onRemove={() => handleEdit('excel', null)}
@@ -97,8 +102,8 @@ const StatsModal = ({ isModal, setIsModal }) => {
             </div>
 
             <div className={styles.footer}>
-               <button onClick={() => setIsModal(false)}>Отмена</button>
-               <button onClick={() => handleSubmit()}>Отправить</button>
+               <button onClick={() => setIsModal(false)}>{t('buttons.cancel')}</button>
+               <button onClick={() => handleSubmit()}>{t('buttons.save')}</button>
             </div>
          </div>
       </ModalWrapper>

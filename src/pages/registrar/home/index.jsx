@@ -1,10 +1,12 @@
 import { Popover, Spin, Table } from 'antd';
 import {
+   ShowMessage,
    branchIndeficator,
    canceledClientsCounter,
    clientTypeTranslate,
    clientsCounter,
    getServiceName,
+   isAuthenticated,
    returnUnderstandableDate,
    timeLimitSeconds,
 } from '@/utils/utils';
@@ -15,7 +17,7 @@ import {
 } from '@/api/registrar/registrar_api';
 
 import { LoadingOutlined } from '@ant-design/icons';
-import MainLayout from '@/components/operator/UI/Layout';
+import MainLayout from '@/components/Main/Layout';
 import { ModalForm } from '@/components/registrar/ModalWindow/ModalForm';
 import { UserHeader } from '@/components/registrar/Navbar/Navbar-1-7';
 import alert from '@/assets/svg/1_6Alert.svg';
@@ -147,8 +149,8 @@ const RegistrarHome = () => {
          ),
          dataIndex: 'service',
          render: (value) => <p className={styles.columnData}>{getServiceName(value)}</p>,
-         filters: employee?.service?.length
-            ? employee?.service?.map((item) => ({
+         filters: serviceList?.length
+            ? serviceList?.map((item) => ({
                  text: getServiceName(item?.name),
                  value: item?.name,
               }))
@@ -315,10 +317,10 @@ const RegistrarHome = () => {
 
    const handleDeletetalon = async (talon) => {
       try {
-         await deleteTalon(talon.token);
+         await deleteTalon(talon.id);
          await refetch();
       } catch (error) {
-         console.log(error);
+         ShowMessage('error', error.message);
       }
    };
 
@@ -340,7 +342,7 @@ const RegistrarHome = () => {
    });
 
    useEffect(() => {
-      if (!JSON.parse(localStorage.getItem('token'))) {
+      if (!isAuthenticated()) {
          navigate('/');
       }
    }, []);
@@ -366,13 +368,7 @@ const RegistrarHome = () => {
    ) : (
       <MainLayout
          isSidebar={true}
-         Navbar={
-            <UserHeader
-               employee={employee}
-               searchValue={searchValue}
-               setSearchValue={setSearchValue}
-            />
-         }
+         Navbar={<UserHeader searchValue={searchValue} setSearchValue={setSearchValue} />}
       >
          <div className={styles.main}>
             <div className={styles.mainCardBlock}>

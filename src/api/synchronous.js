@@ -24,7 +24,6 @@ const synchronous = createSlice({
             default:
                state.isSuperAdmin = false;
          }
-         console.log('worked');
       },
    },
 });

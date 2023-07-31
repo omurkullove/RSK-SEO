@@ -1,12 +1,14 @@
+import { CustomLoading, transalteIdentifier } from '@/utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
 import CreateServiceModal from './CreateServiceModal';
-import { CustomLoading } from '@/utils/utils';
 import ServiceModal from './serviceModal';
 import { adminIdentifier } from '@/api/synchronous';
+import i18n from '@/i18next';
 import styles from './Service.module.scss';
 import { t } from 'i18next';
+import { useGetLanguageQuery } from '@/api/admin/language_api';
 import { useGetServiceQuery } from '@/api/admin/service_api';
 
 const Service = () => {
@@ -15,6 +17,7 @@ const Service = () => {
    const dispatch = useDispatch();
 
    const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
+   const { data: translates, isLoading: isTranslateLoading } = useGetLanguageQuery();
 
    const [isCreateServiceModal, setIsCreateServiceModal] = useState(false);
    const [isServiceModal, setIsServiceModal] = useState(false);
@@ -32,7 +35,7 @@ const Service = () => {
       dispatch(adminIdentifier());
    }, []);
 
-   return isServiceListLoading ? (
+   return isServiceListLoading && isTranslateLoading ? (
       <CustomLoading />
    ) : (
       <>
@@ -56,7 +59,8 @@ const Service = () => {
                            color: isDarkMode ? 'white' : '',
                         }}
                      >
-                        {item?.name}
+                        {transalteIdentifier(translates, item?.lang_name, i18n?.language) ??
+                           item?.name}
                      </div>
                   ))
                ) : (

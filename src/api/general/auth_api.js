@@ -30,7 +30,12 @@ export const auth_api = createApi({
       getProfileInfo: builder.query({
          query: () => '/employee/retrieve/',
       }),
+
+      shiftEmployee: builder.query({
+         query: () => '/employee/shift/',
+      }),
    }),
 });
 
-export const { useLoginEmployeeMutation, useGetProfileInfoQuery } = auth_api;
+export const { useLoginEmployeeMutation, useGetProfileInfoQuery, useLazyShiftEmployeeQuery } =
+   auth_api;

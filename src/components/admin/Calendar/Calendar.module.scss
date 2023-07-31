@@ -1,0 +1,65 @@
+@import '../../../assets/styles/variables.scss';
+.calendarBlock {
+   min-height: 50vh;
+   height: min-content;
+   min-height: 50vh;
+   display: flex;
+   flex-direction: column;
+   background-color: #fff;
+   border-radius: 20px;
+   -webkit-border-radius: 20px;
+   -moz-border-radius: 20px;
+   -ms-border-radius: 20px;
+   -o-border-radius: 20px;
+   padding-bottom: 20px;
+   gap: 50px;
+
+   .head {
+      border-bottom: 1px solid #d7d7d7;
+      p {
+         color: #2b2b2b;
+         font-family: $Inter;
+         font-size: 24px;
+         font-weight: 600;
+         line-height: 20px;
+         padding: 20px;
+      }
+   }
+
+   .body {
+      padding-inline: 20px;
+      display: flex;
+      height: 100%;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+      gap: 20px;
+      overflow-x: scroll;
+
+      .customDayPicker {
+         font-size: 18px;
+      }
+   }
+
+   .footer {
+      padding-inline: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+
+      button {
+         background-color: #1e4a89;
+         font-family: $Inter;
+         color: white;
+         border: none;
+         border-radius: 10px;
+         -webkit-border-radius: 10px;
+         -moz-border-radius: 10px;
+         -ms-border-radius: 10px;
+         -o-border-radius: 10px;
+         padding: 10px;
+         font-weight: 600;
+         cursor: pointer;
+      }
+   }
+}

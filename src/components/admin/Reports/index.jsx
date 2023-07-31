@@ -3,6 +3,8 @@ import {
    branchIndeficator,
    cityTransalte,
    employeeIdetificator,
+   isDarkModeTrigger,
+   returnUnderstandableDate,
 } from '@/utils/utils';
 import { useEffect, useState } from 'react';
 
@@ -11,26 +13,7 @@ import { t } from 'i18next';
 import { useGetBranchListQuery } from '@/api/registrar/registrar_api';
 import { useGetEmployeeListQuery } from '@/api/admin/employee_api';
 import { useGetReportQuery } from '@/api/admin/report_api';
-
-const reports = [
-   {
-      id: 1,
-      pdf_file: 'fake_uri_1.pdf',
-      exel_file: 'fake_uri_1.xlsx',
-      registration_date: '2023-07-23T12:34:56',
-      title: 'Report 1',
-      branch: 1,
-      user: 10,
-   },
-   {
-      id: 2,
-      pdf_file: 'fake_uri_2.pdf',
-      exel_file: 'fake_uri_2.xlsx',
-      registration_date: '2023-07-24T10:20:30',
-      branch: 2,
-      user: 11,
-   },
-];
+import { useSelector } from 'react-redux';
 
 const Reports = () => {
    const { data: reports, isLoading: isReportsLoading } = useGetReportQuery();
@@ -43,12 +26,14 @@ const Reports = () => {
 
    const [currentBranch, setCurrentBranch] = useState('all');
 
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+
    const handleFilter = (branchId) => {
       setCurrentBranch(branchId);
       if (branchId === 'all') {
          setFilteredReports(reports);
       } else {
-         setFilteredReports(reports.filter((item) => item.branch === branchId));
+         setFilteredReports(reports.filter((item) => item.branch.id === branchId));
       }
    };
 
@@ -80,15 +65,23 @@ const Reports = () => {
       setFilteredReports(reports);
    }, [reports]);
 
+   const fileCutter = (url) => {
+      if (url) {
+         const result = url.substring(url.lastIndexOf('/media/') + '/media/'.length);
+         return result;
+      }
+      return;
+   };
+
    return (
       <div className={styles.main}>
-         <h1>Отчеты</h1>
+         <h1>{t('admin.reports.reports')}</h1>
          {isReportsLoading && isBranchListLoading ? (
             <CustomLoading />
          ) : reports?.length ? (
             <>
                <input
-                  placeholder='Поиск по отчетам...'
+                  placeholder={t('admin.reports.reports_search')}
                   onChange={(e) => handleSearch(e.target.value)}
                />
                <div className={styles.buttonBlock}>
@@ -96,7 +89,7 @@ const Reports = () => {
                      onClick={() => handleFilter('all')}
                      style={{ backgroundColor: currentBranch === 'all' ? '#2f78df' : '' }}
                   >
-                     Все
+                     {t('admin.reports.all')}
                   </button>
                   {branchList?.map((item) => (
                      <button
@@ -108,37 +101,75 @@ const Reports = () => {
                <div className={styles.reportsList}>
                   {filteredReports?.map((report) => (
                      <>
-                        <div className={styles.reportItem}>
+                        <div
+                           key={report?.id}
+                           className={styles.reportItem}
+                           style={isDarkModeTrigger(1, true, isDarkMode)}
+                        >
                            <div className={styles.title}>
-                              {branchIndeficator(branchList, report.branch)}
+                              {`${report.branch.city}, ${report.branch.address}`}
                            </div>
                            <div className={styles.info}>
                               <div className={styles.infoItem}>
                                  <span className={styles.label}>ID:</span>
-                                 <span className={styles.value}>{report.id}</span>
-                              </div>
-                              <div className={styles.infoItem}>
-                                 <span className={styles.label}>PDF file:</span>
-                                 <span className={styles.value}>{report.pdf_file}</span>
-                              </div>
-                              <div className={styles.infoItem}>
-                                 <span className={styles.label}>Excel file:</span>
-                                 <span className={styles.value}>{report.exel_file}</span>
-                              </div>
-                              <div className={styles.infoItem}>
-                                 <span className={styles.label}>Registration date:</span>
-                                 <span className={styles.value}>{report.registration_date}</span>
-                              </div>
-                              <div className={styles.infoItem}>
-                                 <span className={styles.label}>Branch:</span>
-                                 <span className={styles.value}>
-                                    {branchIndeficator(branchList, report.branch)}
+                                 <span
+                                    className={styles.value}
+                                    style={isDarkModeTrigger(1, false, isDarkMode)}
+                                 >
+                                    {report.id}
                                  </span>
                               </div>
                               <div className={styles.infoItem}>
-                                 <span className={styles.label}>User:</span>
-                                 <span className={styles.value}>
-                                    {employeeIdetificator(employeeList, report.user)}
+                                 <span className={styles.label}>PDF:</span>
+                                 <a
+                                    href={report.pdf_file}
+                                    target='_blank'
+                                    className={styles.value}
+                                    style={isDarkModeTrigger(1, false, isDarkMode)}
+                                 >
+                                    {fileCutter(report.pdf_file)}
+                                 </a>
+                              </div>
+                              <div className={styles.infoItem}>
+                                 <span className={styles.label}>Excel:</span>
+                                 <a
+                                    href={report.exel_file}
+                                    target='_blank'
+                                    className={styles.value}
+                                    style={isDarkModeTrigger(1, false, isDarkMode)}
+                                 >
+                                    {fileCutter(report.exel_file)}
+                                 </a>
+                              </div>
+                              <div className={styles.infoItem}>
+                                 <span className={styles.label}>
+                                    {t('admin.reports.registered_at')}:
+                                 </span>
+                                 <span
+                                    className={styles.value}
+                                    style={isDarkModeTrigger(1, false, isDarkMode)}
+                                 >
+                                    {returnUnderstandableDate(report?.registration_date, false)}
+                                 </span>
+                              </div>
+                              <div className={styles.infoItem}>
+                                 <span className={styles.label}>{t('admin.reports.branch')}:</span>
+                                 <span
+                                    className={styles.value}
+                                    style={isDarkModeTrigger(1, false, isDarkMode)}
+                                 >
+                                    {`${report.branch.city}, ${report.branch.address}`}
+                                 </span>
+                              </div>
+                              <div className={styles.infoItem}>
+                                 <span className={styles.label}>
+                                    {t('admin.reports.employee')}:
+                                 </span>
+                                 <span
+                                    className={styles.value}
+                                    style={isDarkModeTrigger(1, false, isDarkMode)}
+                                 >
+                                    {report?.author}
                                  </span>
                               </div>
                            </div>

@@ -1,9 +1,10 @@
-import { CustomLoading, ShowMessage } from '@/utils/utils';
+import { CustomLoading, ShowMessage, isAuthenticated } from '@/utils/utils';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CalendarMain from '@/components/admin/Calendar';
 import { LoadingOutlined } from '@ant-design/icons';
-import MainLayout from '@/components/operator/UI/Layout';
+import MainLayout from '@/components/Main/Layout';
 import Navbar from '@/components/admin/Navbar';
 import { Spin } from 'antd';
 import { adminIdentifier } from '@/api/synchronous';
@@ -22,7 +23,8 @@ const LanguagesMain = lazy(() => import('@/components/admin/languagesMain'));
 const Window = lazy(() => import('@/components/admin/Window'));
 const Branch = lazy(() => import('@/components/admin/Branch'));
 const Reports = lazy(() => import('@/components/admin/Reports'));
-const Television = lazy(() => import('@/components/admin/Television'));
+const Television = lazy(() => import('@/components/admin/TV'));
+const DataBase = lazy(() => import('@/components/admin/DataBase'));
 
 const HomePage = () => {
    const dispatch = useDispatch();
@@ -61,7 +63,7 @@ const HomePage = () => {
       {
          title: t('admin.cards.ViewActions'),
          id: 4,
-         isSuperAdminView: !isSuperAdmin,
+         isSuperAdminView: isSuperAdmin,
       },
       {
          title: t('admin.cards.Stats'),
@@ -81,7 +83,7 @@ const HomePage = () => {
       {
          title: t('admin.cards.createWindow'),
          id: 8,
-         isSuperAdminView: isSuperAdmin,
+         isSuperAdminView: !isSuperAdmin,
       },
       {
          title: t('buttons.createBranch'),
@@ -94,16 +96,25 @@ const HomePage = () => {
          isSuperAdminView: isSuperAdmin,
       },
       {
-         title: 'Настроить телевизор',
+         title: t('admin.cards.ad'),
+
          id: 11,
+         isSuperAdminView: isSuperAdmin,
+      },
+      {
+         title: t('admin.cards.db'),
+         id: 12,
+         isSuperAdminView: isSuperAdmin,
+      },
+      {
+         title: t('admin.cards.calendar'),
+         id: 13,
          isSuperAdminView: isSuperAdmin,
       },
    ];
 
    useEffect(() => {
-      if (JSON.parse(localStorage.getItem('token'))) {
-         ShowMessage('success', 'Вы успешно зашли на аккаунт');
-      } else {
+      if (!isAuthenticated()) {
          navigate('/');
       }
    }, []);
@@ -127,7 +138,7 @@ const HomePage = () => {
          <h4>{t('dataLoading')}</h4>
       </div>
    ) : (
-      <MainLayout isSidebar={true} Navbar={<Navbar employee={employee} />}>
+      <MainLayout isSidebar={true} Navbar={<Navbar />}>
          <div className={styles.main}>
             <div className={styles.cardMainBlock}>
                {CARD_ITEMS.map((item) => (
@@ -166,8 +177,8 @@ const HomePage = () => {
                   {currentCard === 9 && <Branch />}
                   {currentCard === 10 && <Reports />}
                   {currentCard === 11 && <Television />}
-                  {currentCard === 12 && <EmployeeTable />}
-                  {currentCard === 13 && <Queue />}
+                  {currentCard === 12 && <DataBase />}
+                  {currentCard === 13 && <CalendarMain />}
                </Suspense>
             </div>
          </div>

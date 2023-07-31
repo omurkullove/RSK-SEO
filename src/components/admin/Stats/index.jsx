@@ -51,7 +51,9 @@ const Stats = () => {
                   {t('admin.statsMain.start')}:
                   <span>
                      <DatePicker
-                        style={{ background: 'transparent' }}
+                        style={{
+                           background: 'transparent',
+                        }}
                         onChange={(_, value) => onChange('start_time', value)}
                      />
                   </span>

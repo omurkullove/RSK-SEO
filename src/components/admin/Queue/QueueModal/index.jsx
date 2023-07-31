@@ -103,8 +103,6 @@ const QueueModal = ({ isQueModal, setIsQueModal, queue }) => {
 
    const branchOptions = MainBranchOptions(branchList, isDarkMode);
 
-   console.log(branchList);
-
    return (
       <ModalWrapper isOpen={isQueModal} setIsOpen={setIsQueModal}>
          <div

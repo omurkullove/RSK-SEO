@@ -8,6 +8,29 @@
 
 .column {
    width: 48%;
+
+   .filter {
+      display: flex;
+      justify-content: space-evenly;
+      padding: 20px;
+      margin: 10px;
+
+      button {
+         padding: 10px 20px;
+         margin: 0 5px;
+         font-size: 16px;
+         background-color: #1e4a89;
+         color: white;
+         border: none;
+         border-radius: 5px;
+         cursor: pointer;
+         transition: background-color 0.3s ease;
+
+         &:hover {
+            background-color: #2862b4;
+         }
+      }
+   }
 }
 
 .actionCard {

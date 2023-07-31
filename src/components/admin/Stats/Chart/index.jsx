@@ -11,15 +11,16 @@ import {
    XAxis,
    YAxis,
 } from 'recharts';
+import { isDarkModeTrigger, monthTranslate } from '@/utils/utils';
 
 import ReactQuill from 'react-quill';
 import StatsModal from '../StatsModal';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { monthTranslate } from '@/utils/utils';
 import styles from '../Stats.module.scss';
 import { t } from 'i18next';
 import { useGetEmployeeListQuery } from '@/api/admin/employee_api';
+import { useSelector } from 'react-redux';
 import { useState } from 'react';
 
 const data = [
@@ -143,6 +144,8 @@ const Chart = ({ stats }) => {
 
    const [isModal, setIsModal] = useState(false);
 
+   const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+
    const saveAsPDF = async () => {
       const chartBlock = document.getElementById('chartBlock');
       const textBlock = document.getElementById('textBlock');
@@ -206,7 +209,7 @@ const Chart = ({ stats }) => {
       <>
          <div className={styles.chartBlock}>
             <div className={styles.childBlock} id='chartBlock'>
-               <h1>{t('chart.talons')}:</h1>
+               <h1 style={isDarkModeTrigger(1, false, isDarkMode)}>{t('chart.talons')}:</h1>
                <LineChart data={stats?.month} width={1200} height={400}>
                   <CartesianGrid strokeDasharray='3 3' />
                   <XAxis
@@ -241,24 +244,32 @@ const Chart = ({ stats }) => {
                   />
                </LineChart>
                <div className={styles.diagramma}>
-                  <h1>{t('chart.employee')}:</h1>
-                  <BarChart width={1200} height={400} data={demoEmployeeList}>
+                  <h1 style={isDarkModeTrigger(1, false, isDarkMode)}>{t('chart.employee')}:</h1>
+                  <BarChart width={1200} height={400} data={editedEmployeeData}>
                      <CartesianGrid strokeDasharray='3 3' />
                      <XAxis dataKey='name' />
                      <YAxis />
                      <Tooltip />
                      <Legend />
-                     <Bar dataKey='rating' stackId='a' fill='lightblue' />
+                     <Bar
+                        dataKey='rating'
+                        stackId='a'
+                        fill={isDarkMode ? '#455E83' : 'lightblue'}
+                     />
                   </BarChart>
                </div>
             </div>
             {isModal && <StatsModal isModal={isModal} setIsModal={setIsModal} />}
             <center>
-               <h1>{t('chart.report')}:</h1>
+               <h1 style={isDarkModeTrigger(1, false, isDarkMode)}>{t('chart.report')}:</h1>
             </center>
             <div className={styles.textareaBlock}>
                <ReactQuill
-                  style={{ height: '100%', minHeight: '500px' }}
+                  style={{
+                     ...isDarkModeTrigger(1, false, isDarkMode),
+                     height: '100%',
+                     minHeight: '500px',
+                  }}
                   key={isTool ? 'toolbar-on' : 'toolbar-off'}
                   value={htmlContent}
                   id='textBlock'

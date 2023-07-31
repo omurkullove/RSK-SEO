@@ -53,7 +53,8 @@
       "queue": "Всего",
       "date": "Дата",
       "window": "Окно",
-      "searchTalon": "Поиск по номеру талона"
+      "searchTalon": "Поиск по номеру талона",
+      "admin": "Администратор"
    },
    "card": {
       "title1": "Клиентов за день",
@@ -113,7 +114,10 @@
          "CreateDoc": "Создать документ",
          "docTranslate": "Переводы для документов",
          "createWindow": "Создать окно",
-         "reports": "Отчеты"
+         "reports": "Отчеты",
+         "db": "База данных",
+         "ad": "Настроить рекламу",
+         "calendar": "Календарь не рабочих дней"
       },
       "table": {
          "FullName": "ФИО",
@@ -193,13 +197,24 @@
          "address": "Адрес",
          "service": "Услуги",
          "work_time_start": "Начало рабочего дня",
-         "work_time_end": "Конец рабочего дня"
+         "work_time_end": "Конец рабочего дня",
+         "lang_name": "Перевод"
+      },
+      "reports": {
+         "branch": "Филиал",
+         "registered_at": "Дата регитсрации",
+         "employee": "Сотрудник",
+         "reports_search": "Поиск по отчетам",
+         "reports": "Отчеты",
+         "all": "Все"
       },
       "actions": {
          "actionSearch": "Поиск действий",
          "allBranches": "Все филиалы",
          "branch": "Филиал",
-         "employee": "Сотрудник"
+         "employee": "Сотрудник",
+         "newFirst": "Сначала новые",
+         "oldFirst": "Сначала старые"
       },
       "statsMain": {
          "period": "Период",
@@ -213,6 +228,23 @@
          "branchs": "Филиалы",
          "queues": "Очереди",
          "services": "Услуги"
+      },
+      "db": {
+         "db": "Баз данных",
+         "copyToDb": "Копирование базы данных",
+         "restoreDb": "Восстановление базы данных"
+      },
+      "tv": {
+         "settings": "Настройки Рекламы",
+         "ad": "Реклама",
+         "runnigLine": "Бегущая строка",
+         "ad_title": "Загаловок",
+         "text": "Текст"
+      },
+      "calendar": {
+         "calendar": "Календарь",
+         "addMode": "Режим добавления",
+         "deleteMode": "Режим удаления"
       }
    },
    "branch": {
@@ -242,7 +274,8 @@
       "open": "Открыть",
       "edit": "Изменить",
       "transfer": "Перенести",
-      "cancelIt": "Отменить талон"
+      "cancelIt": "Отменить талон",
+      "restore": "Восстановить"
    },
    "status": {
       "active": "Активный",
@@ -285,7 +318,28 @@
       "employee": "Сотрудники",
       "report": "Отчеты",
       "saveAsPdf": "Сохранить в PDF",
-      "saveAsExel": "Сохранить в Exel",
+      "saveAsExel": "Сохранить в Excel",
       "submitToDB": "Отправить в базу данных"
-   }
+   },
+   "idHint": "Данное поле нельзя изменить.",
+   "stingAny": "Строка, любое значение.",
+   "positionKeyWords": "Ключевое значение: operator, registrator, admin",
+   "dateAny": "Время, любое значение.",
+   "dataKeyText": "Дата и время: ДД.ММ ЧЧ:мм",
+   "statusKeyWord": "Ключевое значение: активный, неактивный",
+   "selectKeyWord": "Выбор опций: любое из доступных",
+   "booleanKey": "Логическое значение: true, false",
+   "numberAny": "Число, любое значение",
+
+   "positions": {
+      "admin": "Админ",
+      "operator": "Оператор",
+      "registrator": "Регистратор",
+      "super_admin": "Супер админ"
+   },
+
+   "backup": "Резервная копия",
+
+   "shiftOn": "Уйти на перерыв",
+   "shiftOff": "Вернуться"
 }

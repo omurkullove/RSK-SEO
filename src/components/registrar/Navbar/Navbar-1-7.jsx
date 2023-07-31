@@ -4,13 +4,20 @@ import darkModeLogo from '@/assets/svg/darkModeLogo.svg';
 import logo from '@/assets/png/logo.png';
 import search from '@/assets/png/search.png';
 import styles from '@/assets/styles/registrar/Header.module.scss';
+import { useEffect } from 'react';
+import { useGetProfileInfoQuery } from '@/api/general/auth_api';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-export const UserHeader = ({ employee, searchValue, setSearchValue }) => {
+export const UserHeader = ({ searchValue, setSearchValue }) => {
    const { t, i18n } = useTranslation();
 
    const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+   const { data: employee, refetch } = useGetProfileInfoQuery();
+
+   useEffect(() => {
+      refetch();
+   }, []);
 
    return (
       <div className={styles.user__header} style={{ backgroundColor: isDarkMode && '#455E83' }}>

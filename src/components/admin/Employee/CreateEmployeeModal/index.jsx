@@ -1,14 +1,8 @@
-import { Button, Checkbox, Select, Upload } from 'antd';
-import {
-   MainBranchOptions,
-   getServiceName,
-   isDarkModeTrigger,
-   selectModalStyles,
-} from '@/utils/utils';
+import { Checkbox, Select } from 'antd';
+import { MainBranchOptions, getServiceName, selectModalStyles } from '@/utils/utils';
 import { useCreateEmployeeMutation, useLazyGetEmployeeListQuery } from '@/api/admin/employee_api';
 
 import ModalWrapper from '../../ModalWrapper';
-import { UploadOutlined } from '@ant-design/icons';
 import styles from '@/assets/styles/admin/AllModal.module.scss';
 import { t } from 'i18next';
 import { useSelector } from 'react-redux';
@@ -25,14 +19,8 @@ const CreateEmployeeModal = ({
 
    const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
-   const [pp, setpp] = useState();
-
    const handleEdit = (name, value) => {
       const service = name === 'service' ? [...value] : value;
-
-      if (name === 'image') {
-         setpp(value);
-      }
 
       setEmployee((prev) => ({
          ...prev,
@@ -61,18 +49,43 @@ const CreateEmployeeModal = ({
 
    const windowOptions = windowList?.map((item) => ({
       label: <p className={isDarkMode ? 'dark_modeOption' : ''}>{item.number}</p>,
-      value: item.id,
+      value: item?.id,
    }));
+   const positionOptions = [
+      {
+         label: t('positions.super_admin'),
+         value: 'super_admin',
+         key: 1,
+      },
+      {
+         label: t('positions.admin'),
+         value: 'admin',
+         key: 2,
+      },
+      {
+         label: t('positions.registrator'),
+         value: 'registrator',
+         key: 3,
+      },
+      {
+         label: t('positions.operator'),
+         value: 'operator',
+         key: 4,
+      },
+   ];
 
-   const fileList = pp
-      ? [
-           {
-              ...pp,
-              thumbUrl: URL.createObjectURL(pp),
-              name: pp?.name,
-           },
-        ]
-      : [];
+   const statusOptions = [
+      {
+         label: t('status.active'),
+         value: 'active',
+         key: 1,
+      },
+      {
+         label: t('status.noActive'),
+         value: 'no active',
+         key: 2,
+      },
+   ];
 
    return (
       <ModalWrapper isOpen={isCreateEmpModal} setIsOpen={setIsCreateEmpModal}>
@@ -157,15 +170,14 @@ const CreateEmployeeModal = ({
                <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='position'>
                   {t('admin.employeeModal.position')}
                </label>
-               <input
-                  onChange={(e) => handleEdit('position', e.target.value)}
-                  name='position'
-                  type='text'
-                  id='position'
+               <Select
+                  options={positionOptions}
+                  dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                  style={{ ...selectModalStyles, marginTop: 0 }}
+                  bordered={false}
                   placeholder={t('admin.employeeModal.position')}
-                  required
+                  onChange={(value) => handleEdit('position', value)}
                />
-
                <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='shift'>
                   {t('admin.employeeModal.shift')}
                </label>
@@ -193,14 +205,15 @@ const CreateEmployeeModal = ({
                <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='status'>
                   {t('admin.employeeModal.status')}
                </label>
-               <input
-                  onChange={(e) => handleEdit('status', e.target.value)}
-                  name='status'
-                  type='text'
+
+               <Select
                   id='status'
+                  options={statusOptions}
+                  dropdownStyle={{ backgroundColor: isDarkMode ? '#455E83' : '' }}
+                  style={{ ...selectModalStyles, marginTop: 0 }}
+                  bordered={false}
                   placeholder={t('admin.employeeModal.status')}
-                  maxLength={255}
-                  minLength={1}
+                  onChange={(value) => handleEdit('status', value)}
                />
 
                <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='max_transport'>
@@ -277,26 +290,6 @@ const CreateEmployeeModal = ({
                   id='last_login'
                   placeholder={t('admin.employeeModal.last_login')}
                />
-               <center style={{ display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ color: isDarkMode ? 'white' : '' }} htmlFor='image'>
-                     Загрузите фото
-                  </label>
-                  <Upload
-                     fileList={fileList}
-                     onChange={(info) => handleEdit('image', info.fileList[0].originFileObj)}
-                     customRequest={() => {}}
-                     id='image'
-                     listType='picture'
-                     maxCount={1}
-                  >
-                     <Button
-                        icon={<UploadOutlined />}
-                        style={isDarkModeTrigger(2, true, isDarkMode)}
-                     >
-                        Upload
-                     </Button>
-                  </Upload>
-               </center>
 
                <div className={styles.footer}>
                   <button onClick={() => setIsCreateEmpModal(false)}>{t('buttons.cancel')}</button>

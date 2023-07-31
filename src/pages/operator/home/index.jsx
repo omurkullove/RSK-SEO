@@ -8,6 +8,8 @@ import {
    clientsCounter,
    formatTime,
    getServiceName,
+   handleRequestResult,
+   isAuthenticated,
    returnUnderstandableDate,
    timeLimitSeconds,
 } from '@/utils/utils';
@@ -24,7 +26,7 @@ import {
 
 import { LoadingOutlined } from '@ant-design/icons';
 // Components & modules
-import MainLayout from '@/components/operator/UI/Layout';
+import MainLayout from '@/components/Main/Layout';
 import Modal from '@/components/operator/Modal/Modal';
 import Navbar from '@/components/operator/UI/Navbar';
 import alert from '@/assets/svg/1_6Alert.svg';
@@ -44,16 +46,33 @@ import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
    const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
-   const { data, isLoading: getTalonsLoading, refetch } = useGetTalonQuery();
    const [transferTalonToEnd] = useLazyTransferTalonToEndQuery();
    const [transferTalonToStart] = useLazyTransferTalonToStartQuery();
    const [serviceEnd] = useLazyServiceEndQuery();
    const [serviceStart] = useLazyServiceStartQuery();
    const [deleteTalon] = useLazyRemoveTalonQuery();
 
+   const {
+      data,
+      isLoading: getTalonsLoading,
+      refetch,
+      isSuccess: isTalonsSuccess,
+      error: talonError,
+   } = useGetTalonQuery(null, { pollingInterval: 60000 });
+   const {
+      data: employee,
+      isLoading: getProfileInfoLoading,
+      refetch: profileInforefetch,
+   } = useGetProfileInfoQuery();
+   const {
+      data: serviceList,
+      isLoading: isServiceListLoading,
+
+      isSuccess: isServiceSuccess,
+      error: serviceError,
+   } = useGetServiceQuery();
+
    const [getBranchQueues, { data: queueBranch }] = useLazyGetBranchQueueQuery();
-   const { data: employee, isLoading: getProfileInfoLoading } = useGetProfileInfoQuery();
-   const { data: serviceList, isLoading: isServiceListLoading } = useGetServiceQuery();
 
    const [talons, setTalons] = useState(data?.talons);
    const [clients_per_day, SetClients_per_day] = useState(data?.talons);
@@ -63,6 +82,7 @@ const HomePage = () => {
       setTalons(data?.talons);
       SetClients_per_day(data?.clients_per_day);
       setCurrentTalon(data?.talons[0]);
+      profileInforefetch();
    }, [data]);
 
    // Vanilla states
@@ -299,7 +319,7 @@ const HomePage = () => {
          await deleteTalon(talon.token);
          await refetch();
       } catch (error) {
-         console.log(error);
+         ShowMessage('error', error.message);
       }
    };
 
@@ -361,7 +381,7 @@ const HomePage = () => {
    // Effects
    // Fetch data
    useEffect(() => {
-      if (!JSON.parse(localStorage.getItem('token'))) {
+      if (!isAuthenticated()) {
          navigate('/');
       }
    }, []);
@@ -373,7 +393,6 @@ const HomePage = () => {
       }
    }, []);
 
-   // Timer indicator
    useEffect(() => {
       let interval = null;
 
@@ -403,12 +422,7 @@ const HomePage = () => {
          <h4>{t('dataLoading')}</h4>
       </div>
    ) : (
-      <MainLayout
-         isSidebar={true}
-         Navbar={
-            <Navbar employee={{ ...employee, image: `http://0.0.0.0:8000/${employee?.image}` }} />
-         }
-      >
+      <MainLayout isSidebar={true} Navbar={<Navbar />}>
          <div className={styles.main}>
             <div className={styles.mainCardBlock}>
                <div className={styles.cardBlock}>

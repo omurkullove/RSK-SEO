@@ -21,6 +21,7 @@ export const CustomLoading = () => {
             flexDirection: 'column',
             gap: '20px',
             background: 'transparent',
+            color: 'lightgray',
          }}
       >
          <Spin indicator={antIcon} size='50' />
@@ -118,7 +119,7 @@ export const returnEmployee = (email, list) => {
       const currentEmployee = list.find((item) => item.email === email);
       return currentEmployee;
    }
-   console.log('Данные были переданы не корректно');
+   return null;
 };
 
 export const selectModalStyles = {
@@ -178,7 +179,7 @@ export const branchIndeficator = (branchList, itemBranch) => {
 
 export const employeeIdetificator = (employeeList, id) => {
    const employee = employeeList?.find((item) => item.id === id);
-   return employee?.username;
+   return `${employee?.username}, ${employee?.email}`;
 };
 
 export const cityTransalte = (city) => {
@@ -348,4 +349,56 @@ export const MainDocumentOptions = (documentList, isDarkMode) => {
    }));
 
    return filteredDocuments;
+};
+
+export const isAuthenticated = () => {
+   const token = localStorage.getItem('token');
+   return !!token;
+};
+
+export const transalteIdentifier = (langueageList, translateId, i18n) => {
+   const translatedWords = [];
+   switch (i18n) {
+      case 'ru':
+         translateId?.forEach((id) => {
+            const translation = langueageList?.find((item) => item.id === id && item.lang === 'ru');
+            if (translation) {
+               translatedWords.push(translation);
+            }
+         });
+         return translatedWords[0]?.text;
+      case 'en':
+         translateId?.forEach((id) => {
+            const translation = langueageList?.find((item) => item.id === id && item.lang === 'en');
+            if (translation) {
+               translatedWords.push(translation);
+            }
+         });
+         return translatedWords[0]?.text;
+      case 'kg':
+         translateId?.forEach((id) => {
+            const translation = langueageList?.find((item) => item.id === id && item.lang === 'ky');
+            if (translation) {
+               translatedWords.push(translation);
+            }
+         });
+         return translatedWords[0]?.text;
+
+      default:
+         return null;
+   }
+};
+
+export const handleRequestResult = (requests) => {
+   requests.forEach((request) => {
+      const { loading, success, error, successText, errorText } = request;
+
+      if (!loading) {
+         if (success) {
+            ShowMessage('success', successText);
+         } else if (error) {
+            ShowMessage('error', `${errorText} - ${error.originalStatus}`);
+         }
+      }
+   });
 };

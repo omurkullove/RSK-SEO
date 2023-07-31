@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router';
 
 import AuthPage from '@/pages/auth';
+import NotFound404 from '@/pages/NotFound404/NotFound404';
 import React from 'react';
 import RootAdmin from '@/pages/admin';
 import RootOpertor from '@/pages/operator';
@@ -13,7 +14,7 @@ const MainRouter = () => {
          <Route path='/operator/*' element={<RootOpertor />} />
          <Route path='/registrar/*' element={<RootRegistrar />} />
          <Route path='/admin/*' element={<RootAdmin />} />
-         <Route path='*' element={<p>404 not found</p>} />
+         <Route path='*' element={<NotFound404 />} />
       </Routes>
    );
 };

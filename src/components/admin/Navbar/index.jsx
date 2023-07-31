@@ -5,11 +5,13 @@ import { UserOutlined } from '@ant-design/icons';
 import darkModeLogo from '@/assets/svg/darkModeLogo.svg';
 import navLogo from '@/assets/svg/navLogo.svg';
 import styles from '@/assets/styles/admin/Navbar.module.scss';
+import { useGetProfileInfoQuery } from '@/api/general/auth_api';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-const Navbar = ({ employee }) => {
+const Navbar = ({}) => {
    const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
+   const { data: employee, refetch } = useGetProfileInfoQuery();
 
    const { t, i18n } = useTranslation();
    const [date, setDate] = useState('');
@@ -20,6 +22,7 @@ const Navbar = ({ employee }) => {
    };
    useEffect(() => {
       getDate();
+      refetch();
    }, []);
 
    return (
@@ -29,19 +32,10 @@ const Navbar = ({ employee }) => {
                <img src={isDarkMode ? darkModeLogo : navLogo} alt='logo' />
             </div>
             <div className={styles.avatarBlock}>
-               <Avatar
-                  size={45}
-                  icon={
-                     employee?.image ? (
-                        <img src={`http://0.0.0.0:8000/${employee?.image}`} />
-                     ) : (
-                        <UserOutlined />
-                     )
-                  }
-               />
+               <Avatar size={45} icon={<UserOutlined />} />
                <div className={styles.avatarChildBlock}>
                   <p style={{ color: isDarkMode && 'white' }}>{employee?.username}</p>
-                  <p style={{ color: isDarkMode && '#92BFFF' }}>Админ</p>
+                  <p style={{ color: isDarkMode && '#92BFFF' }}>{t('navbar.admin')}</p>
                </div>
             </div>
          </div>

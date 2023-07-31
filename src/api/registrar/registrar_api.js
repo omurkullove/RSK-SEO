@@ -36,7 +36,7 @@ export const registrar_api = createApi({
 
       deleteTalon: builder.query({
          query: (id) => ({
-            url: `/talon/remove/${id}/`,
+            url: `/talon/registrator/remove/${id}/`,
          }),
          providesTags: ['talon'],
       }),

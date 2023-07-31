@@ -86,7 +86,7 @@ const BranchModal = ({ isModal, setIsModal, branch, serviceList, languageList })
       },
    ];
 
-   const languageOptions = languageList.map((item) => ({
+   const languageOptions = languageList?.map((item) => ({
       key: item.id,
       label: <p style={isDarkModeTrigger(3, false, isDarkMode)}>{item.text}</p>,
       value: item.id,
@@ -133,7 +133,7 @@ const BranchModal = ({ isModal, setIsModal, branch, serviceList, languageList })
                <p style={isDarkModeTrigger(1, false, isDarkMode)}>Филиал</p>
             </div>
             <form className={styles.body} onSubmit={handleSave} action='submit'>
-               {TBody.map((item) => (
+               {TBody?.map((item) => (
                   <div className={styles.line} key={item.id}>
                      <p style={isDarkModeTrigger(3, false, isDarkMode)}>
                         {t(`admin.branchMain.${item?.name}`)}

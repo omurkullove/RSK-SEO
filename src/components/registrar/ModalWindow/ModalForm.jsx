@@ -18,10 +18,17 @@ export const ModalForm = ({ active, setActive, branch, serviceList, refetch }) =
    const [talon, setTalon] = useState();
 
    const handleEdit = (name, value) => {
-      setTalon((prev) => ({
-         ...prev,
-         [name]: value,
-      }));
+      if (!value) {
+         setTalon((prev) => ({
+            ...prev,
+            [name]: null,
+         }));
+      } else {
+         setTalon((prev) => ({
+            ...prev,
+            [name]: value,
+         }));
+      }
    };
    const generatePrintContent = (service, clientType, date, branch) => {
       return `

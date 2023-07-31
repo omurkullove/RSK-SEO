@@ -17,18 +17,21 @@ import { useGetEmployeeListQuery } from '@/api/admin/employee_api';
 import { useSelector } from 'react-redux';
 
 const Actions = () => {
-   const { data: actions, isLoading: isActionsLoadinng } = useGetActionQuery();
+   const { data: actions, isLoading: isActionsLoadinng, refetch } = useGetActionQuery();
    const { data: branchList, isLoading: isBranchListLoading } = useGetBranchQuery();
-   const { employeeList, isLoading: isEmployeeListLoading } = useGetEmployeeListQuery();
+   const { data: employeeList, isLoading: isEmployeeListLoading } = useGetEmployeeListQuery();
    const [deleteActions] = useRemoveActionMutation();
 
    const [searchActions, setSearchActions] = useState([]);
    const [currentBranch, setCurrentBranch] = useState('all');
 
+   const [actionTime, setActionTime] = useState('old');
+
    const isDarkMode = useSelector((state) => state.toggleDarkMode.isDarkMode);
 
    const handleDelete = async (id) => {
       await deleteActions(id);
+      await refetch();
    };
 
    const handleSearch = (value) => {
@@ -65,15 +68,44 @@ const Actions = () => {
       }
    };
 
+   const handleNewActions = () => {
+      setActionTime('new');
+      const sortedActions = [...searchActions].sort((a, b) => {
+         return moment(b.registerd_time).diff(moment(a.registerd_time));
+      });
+      setSearchActions(sortedActions);
+   };
+   const handleOldActions = () => {
+      setActionTime('old');
+      const sortedActions = [...searchActions].sort((a, b) => {
+         return moment(a.registerd_time).diff(moment(b.registerd_time));
+      });
+      setSearchActions(sortedActions);
+   };
+
    useEffect(() => {
-      setSearchActions(actions?.reverse());
+      setSearchActions(actions);
    }, [actions]);
 
-   return isActionsLoadinng ? (
+   return isActionsLoadinng && isBranchListLoading && isEmployeeListLoading ? (
       <CustomLoading />
    ) : (
       <div className={styles.actionsContainer}>
          <div className={styles.column}>
+            <div className={styles.filter}>
+               <button
+                  onClick={handleNewActions}
+                  style={{ backgroundColor: actionTime === 'new' ? '#2f78df' : '' }}
+               >
+                  {t('admin.actions.newFirst')}
+               </button>
+               <button
+                  onClick={handleOldActions}
+                  style={{ backgroundColor: actionTime === 'old' ? '#2f78df' : '' }}
+               >
+                  {t('admin.actions.oldFirst')}
+               </button>
+            </div>
             {actions?.length ? (
                searchActions?.length ? (
                   searchActions?.map((action) => (

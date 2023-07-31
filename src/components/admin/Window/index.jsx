@@ -36,7 +36,9 @@ const Window = () => {
       ),
       value: item?.id,
    }));
-   const filterOptions = [...createOptions, { label: t('all'), value: 'all' }];
+   const filterOptions = createOptions?.length
+      ? [...createOptions, { label: t('all'), value: 'all' }]
+      : [{ label: t('all'), value: 'all' }];
 
    const [window, setWindow] = useState();
    const [searchWindow, setSearchWindow] = useState([]);
@@ -168,14 +170,14 @@ const Window = () => {
             <Select
                dropdownStyle={isDarkModeTrigger(2, true, isDarkMode)}
                options={filterOptions}
-               defaultValue={filterOptions[filterOptions.length - 1]}
+               defaultValue={filterOptions[filterOptions?.length - 1]}
                style={{ width: '180px' }}
                onChange={(value) => handleFilter(value)}
             />
          </center>
-         {windowList.length ? (
+         {windowList?.length ? (
             <div className={styles.windowList}>
-               {searchWindow.length ? (
+               {searchWindow?.length ? (
                   searchWindow?.map((item) => (
                      <div
                         key={item?.id}
@@ -225,7 +227,7 @@ const Window = () => {
                )}
             </div>
          ) : (
-            <h1>{t('noData')}</h1>
+            <h1 style={{ margin: 50 }}>{t('noData')}</h1>
          )}
       </div>
    );
