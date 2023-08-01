@@ -4,9 +4,9 @@ import { LoadingOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { t } from 'i18next';
 
-export const API = 'https://rskseo.pythonanywhere.com';
+export const API = '';
 
-export const baseUrl = 'http://0.0.0.0:8000';
+export const baseUrl = 'https://rskseo.pythonanywhere.com';
 
 export const antIcon = <LoadingOutlined style={{ fontSize: 54 }} spin />;
 
