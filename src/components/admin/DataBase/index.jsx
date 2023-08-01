@@ -50,7 +50,7 @@ const DataBase = () => {
                </div>
 
                <div className={styles.footer}>
-                  {buckups.backups?.map((item, index) => (
+                  {buckups?.backups?.map((item, index) => (
                      <h1 key={index} style={isDarkModeTrigger(1, false, isDarkMode)}>
                         {item}
                      </h1>
