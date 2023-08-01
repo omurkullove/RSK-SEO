@@ -1,5 +1,5 @@
 import { DownOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { branchIndeficator, getServiceName } from '@/utils/utils';
+import { branchIndeficator, getServiceName, isDarkModeTrigger } from '@/utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetProfileInfoQuery, useLazyShiftEmployeeQuery } from '@/api/general/auth_api';
 
@@ -132,7 +132,7 @@ const Sidebar = () => {
                                  <p key={index}>- {getServiceName(item?.name)}</p>
                               ))
                            ) : (
-                              <p>{t('noData')}</p>
+                              <p style={isDarkModeTrigger(1, false, isDarkMode)}>{t('noData')}</p>
                            )}
                         </div>
                      </label>

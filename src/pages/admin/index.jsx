@@ -10,7 +10,7 @@ const RootAdmin = () => {
    return (
       <Routes>
          <Route path={`/home/`} element={<HomePage />} />
-         {/* <Route path='/home/*' element={<NotFound404 />} /> */}
+         <Route path='/home/*' element={<NotFound404 />} />
       </Routes>
    );
 };

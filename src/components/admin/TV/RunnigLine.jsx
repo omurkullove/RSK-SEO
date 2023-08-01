@@ -67,7 +67,7 @@ const RunnigLine = () => {
                placeholder={t('admin.tv.text')}
                onChange={(e) => handleChange('text', e.target.value)}
                type='text'
-               maxLength={50}
+               maxLength={300}
                minLength={5}
                value={runningLine.text || ''}
             />

@@ -54,7 +54,7 @@ const RunningLineModal = ({ currentRunnigLine, isModal, setIsModal }) => {
                placeholder={t('admin.tv.text')}
                onChange={(e) => handleChange('text', e.target.value)}
                type='text'
-               maxLength={50}
+               maxLength={300}
                defaultValue={currentRunnigLine?.text || ''}
             />
 

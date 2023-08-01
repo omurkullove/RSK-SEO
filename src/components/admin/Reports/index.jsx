@@ -75,7 +75,7 @@ const Reports = () => {
 
    return (
       <div className={styles.main}>
-         <h1>{t('admin.reports.reports')}</h1>
+         <h1 style={isDarkModeTrigger(1, false, isDarkMode)}>{t('admin.reports.reports')}</h1>
          {isReportsLoading && isBranchListLoading ? (
             <CustomLoading />
          ) : reports?.length ? (
@@ -87,7 +87,9 @@ const Reports = () => {
                <div className={styles.buttonBlock}>
                   <button
                      onClick={() => handleFilter('all')}
-                     style={{ backgroundColor: currentBranch === 'all' ? '#2f78df' : '' }}
+                     style={{
+                        backgroundColor: currentBranch === 'all' ? '#2f78df' : '',
+                     }}
                   >
                      {t('admin.reports.all')}
                   </button>
@@ -180,7 +182,9 @@ const Reports = () => {
             </>
          ) : (
             <>
-               <h1 style={{ marginTop: '50px' }}>{`${t('noData')}`}</h1>
+               <h1 style={{ marginTop: '50px', ...isDarkModeTrigger(1, false, isDarkMode) }}>{`${t(
+                  'noData'
+               )}`}</h1>
             </>
          )}
       </div>

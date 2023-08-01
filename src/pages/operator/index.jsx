@@ -9,7 +9,8 @@ const RootOpertor = () => {
 
    return (
       <Routes>
-         <Route path={`/home`} element={<HomePage />} />
+         <Route path={`/home/`} element={<HomePage />} />
+         <Route path='/home/*' element={<NotFound404 />} />
       </Routes>
    );
 };

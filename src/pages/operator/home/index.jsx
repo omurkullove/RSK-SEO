@@ -502,7 +502,14 @@ const HomePage = () => {
                      </>
                   ) : (
                      <center>
-                        <p style={{ color: isDarkMode && '#DFDFDF' }}>{t('nothingAtTheMoment')}</p>
+                        <p
+                           style={{
+                              color: isDarkMode && '#DFDFDF',
+                              ...isDarkModeTrigger(1, false, isDarkMode),
+                           }}
+                        >
+                           {t('nothingAtTheMoment')}
+                        </p>
                      </center>
                   )}
 

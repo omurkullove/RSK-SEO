@@ -1,4 +1,4 @@
-import { CustomLoading, transalteIdentifier } from '@/utils/utils';
+import { CustomLoading, isDarkModeTrigger, transalteIdentifier } from '@/utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
@@ -59,12 +59,11 @@ const Service = () => {
                            color: isDarkMode ? 'white' : '',
                         }}
                      >
-                        {transalteIdentifier(translates, item?.lang_name, i18n?.language) ??
-                           item?.name}
+                        {item?.name}
                      </div>
                   ))
                ) : (
-                  <p>{t('nothingAtTheMoment')}</p>
+                  <h1 style={isDarkModeTrigger(1, false, isDarkMode)}>{t('nothingAtTheMoment')}</h1>
                )}
             </div>
             {isSuperAdmin ? (

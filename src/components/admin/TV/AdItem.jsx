@@ -19,6 +19,9 @@ const AdItem = ({ id, title, image, onDelete, handleAdPicker }) => {
             <div>
                <button onClick={() => onDelete(id)}>{t('buttons.delete')}</button>
                <button onClick={() => handleAdPicker(id)}>{t('buttons.edit')}</button>
+               <a target='_blank' href={`${baseUrl}${image}`}>
+                  asdf
+               </a>
             </div>
          </div>
       </div>

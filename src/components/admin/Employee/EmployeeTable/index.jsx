@@ -116,11 +116,9 @@ const EmployeeTable = () => {
       refetch();
    }, []);
 
-
-
-   return isBranchListLoading &&
-      isEmployeeListLoading &&
-      isWindowListLoading &&
+   return isBranchListLoading ||
+      isEmployeeListLoading ||
+      isWindowListLoading ||
       isServiceListLoading ? (
       <CustomLoading />
    ) : (

@@ -1,4 +1,4 @@
-import { CustomLoading, ShowMessage, getServiceName } from '@/utils/utils';
+import { CustomLoading, ShowMessage, getServiceName, isDarkModeTrigger } from '@/utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
@@ -75,7 +75,7 @@ const Queue = () => {
                      </div>
                   ))
                ) : (
-                  <h1>{t('nothingAtTheMoment')}</h1>
+                  <h1 style={isDarkModeTrigger(1, false, isDarkMode)}>{t('nothingAtTheMoment')}</h1>
                )}
             </div>
             {isSuperAdmin ? (

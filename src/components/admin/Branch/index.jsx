@@ -1,4 +1,4 @@
-import { CustomLoading, cityTransalte } from '@/utils/utils';
+import { CustomLoading, cityTransalte, isDarkModeTrigger } from '@/utils/utils';
 
 import BranchModal from './BranchModal';
 import CreateBranchModal from './CreateBranchModal';
@@ -55,7 +55,7 @@ const Branch = () => {
                      </div>
                   ))
                ) : (
-                  <p>{t('nothingAtTheMoment')}</p>
+                  <h1 style={isDarkModeTrigger(1, false, isDarkMode)}>{t('nothingAtTheMoment')}</h1>
                )}
             </div>
             {isSuperAdmin ? (

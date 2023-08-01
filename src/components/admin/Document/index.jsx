@@ -245,7 +245,9 @@ const Document = () => {
                )}
             </div>
          ) : (
-            t('noData')
+            <h1 style={{ margin: '50px', ...isDarkModeTrigger(1, false, isDarkMode) }}>
+               {t('noData')}
+            </h1>
          )}
       </div>
    );

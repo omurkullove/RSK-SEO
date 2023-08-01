@@ -85,9 +85,7 @@ const ServiceModal = ({ isServiceModal, setIsServiceModal, service }) => {
       {
          id: 2,
          title: 'Название',
-         data: service?.name
-            ? transalteIdentifier(translates, service?.lang_name, i18n.language)
-            : '',
+         data: service?.name ?? '-',
          name: 'name',
          type: 'text',
          hintAlert: <Alert {...alertComponents.stingAny} />,

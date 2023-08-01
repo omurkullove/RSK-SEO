@@ -7,8 +7,8 @@ import RegistrarHome from './home';
 const RootRegistrar = () => {
    return (
       <Routes>
-         <Route path='/home' element={<RegistrarHome />} />
-         <Route path='*' element={<NotFound404 />} />
+         <Route path='/home/' element={<RegistrarHome />} />
+         <Route path='/home/*' element={<NotFound404 />} />
       </Routes>
    );
 };

@@ -124,7 +124,7 @@ const AuthPage = () => {
                      />
                   </Form.Item>
 
-                  <Form.Item
+                  {/* <Form.Item
                      style={{
                         marginTop: '-20px',
                      }}
@@ -141,7 +141,7 @@ const AuthPage = () => {
                      >
                         {t('auth.forgetPassword')}
                      </Link>
-                  </Form.Item>
+                  </Form.Item> */}
 
                   <Form.Item>
                      <Button

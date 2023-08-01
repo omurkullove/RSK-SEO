@@ -82,7 +82,7 @@ const TVModal = ({ currentAd, isModal, setIsModal }) => {
                onChange={(e) => handleChange('image', e.target.files[0])}
             />
             <Image
-               src={isFileChanged ? fileUrl : `${baseUrl}${newAd.image}`}
+               src={isFileChanged ? fileUrl : `${baseUrl}/${newAd.image}`}
                height={200}
                width={350}
             />
