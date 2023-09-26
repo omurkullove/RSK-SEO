@@ -6,9 +6,14 @@ import { t } from 'i18next';
 
 export const API = 'https://rskseo.pythonanywhere.com';
 
-export const baseUrl = 'http://16.171.43.52';
+export const baseUrl = 'https://rskapi.pythonanywhere.com';
 
-export const antIcon = <LoadingOutlined style={{ fontSize: 54 }} spin />;
+export const antIcon = (
+   <LoadingOutlined
+      style={{ fontSize: 54 }}
+      spin
+   />
+);
 
 export const CustomLoading = () => {
    return (
@@ -24,7 +29,10 @@ export const CustomLoading = () => {
             color: 'lightgray',
          }}
       >
-         <Spin indicator={antIcon} size='50' />
+         <Spin
+            indicator={antIcon}
+            size="50"
+         />
          <h4>{t('dataLoading')}</h4>
       </div>
    );
@@ -43,7 +51,10 @@ export const CustomModalLoading = () => {
             background: 'transparent',
          }}
       >
-         <Spin indicator={antIcon} size='50' />
+         <Spin
+            indicator={antIcon}
+            size="50"
+         />
          <h1>Загузка</h1>
       </div>
    );
@@ -317,11 +328,7 @@ export const MainBranchOptions = (branchList, isDarkMode) => {
       return null;
    }
    const filtredBranchs = branchList?.map((item) => ({
-      label: (
-         <p style={isDarkModeTrigger(3, false, isDarkMode)}>{`${cityTransalte(item?.city)}, ${
-            item?.address
-         }`}</p>
-      ),
+      label: <p style={isDarkModeTrigger(3, false, isDarkMode)}>{`${cityTransalte(item?.city)}, ${item?.address}`}</p>,
       value: item?.id,
    }));
 
